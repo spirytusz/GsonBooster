@@ -1,0 +1,4 @@
+include ':booster-processor'
+include ':booster-annotation'
+include ':app'
+rootProject.name = "GsonBooster"

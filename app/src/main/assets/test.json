@@ -1,0 +1,10 @@
+{
+  "foo_int": 1,
+  "foo_string": "2",
+  "foo_long": 3,
+  "foo_boolean": true,
+  "foo_double": 4.0,
+  "bar": {
+    "bar_int": 5
+  }
+}
