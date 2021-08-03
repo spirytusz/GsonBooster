@@ -123,8 +123,11 @@ class BoostProcessor : BaseProcessor() {
         }.distinctBy {
             // 过滤掉重复的type adapter声明
             it.kType.adapterFieldName
-        }.forEach {
-            typeAdapterBuilder.addProperty(adapterDeclareStrategy.declare(it))
+        }.mapNotNull {
+            // 过滤掉不生成type adapter的类型
+            adapterDeclareStrategy.declare(it)
+        }.forEach { propertySpec ->
+            typeAdapterBuilder.addProperty(propertySpec)
         }
 
         typeAdapterBuilder.addFunction(generateReadFunc(clazz, fields))

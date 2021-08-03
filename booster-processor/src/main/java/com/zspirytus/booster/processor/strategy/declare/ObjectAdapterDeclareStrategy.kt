@@ -9,11 +9,11 @@ internal class ObjectAdapterDeclareStrategy : IAdapterDeclareStrategy {
 
     var registerTypeAdapters = mapOf<String, ClassName>()
 
-    override fun declare(kField: KField): PropertySpec {
+    override fun declare(kField: KField): PropertySpec? {
         val typeClassName = kField.kType.typeName as ClassName
         val isRegisteredType = registerTypeAdapters.containsKey(typeClassName.canonicalName)
         val type = if (isRegisteredType) {
-            registerTypeAdapters[typeClassName.canonicalName]!!
+            registerTypeAdapters[typeClassName.canonicalName]
         } else {
             kField.kType.typeName
         }

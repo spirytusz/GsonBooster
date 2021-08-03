@@ -5,5 +5,5 @@ import com.zspirytus.booster.processor.data.KField
 
 internal interface IAdapterDeclareStrategy {
 
-    fun declare(kField: KField): PropertySpec
+    fun declare(kField: KField): PropertySpec?
 }

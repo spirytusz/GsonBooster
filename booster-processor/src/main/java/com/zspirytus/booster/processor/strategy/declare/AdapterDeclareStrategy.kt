@@ -6,8 +6,13 @@ import com.zspirytus.booster.processor.data.KField
 import com.zspirytus.booster.processor.data.type.BackoffKType
 import com.zspirytus.booster.processor.data.type.CollectionKType
 import com.zspirytus.booster.processor.data.type.ObjectKType
+import com.zspirytus.booster.processor.data.type.PrimitiveKType
 
 internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
+
+    private val primitiveAdapterDeclareStrategy by lazy {
+        PrimitiveAdapterDeclareStrategy()
+    }
 
     private val objectAdapterDeclareStrategy by lazy {
         ObjectAdapterDeclareStrategy()
@@ -25,8 +30,11 @@ internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
         objectAdapterDeclareStrategy.registerTypeAdapters = registerTypeAdapters
     }
 
-    override fun declare(kField: KField): PropertySpec {
+    override fun declare(kField: KField): PropertySpec? {
         return when (kField.kType) {
+            is PrimitiveKType -> {
+                primitiveAdapterDeclareStrategy.declare(kField)
+            }
             is CollectionKType -> {
                 collectionAdapterDeclareStrategy.declare(kField)
             }
@@ -37,7 +45,7 @@ internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
                 backoffAdapterDeclareStrategy.declare(kField)
             }
             else -> {
-                throw IllegalArgumentException("unknown kType ${kField.kType}")
+                null
             }
         }
     }
