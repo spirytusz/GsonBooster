@@ -1,10 +1,10 @@
 package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.ClassName
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.Element
 
 data class CollectionKType(
-    val element: VariableElement,
+    val element: Element,
     val rawType: ClassName,
     val genericType: ClassName
 ) : KType(element) {

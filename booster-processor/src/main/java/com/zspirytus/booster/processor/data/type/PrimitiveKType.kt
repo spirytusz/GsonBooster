@@ -2,10 +2,10 @@ package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asTypeName
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.Element
 
 data class PrimitiveKType(
-    val element: VariableElement
+    val element: Element
 ) : KType(element) {
 
     override val adapterFieldName: String

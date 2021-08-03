@@ -6,46 +6,46 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.zspirytus.booster.processor.extensions.kotlinType
 import com.zspirytus.booster.processor.helper.TypeHelper
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.Element
 
-abstract class KType(variableElement: VariableElement) {
+abstract class KType(element: Element) {
 
-    val typeName: TypeName by lazy { variableElement.asType().asTypeName() }
+    val typeName: TypeName by lazy { element.asType().asTypeName() }
 
     abstract val adapterFieldName: String
 
     companion object {
 
-        fun makeKType(typeHelper: TypeHelper, variableElement: VariableElement): KType {
+        fun makeKType(typeHelper: TypeHelper, element: Element): KType {
             return when {
-                isPrimitive(variableElement) -> {
-                    PrimitiveKType(variableElement)
+                isPrimitive(element) -> {
+                    PrimitiveKType(element)
                 }
-                typeHelper.isList(variableElement.asType()) -> {
+                typeHelper.isList(element.asType()) -> {
                     val parameterizedTypeName =
-                        variableElement.asType().asTypeName() as ParameterizedTypeName
+                        element.asType().asTypeName() as ParameterizedTypeName
                     val generic = parameterizedTypeName.typeArguments.first()
                     if (generic is ClassName) {
                         CollectionKType(
-                            variableElement,
+                            element,
                             parameterizedTypeName.rawType,
                             generic
                         )
                     } else {
-                        BackoffKType(variableElement)
+                        BackoffKType(element)
                     }
                 }
-                variableElement.asType().asTypeName() is ClassName -> {
-                    ObjectKType(variableElement)
+                element.asType().asTypeName() is ClassName -> {
+                    ObjectKType(element)
                 }
                 else -> {
-                    BackoffKType(variableElement)
+                    BackoffKType(element)
                 }
             }
         }
 
-        private fun isPrimitive(variableElement: VariableElement): Boolean {
-            val kotlinType = variableElement.asType().asTypeName().kotlinType()
+        private fun isPrimitive(element: Element): Boolean {
+            val kotlinType = element.asType().asTypeName().kotlinType()
             if (kotlinType !is ClassName) {
                 return false
             }

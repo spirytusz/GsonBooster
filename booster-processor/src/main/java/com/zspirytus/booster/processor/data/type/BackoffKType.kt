@@ -2,10 +2,10 @@ package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.*
 import com.zspirytus.booster.processor.const.TYPE_ADAPTER_FIELD_NAME_SUFFIX
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.Element
 
 data class BackoffKType(
-    val element: VariableElement
+    val element: Element
 ) : KType(element) {
     override val adapterFieldName: String
         get() = _adapterFieldName
