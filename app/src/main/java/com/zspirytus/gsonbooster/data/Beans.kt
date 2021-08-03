@@ -16,10 +16,20 @@ data class Foo(
     @SerializedName("foo_double")
     val doubleValue: Double = 0.0,
     @SerializedName("bar")
-    val bar: Bar = Bar()
+    val bar: Bar = Bar(),
+    @SerializedName("list")
+    val list: List<Long> = listOf(),
+    @SerializedName("listBar")
+    val listBar: List<Bar> = listOf(),
+    @SerializedName("set")
+    val set: Set<Double> = setOf(),
+    @SerializedName("setBar")
+    val setBar: Set<Bar> = setOf()/*,
+    @SerializedName("listList")
+    val nestedList: List<List<Long>> = listOf()*/
 )
 
-@Boost
+
 data class Bar(
     @SerializedName("bar_int")
     val intValue: Int = 0

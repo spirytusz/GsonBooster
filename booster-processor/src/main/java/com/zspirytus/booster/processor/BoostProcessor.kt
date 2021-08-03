@@ -15,7 +15,6 @@ import com.zspirytus.booster.processor.const.READER
 import com.zspirytus.booster.processor.const.WRITER
 import com.zspirytus.booster.processor.data.KField
 import com.zspirytus.booster.processor.data.type.KType
-import com.zspirytus.booster.processor.data.type.PrimitiveKType
 import com.zspirytus.booster.processor.extensions.asNullable
 import com.zspirytus.booster.processor.extensions.generateTypeAdapterName
 import com.zspirytus.booster.processor.extensions.kotlinType
@@ -119,15 +118,15 @@ class BoostProcessor : BaseProcessor() {
                 .build()
         )
 
-        fields.filter {
+        fields.asSequence().filter {
             // 原始类型不需要typeAdapter
-            it.kType !is PrimitiveKType
+            it.kType.adapterFieldName.isNotEmpty()
         }.distinctBy {
             // 过滤掉重复的type adapter声明
             it.kType.adapterFieldName
         }.mapNotNull {
             // 过滤掉不生成type adapter的类型
-            adapterDeclareStrategy.declare(it)
+            adapterDeclareStrategy.declare(it.kType)
         }.forEach { propertySpec ->
             typeAdapterBuilder.addProperty(propertySpec)
         }

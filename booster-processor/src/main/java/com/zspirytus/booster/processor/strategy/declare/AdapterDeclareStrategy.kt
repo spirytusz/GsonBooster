@@ -2,11 +2,7 @@ package com.zspirytus.booster.processor.strategy.declare
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.PropertySpec
-import com.zspirytus.booster.processor.data.KField
-import com.zspirytus.booster.processor.data.type.BackoffKType
-import com.zspirytus.booster.processor.data.type.CollectionKType
-import com.zspirytus.booster.processor.data.type.ObjectKType
-import com.zspirytus.booster.processor.data.type.PrimitiveKType
+import com.zspirytus.booster.processor.data.type.*
 
 internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
 
@@ -19,7 +15,10 @@ internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
     }
 
     private val collectionAdapterDeclareStrategy by lazy {
-        CollectionAdapterDeclareStrategy()
+        CollectionAdapterDeclareStrategy().apply {
+            this.objectAdapterDeclareStrategy =
+                this@AdapterDeclareStrategy.objectAdapterDeclareStrategy
+        }
     }
 
     private val backoffAdapterDeclareStrategy by lazy {
@@ -30,19 +29,19 @@ internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
         objectAdapterDeclareStrategy.registerTypeAdapters = registerTypeAdapters
     }
 
-    override fun declare(kField: KField): PropertySpec? {
-        return when (kField.kType) {
+    override fun declare(kType: KType): PropertySpec? {
+        return when (kType) {
             is PrimitiveKType -> {
-                primitiveAdapterDeclareStrategy.declare(kField)
+                primitiveAdapterDeclareStrategy.declare(kType)
             }
             is CollectionKType -> {
-                collectionAdapterDeclareStrategy.declare(kField)
+                collectionAdapterDeclareStrategy.declare(kType)
             }
             is ObjectKType -> {
-                objectAdapterDeclareStrategy.declare(kField)
+                objectAdapterDeclareStrategy.declare(kType)
             }
             is BackoffKType -> {
-                backoffAdapterDeclareStrategy.declare(kField)
+                backoffAdapterDeclareStrategy.declare(kType)
             }
             else -> {
                 null

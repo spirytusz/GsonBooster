@@ -25,7 +25,7 @@ abstract class BaseProcessor : AbstractProcessor() {
         }
 
     protected fun log(msg: String, kind: Diagnostic.Kind = Diagnostic.Kind.NOTE) {
-        processingEnv.messager.printMessage(kind, "$CONSOLE_TAG ${javaClass.name}: $msg")
+        processingEnv.messager.printMessage(kind, "\n$CONSOLE_TAG ${javaClass.name}: $msg\n")
     }
 
     override fun process(annotations: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {

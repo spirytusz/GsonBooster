@@ -3,19 +3,19 @@ package com.zspirytus.booster.processor.strategy.declare
 import com.google.gson.TypeAdapter
 import com.squareup.kotlinpoet.*
 import com.zspirytus.booster.processor.const.GSON
-import com.zspirytus.booster.processor.data.KField
+import com.zspirytus.booster.processor.data.type.KType
 
 internal class ObjectAdapterDeclareStrategy : IAdapterDeclareStrategy {
 
     var registerTypeAdapters = mapOf<String, ClassName>()
 
-    override fun declare(kField: KField): PropertySpec? {
-        val typeClassName = kField.kType.typeName as ClassName
+    override fun declare(kType: KType): PropertySpec? {
+        val typeClassName = kType.typeName as ClassName
         val isRegisteredType = registerTypeAdapters.containsKey(typeClassName.canonicalName)
         val type = if (isRegisteredType) {
             registerTypeAdapters[typeClassName.canonicalName]
         } else {
-            kField.kType.typeName
+            kType.typeName
         }
         val typeAdapterCodeBlock = if (isRegisteredType) {
             CodeBlock.Builder()
@@ -31,9 +31,9 @@ internal class ObjectAdapterDeclareStrategy : IAdapterDeclareStrategy {
                 .build()
         }
         val adapterType = with(ParameterizedTypeName.Companion) {
-            TypeAdapter::class.asClassName().parameterizedBy(kField.kType.typeName)
+            TypeAdapter::class.asClassName().parameterizedBy(kType.typeName)
         }
-        return PropertySpec.builder(kField.kType.adapterFieldName, adapterType, KModifier.PRIVATE)
+        return PropertySpec.builder(kType.adapterFieldName, adapterType, KModifier.PRIVATE)
             .delegate(typeAdapterCodeBlock)
             .build()
     }

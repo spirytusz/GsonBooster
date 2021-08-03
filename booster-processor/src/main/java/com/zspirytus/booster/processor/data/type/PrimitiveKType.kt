@@ -1,6 +1,7 @@
 package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import com.zspirytus.booster.processor.extensions.kotlinType
 import javax.lang.model.element.Element
@@ -13,18 +14,16 @@ data class PrimitiveKType(
         get() = ""
 
     fun getPrimitiveTypeNameForJsonReader(): String {
-        val doubleType = setOf("Double", "Float")
-        val simpleName = (element.asType().asTypeName() as ClassName).simpleName
-        return if (simpleName in doubleType) {
-            return "Double"
-        } else {
-            simpleName
-        }
+        return getPrimitiveTypeNameForJsonReader(element.asType().asTypeName() as ClassName)
     }
 
     companion object {
         fun isPrimitive(element: Element): Boolean {
-            val kotlinType = element.asType().asTypeName().kotlinType()
+            return isPrimitive(element.asType().asTypeName().kotlinType())
+        }
+
+        fun isPrimitive(typeName: TypeName): Boolean {
+            val kotlinType = typeName.kotlinType()
             if (kotlinType !is ClassName) {
                 return false
             }
@@ -36,6 +35,16 @@ data class PrimitiveKType(
                 "String",
                 "Float"
             )
+        }
+
+        fun getPrimitiveTypeNameForJsonReader(className: ClassName): String {
+            val doubleType = setOf("Double", "Float")
+            val simpleName = (className.kotlinType() as ClassName).simpleName
+            return if (simpleName in doubleType) {
+                return "Double"
+            } else {
+                simpleName
+            }
         }
     }
 }

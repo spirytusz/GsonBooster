@@ -1,10 +1,10 @@
 package com.zspirytus.booster.processor.strategy.declare
 
 import com.squareup.kotlinpoet.PropertySpec
-import com.zspirytus.booster.processor.data.KField
+import com.zspirytus.booster.processor.data.type.KType
 
 internal class PrimitiveAdapterDeclareStrategy : IAdapterDeclareStrategy {
-    override fun declare(kField: KField): PropertySpec? {
+    override fun declare(kType: KType): PropertySpec? {
         return null
     }
 }
