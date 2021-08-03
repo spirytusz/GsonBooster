@@ -5,12 +5,20 @@ import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import javax.annotation.processing.ProcessingEnvironment
+import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
+import javax.lang.model.util.Elements
+import javax.lang.model.util.Types
 
-class TypeHelper(processingEnv: ProcessingEnvironment) {
+object TypeHelper {
 
-    private val elementUtils = processingEnv.elementUtils
-    private val typeUtils = processingEnv.typeUtils
+    private lateinit var elementUtils: Elements
+    private lateinit var typeUtils: Types
+
+    fun init(processingEnv: ProcessingEnvironment) {
+        elementUtils = processingEnv.elementUtils
+        typeUtils = processingEnv.typeUtils
+    }
 
     fun isList(typeMirror: TypeMirror): Boolean {
         val javaListClassName = ClassName("java.util", "List")
@@ -28,6 +36,10 @@ class TypeHelper(processingEnv: ProcessingEnvironment) {
             typeMirror,
             kotlinSetClassName
         )
+    }
+
+    fun getElementFromClassName(className: ClassName): Element {
+        return elementUtils.getTypeElement(className.canonicalName)
     }
 
     fun isInterfaceOf(typeMirror: TypeMirror, interfaceName: TypeName): Boolean {

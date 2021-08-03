@@ -25,12 +25,12 @@ import com.zspirytus.booster.processor.strategy.declare.AdapterDeclareStrategy
 import com.zspirytus.booster.processor.strategy.read.FieldReadStrategy
 import com.zspirytus.booster.processor.strategy.write.FieldWriteStrategy
 import org.jetbrains.annotations.Nullable
+import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
 
 @AutoService(Processor::class)
 class BoostProcessor : BaseProcessor() {
@@ -47,8 +47,10 @@ class BoostProcessor : BaseProcessor() {
         FieldWriteStrategy()
     }
 
-    private val typeHelper by lazy {
-        TypeHelper(processingEnv)
+    override fun init(processingEnv: ProcessingEnvironment) {
+        super.init(processingEnv)
+
+        TypeHelper.init(processingEnv)
     }
 
     override fun process(env: RoundEnvironment) {
@@ -95,7 +97,7 @@ class BoostProcessor : BaseProcessor() {
             }
             KField(
                 keys = keys,
-                kType = KType.makeKType(typeHelper, it as VariableElement),
+                kType = KType.makeKTypeByElement(it),
                 fieldName = it.simpleName.toString(),
                 nullable = it.getAnnotation(Nullable::class.java) != null
             )

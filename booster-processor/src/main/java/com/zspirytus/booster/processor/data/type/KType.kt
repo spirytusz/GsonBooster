@@ -4,7 +4,6 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
-import com.zspirytus.booster.processor.extensions.kotlinType
 import com.zspirytus.booster.processor.helper.TypeHelper
 import javax.lang.model.element.Element
 
@@ -16,12 +15,12 @@ abstract class KType(element: Element) {
 
     companion object {
 
-        fun makeKType(typeHelper: TypeHelper, element: Element): KType {
+        fun makeKTypeByElement(element: Element): KType {
             return when {
-                isPrimitive(element) -> {
+                PrimitiveKType.isPrimitive(element) -> {
                     PrimitiveKType(element)
                 }
-                typeHelper.isList(element.asType()) -> {
+                TypeHelper.isList(element.asType()) || TypeHelper.isSet(element.asType()) -> {
                     val parameterizedTypeName =
                         element.asType().asTypeName() as ParameterizedTypeName
                     val generic = parameterizedTypeName.typeArguments.first()
@@ -44,19 +43,8 @@ abstract class KType(element: Element) {
             }
         }
 
-        private fun isPrimitive(element: Element): Boolean {
-            val kotlinType = element.asType().asTypeName().kotlinType()
-            if (kotlinType !is ClassName) {
-                return false
-            }
-            return kotlinType.simpleName in setOf(
-                "Int",
-                "Long",
-                "Boolean",
-                "Double",
-                "String",
-                "Float"
-            )
+        fun makeKTypeByClassName(className: ClassName): KType {
+            return makeKTypeByElement(TypeHelper.getElementFromClassName(className))
         }
     }
 }
