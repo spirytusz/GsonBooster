@@ -14,6 +14,7 @@ import com.zspirytus.booster.processor.const.OBJECT
 import com.zspirytus.booster.processor.const.READER
 import com.zspirytus.booster.processor.const.WRITER
 import com.zspirytus.booster.processor.data.KField
+import com.zspirytus.booster.processor.data.type.BackoffKType
 import com.zspirytus.booster.processor.data.type.KType
 import com.zspirytus.booster.processor.extensions.asNullable
 import com.zspirytus.booster.processor.extensions.generateTypeAdapterName
@@ -126,6 +127,9 @@ class BoostProcessor : BaseProcessor() {
             it.kType.adapterFieldName
         }.mapNotNull {
             // 过滤掉不生成type adapter的类型
+            if (it.kType is BackoffKType) {
+                log("it.kType.name = ${it.kType.adapterFieldName}")
+            }
             adapterDeclareStrategy.declare(it.kType)
         }.forEach { propertySpec ->
             typeAdapterBuilder.addProperty(propertySpec)

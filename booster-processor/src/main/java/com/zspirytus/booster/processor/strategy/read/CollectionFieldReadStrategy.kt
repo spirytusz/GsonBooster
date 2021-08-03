@@ -8,6 +8,7 @@ import com.zspirytus.booster.processor.const.READER
 import com.zspirytus.booster.processor.data.KField
 import com.zspirytus.booster.processor.data.type.CollectionKType
 import com.zspirytus.booster.processor.data.type.PrimitiveKType
+import com.zspirytus.booster.processor.extensions.kotlinType
 
 internal class CollectionFieldReadStrategy : IFieldReadStrategy {
 
@@ -34,7 +35,7 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
         return CodeBlock.Builder().addStatement(
             """
             if (%L.peek() != %T.NULL) {
-                val tempList = mutableListOf<$primitiveTypeName>()
+                val tempList = mutableListOf<%T>()
                 while (%L.hasNext()) {
                     if (%L.peek() != %T.NULL) {
                         tempList.add(%L.next$primitiveTypeName())
@@ -47,6 +48,7 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
             """.trimIndent(),
             READER,
             JsonToken::class.java,
+            collectionKType.genericType.kotlinType(),
             READER,
             READER,
             JsonToken::class.java,
@@ -66,13 +68,13 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
         return CodeBlock.Builder().addStatement(
             """
                 if (%L.peek() != %T.NULL) {
-                val list = mutableListOf<%L>()
+                val tempList = mutableListOf<%L>()
                 while (%L.hasNext()) {
                     if (%L.peek() != %T.NULL) {
-                        list.add(%L.read(%L))
+                        tempList.add(%L.read(%L))
                     }
                 }
-                %L = list%L
+                %L = tempList%L
             } else {
                 %L.nextNull()
             }

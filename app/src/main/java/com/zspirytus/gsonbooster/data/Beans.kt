@@ -24,9 +24,11 @@ data class Foo(
     @SerializedName("set")
     val set: Set<Double> = setOf(),
     @SerializedName("setBar")
-    val setBar: Set<Bar> = setOf()/*,
+    val setBar: Set<Bar> = setOf(),
     @SerializedName("listList")
-    val nestedList: List<List<Long>> = listOf()*/
+    val nestedList: List<List<Long>> = listOf(),
+    @SerializedName("listSet")
+    val listSet: List<Set<Long>> = listOf()
 )
 
 
