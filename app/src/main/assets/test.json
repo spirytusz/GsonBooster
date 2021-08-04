@@ -1,10 +1,96 @@
 {
-  "foo_int": 1,
-  "foo_string": "2",
-  "foo_long": 3,
-  "foo_boolean": true,
-  "foo_double": 4.0,
-  "bar": {
-    "bar_int": 5
-  }
+    "foo_bar": {
+        "bar_int": 0,
+        "bar_long": 0,
+        "bar_string": ""
+    },
+    "foo_boolean": false,
+    "foo_double": 0.0,
+    "foo_int": 0,
+    "foo_list": [
+        233,
+        666,
+        777,
+        999
+    ],
+    "foo_list_bar": [
+        {
+            "bar_int": 1,
+            "bar_long": 2,
+            "bar_string": "3"
+        },
+        {
+            "bar_int": 4,
+            "bar_long": 5,
+            "bar_string": "6"
+        },
+        {
+            "bar_int": 7,
+            "bar_long": 8,
+            "bar_string": "9"
+        }
+    ],
+    "foo_list_set": [
+        [
+            233,
+            666,
+            777,
+            999
+        ],
+        [
+            114,
+            514,
+            123,
+            456
+        ]
+    ],
+    "foo_long": 0,
+    "foo_list_list": [
+        [
+            233,
+            666,
+            777,
+            999
+        ],
+        [
+            114,
+            514,
+            123,
+            456
+        ]
+    ],
+    "foo_nullable_bean": {
+        "nullable_bar": null,
+        "nullable_boolean": null,
+        "nullable_double": null,
+        "nullable_int": null,
+        "nullable_list": null,
+        "nullable_list_bar": null,
+        "nullable_long": null,
+        "nullable_string": null
+    },
+    "foo_set": [
+        114.0,
+        514.0,
+        233.0,
+        666.0
+    ],
+    "foo_set_bar": [
+        {
+            "bar_int": 10,
+            "bar_long": 11,
+            "bar_string": "12"
+        },
+        {
+            "bar_int": 13,
+            "bar_long": 14,
+            "bar_string": "15"
+        },
+        {
+            "bar_int": 16,
+            "bar_long": 17,
+            "bar_string": "18"
+        }
+    ],
+    "foo_string": ""
 }

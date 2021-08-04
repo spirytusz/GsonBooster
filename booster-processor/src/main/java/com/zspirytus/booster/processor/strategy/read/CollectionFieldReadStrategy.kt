@@ -38,6 +38,7 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
             """
             if (%L.peek() != %T.NULL) {
                 val tempList = mutableListOf<%T>()
+                %L.beginArray()
                 while (%L.hasNext()) {
                     if (%L.peek() != %T.NULL) {
                         tempList.add(%L.next$primitiveTypeName())
@@ -45,6 +46,7 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
                         %L.skipValue()
                     }
                 }
+                %L.endArray()
                 %L = tempList%L
             } else {
                 %L.nextNull()
@@ -55,7 +57,9 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
             collectionKType.genericType.kotlinType(),
             READER,
             READER,
+            READER,
             JsonToken::class.java,
+            READER,
             READER,
             READER,
             kField.fieldName,
@@ -76,8 +80,9 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
         }
         return codeBlock.addStatement(
             """
-                if (%L.peek() != %T.NULL) {
+            if (%L.peek() != %T.NULL) {
                 val tempList = mutableListOf<%L>()
+                %L.beginArray()
                 while (%L.hasNext()) {
                     if (%L.peek() != %T.NULL) {
                         tempList.add(%L.read(%L))
@@ -85,6 +90,7 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
                         %L.skipValue()
                     }
                 }
+                %L.endArray()
                 %L = tempList%L
             } else {
                 %L.nextNull()
@@ -95,8 +101,10 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
             collectionKType.genericType,
             READER,
             READER,
+            READER,
             JsonToken::class.java,
             collectionKType.adapterFieldName,
+            READER,
             READER,
             READER,
             kField.fieldName,

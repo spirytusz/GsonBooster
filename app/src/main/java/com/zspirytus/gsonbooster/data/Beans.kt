@@ -15,20 +15,22 @@ data class Foo(
     val booleanValue: Boolean = false,
     @SerializedName("foo_double")
     val doubleValue: Double = 0.0,
-    @SerializedName("bar")
+    @SerializedName("foo_bar")
     val bar: Bar = Bar(),
-    @SerializedName("list")
+    @SerializedName("foo_list")
     val list: List<Long> = listOf(),
-    @SerializedName("listBar")
+    @SerializedName("foo_list_bar")
     val listBar: List<Bar> = listOf(),
-    @SerializedName("set")
+    @SerializedName("foo_set")
     val set: Set<Double> = setOf(),
-    @SerializedName("setBar")
+    @SerializedName("foo_set_bar")
     val setBar: Set<Bar> = setOf(),
-    @SerializedName("listList")
+    @SerializedName("foo_list_list")
     val nestedList: List<List<Long>> = listOf(),
-    @SerializedName("listSet")
-    val listSet: List<Set<Long>> = listOf()
+    @SerializedName("foo_list_set")
+    val listSet: List<Set<Long>> = listOf(),
+    @SerializedName("foo_nullable_bean")
+    val nullableBean: NullableBean = NullableBean()
 )
 
 @Boost
@@ -39,4 +41,24 @@ data class Bar(
     val longValue: Long = 0L,
     @SerializedName("bar_string")
     val stringValue: String = ""
+)
+
+@Boost
+data class NullableBean(
+    @SerializedName("nullable_int")
+    val intValue: Int? = null,
+    @SerializedName("nullable_string")
+    val stringValue: String? = null,
+    @SerializedName("nullable_long")
+    val longValue: Long? = null,
+    @SerializedName("nullable_boolean")
+    val booleanValue: Boolean? = null,
+    @SerializedName("nullable_double")
+    val doubleValue: Double? = null,
+    @SerializedName("nullable_bar")
+    val bar: Bar? = null,
+    @SerializedName("nullable_list")
+    val list: List<Long>? = null,
+    @SerializedName("nullable_list_bar")
+    val listBar: List<Bar>? = null
 )
