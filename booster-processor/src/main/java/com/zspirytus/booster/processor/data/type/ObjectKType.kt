@@ -1,7 +1,7 @@
 package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.ClassName
-import com.zspirytus.booster.processor.const.TYPE_ADAPTER_FIELD_NAME_SUFFIX
+import com.zspirytus.booster.processor.const.TYPE_ADAPTER_NAME
 
 data class ObjectKType(
     val className: ClassName
@@ -13,5 +13,5 @@ data class ObjectKType(
     }
 
     override val adapterFieldName: String
-        get() = "${adapterFieldNamePrefix}$TYPE_ADAPTER_FIELD_NAME_SUFFIX"
+        get() = "${adapterFieldNamePrefix}$TYPE_ADAPTER_NAME"
 }

@@ -17,9 +17,6 @@ fun KClass<*>.parameterizedBy(typeName: TypeName): ParameterizedTypeName {
     }
 }
 
-fun ClassName.generateTypeAdapterName(): String =
-    "${simpleNames.joinToString(separator = "_")}TypeAdapter"
-
 fun TypeName.asNullable() = copy(nullable = true)
 
 fun TypeName.kotlinType(): TypeName {

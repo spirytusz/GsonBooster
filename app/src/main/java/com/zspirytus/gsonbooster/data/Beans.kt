@@ -31,7 +31,7 @@ data class Foo(
     val listSet: List<Set<Long>> = listOf()
 )
 
-
+@Boost
 data class Bar(
     @SerializedName("bar_int")
     val intValue: Int = 0,

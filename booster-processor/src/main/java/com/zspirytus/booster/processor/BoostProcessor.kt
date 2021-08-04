@@ -18,7 +18,6 @@ import com.zspirytus.booster.processor.data.KField
 import com.zspirytus.booster.processor.data.type.BackoffKType
 import com.zspirytus.booster.processor.data.type.KType
 import com.zspirytus.booster.processor.extensions.asNullable
-import com.zspirytus.booster.processor.extensions.generateTypeAdapterName
 import com.zspirytus.booster.processor.extensions.kotlinType
 import com.zspirytus.booster.processor.extensions.parameterizedBy
 import com.zspirytus.booster.processor.helper.TypeHelper
@@ -75,7 +74,7 @@ class BoostProcessor : BaseProcessor() {
             val className = it.asType().asTypeName() as ClassName
             val adapterClassName = ClassName(
                 className.packageName,
-                "${className.simpleName}$TYPE_ADAPTER_FIELD_NAME_SUFFIX"
+                "${className.simpleName}$TYPE_ADAPTER_NAME"
             )
             registerTypeAdapters[className.canonicalName] = adapterClassName
         }
@@ -259,4 +258,7 @@ class BoostProcessor : BaseProcessor() {
 
         return writeFunc.build()
     }
+
+    private fun ClassName.generateTypeAdapterName(): String =
+        "${simpleName}$TYPE_ADAPTER_NAME"
 }
