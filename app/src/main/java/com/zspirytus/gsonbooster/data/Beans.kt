@@ -36,5 +36,7 @@ data class Bar(
     @SerializedName("bar_int")
     val intValue: Int = 0,
     @SerializedName("bar_long")
-    val longValue: Long = 0L
+    val longValue: Long = 0L,
+    @SerializedName("bar_string")
+    val stringValue: String = ""
 )

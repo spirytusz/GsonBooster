@@ -20,6 +20,8 @@ internal class CollectionFieldWriteStrategy : IFieldWriteStrategy {
     private fun writeGenericsPrimitiveCollections(kField: KField): CodeBlock {
         return if (kField.nullable) {
             CodeBlock.Builder().addStatement(
+                "%L.name(%S)", WRITER, kField.keys.first()
+            ).addStatement(
                 """
                     val %L = %L.%L
                     if (%L != null) {
@@ -44,6 +46,8 @@ internal class CollectionFieldWriteStrategy : IFieldWriteStrategy {
             )
         } else {
             CodeBlock.Builder().addStatement(
+                "%L.name(%S)", WRITER, kField.keys.first()
+            ).addStatement(
                 """
                     %L.beginArray()
                     %L.%L.forEach {

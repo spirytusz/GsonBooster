@@ -251,7 +251,6 @@ class BoostProcessor : BaseProcessor() {
 
         writeFunc.addStatement("%L.beginObject()", WRITER)
         fields.forEach {
-            writeFunc.addStatement("%L.name(%S)", WRITER, it.keys.first())
             writeFunc.addCode(fieldWriteStrategy.write(it))
         }
         writeFunc.addStatement("%L.endObject()", WRITER)

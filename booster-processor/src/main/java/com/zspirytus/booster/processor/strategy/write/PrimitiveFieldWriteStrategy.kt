@@ -8,6 +8,7 @@ import com.zspirytus.booster.processor.data.KField
 internal class PrimitiveFieldWriteStrategy : IFieldWriteStrategy {
     override fun write(kField: KField): CodeBlock {
         val codeBlock = CodeBlock.Builder()
+        codeBlock.addStatement("%L.name(%S)", WRITER, kField.keys.first())
         if (kField.nullable) {
             codeBlock.addStatement(
                 "val %L = %L.%L",
