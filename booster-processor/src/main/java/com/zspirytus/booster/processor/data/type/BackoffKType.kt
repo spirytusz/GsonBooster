@@ -2,6 +2,7 @@ package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.*
 import com.zspirytus.booster.processor.const.TYPE_ADAPTER_NAME
+import com.zspirytus.booster.processor.extensions.firstCharLowerCase
 
 data class BackoffKType(
     val backoffTypeName: TypeName
@@ -15,12 +16,8 @@ data class BackoffKType(
     }
 
     private fun getAdapterFieldName(typeName: TypeName): String {
-        var adapterFieldName = getAdapterFieldNameRecursively(typeName).joinToString("")
-        adapterFieldName = "$adapterFieldName$TYPE_ADAPTER_NAME"
-        return adapterFieldName.replaceFirst(
-            adapterFieldName.first(),
-            adapterFieldName.first().toLowerCase()
-        )
+        val adapterFieldName = getAdapterFieldNameRecursively(typeName).joinToString("")
+        return "$adapterFieldName$TYPE_ADAPTER_NAME".firstCharLowerCase()
     }
 
     private fun getAdapterFieldNameRecursively(typeName: TypeName): List<String> {

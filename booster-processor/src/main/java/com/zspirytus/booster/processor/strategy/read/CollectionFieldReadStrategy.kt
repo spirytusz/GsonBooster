@@ -4,10 +4,12 @@ import com.google.gson.stream.JsonToken
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.asClassName
+import com.zspirytus.booster.processor.const.NULLABLE_FIELD_FLAG_PREFIX
 import com.zspirytus.booster.processor.const.READER
 import com.zspirytus.booster.processor.data.KField
 import com.zspirytus.booster.processor.data.type.CollectionKType
 import com.zspirytus.booster.processor.data.type.PrimitiveKType
+import com.zspirytus.booster.processor.extensions.firstChatUpperCase
 import com.zspirytus.booster.processor.extensions.kotlinType
 
 internal class CollectionFieldReadStrategy : IFieldReadStrategy {
@@ -39,6 +41,8 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
                 while (%L.hasNext()) {
                     if (%L.peek() != %T.NULL) {
                         tempList.add(%L.next$primitiveTypeName())
+                    } else {
+                        %L.skipValue()
                     }
                 }
                 %L = tempList%L
@@ -53,6 +57,7 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
             READER,
             JsonToken::class.java,
             READER,
+            READER,
             kField.fieldName,
             if (isSet(collectionKType)) {
                 ".toSet()"
@@ -65,13 +70,19 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
 
     private fun readGenericsObjectCollections(kField: KField): CodeBlock {
         val collectionKType = kField.kType as CollectionKType
-        return CodeBlock.Builder().addStatement(
+        val codeBlock = CodeBlock.Builder()
+        if (kField.nullable) {
+            codeBlock.addStatement("$NULLABLE_FIELD_FLAG_PREFIX${kField.fieldName.firstChatUpperCase()} = true")
+        }
+        return codeBlock.addStatement(
             """
                 if (%L.peek() != %T.NULL) {
                 val tempList = mutableListOf<%L>()
                 while (%L.hasNext()) {
                     if (%L.peek() != %T.NULL) {
                         tempList.add(%L.read(%L))
+                    } else {
+                        %L.skipValue()
                     }
                 }
                 %L = tempList%L
@@ -86,6 +97,7 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
             READER,
             JsonToken::class.java,
             collectionKType.adapterFieldName,
+            READER,
             READER,
             kField.fieldName,
             if (isSet(collectionKType)) {

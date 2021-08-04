@@ -156,7 +156,7 @@ class BoostProcessor : BaseProcessor() {
                 it.kType.typeName.kotlinType().asNullable()
             )
             if (it.nullable) {
-                readFunc.addStatement("var fetch_${it.fieldName} = false")
+                readFunc.addStatement("var ${it.fetchFlagFieldName} = false")
             }
         }
 
@@ -200,7 +200,7 @@ class BoostProcessor : BaseProcessor() {
                 }
             """.trimIndent(),
                 "real_${it.fieldName}",
-                "fetch_${it.fieldName}",
+                it.fetchFlagFieldName,
                 it.fieldName,
                 "defaultValue.${it.fieldName}"
             )

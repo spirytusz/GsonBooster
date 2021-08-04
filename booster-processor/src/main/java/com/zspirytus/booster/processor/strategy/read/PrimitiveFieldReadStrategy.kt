@@ -2,7 +2,6 @@ package com.zspirytus.booster.processor.strategy.read
 
 import com.google.gson.stream.JsonToken
 import com.squareup.kotlinpoet.CodeBlock
-import com.zspirytus.booster.processor.const.NULLABLE_FIELD_FLAG_PREFIX
 import com.zspirytus.booster.processor.const.READER
 import com.zspirytus.booster.processor.data.KField
 import com.zspirytus.booster.processor.data.type.PrimitiveKType
@@ -11,7 +10,7 @@ internal class PrimitiveFieldReadStrategy : IFieldReadStrategy {
     override fun read(kField: KField): CodeBlock {
         val codeBlock = CodeBlock.Builder()
         if (kField.nullable) {
-            codeBlock.addStatement("$NULLABLE_FIELD_FLAG_PREFIX${kField.fieldName} = true")
+            codeBlock.addStatement("${kField.fetchFlagFieldName} = true")
         }
         val primitiveKType = kField.kType as PrimitiveKType
         codeBlock.addStatement(

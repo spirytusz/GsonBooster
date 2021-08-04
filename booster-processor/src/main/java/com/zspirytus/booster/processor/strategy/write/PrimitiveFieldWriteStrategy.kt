@@ -19,7 +19,7 @@ internal class PrimitiveFieldWriteStrategy : IFieldWriteStrategy {
             codeBlock.addStatement(
                 """
                 if (%L != null) {
-                    %L.value(%L)"
+                    %L.value(%L)
                 } else {
                     %L.nullValue()
                 }
