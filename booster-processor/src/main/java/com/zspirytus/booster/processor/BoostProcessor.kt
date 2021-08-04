@@ -97,7 +97,7 @@ class BoostProcessor : BaseProcessor() {
             }
             KField(
                 keys = keys,
-                kType = KType.makeKTypeByElement(it),
+                kType = KType.makeKTypeByTypeName(it.asType().asTypeName()),
                 fieldName = it.simpleName.toString(),
                 nullable = it.getAnnotation(Nullable::class.java) != null
             )

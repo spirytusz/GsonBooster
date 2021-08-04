@@ -1,11 +1,10 @@
 package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.ClassName
-import javax.lang.model.element.Element
 
 data class ObjectKType(
-    val element: Element
-) : KType(element) {
+    val className: ClassName
+) : KType(className) {
 
     private val adapterFieldNamePrefix by lazy {
         val simpleName = (typeName as ClassName).simpleName

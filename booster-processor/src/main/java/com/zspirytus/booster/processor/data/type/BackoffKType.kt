@@ -2,11 +2,11 @@ package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.*
 import com.zspirytus.booster.processor.const.TYPE_ADAPTER_FIELD_NAME_SUFFIX
-import javax.lang.model.element.Element
 
 data class BackoffKType(
-    val element: Element
-) : KType(element) {
+    val backoffTypeName: TypeName
+) : KType(backoffTypeName) {
+
     override val adapterFieldName: String
         get() = _adapterFieldName
 
@@ -36,7 +36,7 @@ data class BackoffKType(
                 }
             }
             is WildcardTypeName -> {
-                // 协变逆变
+                // 协变逆变通配符
                 val inTypeNames = typeName.inTypes.map {
                     getAdapterFieldNameRecursively(it).joinToString("")
                 }

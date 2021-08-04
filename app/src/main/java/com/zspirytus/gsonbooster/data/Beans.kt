@@ -34,5 +34,7 @@ data class Foo(
 
 data class Bar(
     @SerializedName("bar_int")
-    val intValue: Int = 0
+    val intValue: Int = 0,
+    @SerializedName("bar_long")
+    val longValue: Long = 0L
 )

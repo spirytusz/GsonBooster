@@ -14,7 +14,7 @@ internal class CollectionAdapterDeclareStrategy : IAdapterDeclareStrategy {
         if (PrimitiveKType.isPrimitive(kType.rawType)) {
             return null
         }
-        val genericsKType = KType.makeKTypeByClassName(kType.genericType)
+        val genericsKType = KType.makeKTypeByTypeName(kType.genericType)
         return objectAdapterDeclareStrategy?.declare(genericsKType)
     }
 }

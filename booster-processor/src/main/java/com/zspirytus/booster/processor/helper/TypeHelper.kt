@@ -6,7 +6,6 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
-import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
@@ -20,39 +19,49 @@ object TypeHelper {
         typeUtils = processingEnv.typeUtils
     }
 
-    fun isList(typeMirror: TypeMirror): Boolean {
-        val javaListClassName = ClassName("java.util", "List")
-        val kotlinListClassName = List::class.asTypeName()
-        return isInterfaceOf(typeMirror, javaListClassName) || isInterfaceOf(
-            typeMirror,
-            kotlinListClassName
-        )
+    fun isList(typeName: TypeName): Boolean {
+        return when (typeName) {
+            is ClassName -> {
+                val javaListClassName = ClassName("java.util", "List")
+                val kotlinListClassName = List::class.asTypeName()
+                isInterfaceOf(typeName, javaListClassName) ||
+                        isInterfaceOf(typeName, kotlinListClassName)
+            }
+            is ParameterizedTypeName -> {
+                isList(typeName.rawType)
+            }
+            else -> false
+        }
     }
 
-    fun isSet(typeMirror: TypeMirror): Boolean {
-        val javaSetClassName = ClassName("java.util", "Set")
-        val kotlinSetClassName = Set::class.asTypeName()
-        return isInterfaceOf(typeMirror, javaSetClassName) || isInterfaceOf(
-            typeMirror,
-            kotlinSetClassName
-        )
+    fun isSet(typeName: TypeName): Boolean {
+        return when (typeName) {
+            is ClassName -> {
+                val javaSetClassName = ClassName("java.util", "Set")
+                val kotlinSetClassName = Set::class.asTypeName()
+                isInterfaceOf(typeName, javaSetClassName) ||
+                        isInterfaceOf(typeName, kotlinSetClassName)
+            }
+            is ParameterizedTypeName -> {
+                isSet(typeName.rawType)
+            }
+            else -> false
+        }
     }
 
     fun getElementFromClassName(className: ClassName): Element {
         return elementUtils.getTypeElement(className.canonicalName)
     }
 
-    fun isInterfaceOf(typeMirror: TypeMirror, interfaceName: TypeName): Boolean {
-        val typeName = typeMirror.asTypeName()
-        if (typeName !is ParameterizedTypeName) {
-            return false
-        }
-        val rawType = typeName.rawType
-        if (rawType == interfaceName) {
+    fun isInterfaceOf(className: ClassName, interfaceName: TypeName): Boolean {
+        if (className == interfaceName) {
             return true
         } else {
-            typeUtils.directSupertypes(typeMirror).forEach { mirror ->
-                if (isInterfaceOf(mirror, interfaceName)) {
+            val element = getElementFromClassName(className)
+            val mirror = element.asType()
+            typeUtils.directSupertypes(mirror).forEach { superTypeMirror ->
+                val typeName = superTypeMirror.asTypeName()
+                if (typeName is ClassName && isInterfaceOf(typeName, interfaceName)) {
                     return true
                 }
             }
