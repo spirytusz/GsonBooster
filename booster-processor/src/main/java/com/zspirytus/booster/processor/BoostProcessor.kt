@@ -9,6 +9,7 @@ import com.google.gson.stream.JsonWriter
 import com.squareup.kotlinpoet.*
 import com.zspirytus.booster.annotation.Boost
 import com.zspirytus.booster.processor.base.BaseProcessor
+import com.zspirytus.booster.processor.const.*
 import com.zspirytus.booster.processor.const.GSON
 import com.zspirytus.booster.processor.const.OBJECT
 import com.zspirytus.booster.processor.const.READER
@@ -74,7 +75,7 @@ class BoostProcessor : BaseProcessor() {
             val className = it.asType().asTypeName() as ClassName
             val adapterClassName = ClassName(
                 className.packageName,
-                "${className.simpleName}TypeAdapter"
+                "${className.simpleName}$TYPE_ADAPTER_FIELD_NAME_SUFFIX"
             )
             registerTypeAdapters[className.canonicalName] = adapterClassName
         }

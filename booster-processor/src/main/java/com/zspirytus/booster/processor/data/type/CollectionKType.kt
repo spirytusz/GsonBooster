@@ -2,6 +2,7 @@ package com.zspirytus.booster.processor.data.type
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.zspirytus.booster.processor.const.TYPE_ADAPTER_FIELD_NAME_SUFFIX
 import com.zspirytus.booster.processor.extensions.kotlinType
 
 data class CollectionKType(
@@ -17,7 +18,7 @@ data class CollectionKType(
             var simpleName = genericType.simpleName
             simpleName =
                 simpleName.replaceFirst(simpleName.first(), simpleName.first().toLowerCase())
-            "${simpleName}TypeAdapter"
+            "${simpleName}$TYPE_ADAPTER_FIELD_NAME_SUFFIX"
         }
     }
 
