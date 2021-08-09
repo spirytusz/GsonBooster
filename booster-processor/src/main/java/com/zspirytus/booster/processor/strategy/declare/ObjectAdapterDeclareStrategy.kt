@@ -20,7 +20,7 @@ internal class ObjectAdapterDeclareStrategy : IAdapterDeclareStrategy {
         val typeAdapterCodeBlock = if (isRegisteredType) {
             CodeBlock.Builder()
                 .beginControlFlow("lazy")
-                .addStatement("%T()", type)
+                .addStatement("%T(%L)", type, GSON)
                 .endControlFlow()
                 .build()
         } else {

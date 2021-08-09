@@ -106,6 +106,16 @@ class BoostProcessor : BaseProcessor() {
         val typeAdapterBuilder = TypeSpec
             .classBuilder(clazz.asClassName().generateTypeAdapterName())
             .superclass(TypeAdapter::class.parameterizedBy(clazz))
+            .primaryConstructor(
+                FunSpec.constructorBuilder()
+                    .addParameter(GSON, Gson::class.java)
+                    .build()
+            ).addProperty(
+                PropertySpec.builder(GSON, Gson::class)
+                    .initializer(GSON)
+                    .addModifiers(KModifier.PRIVATE)
+                    .build()
+            )
 
         typeAdapterBuilder.addProperty(
             PropertySpec.builder(GSON, Gson::class, KModifier.PRIVATE)

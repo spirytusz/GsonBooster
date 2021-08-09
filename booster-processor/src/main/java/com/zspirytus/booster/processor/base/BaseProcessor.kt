@@ -1,6 +1,7 @@
 package com.zspirytus.booster.processor.base
 
 import com.zspirytus.booster.annotation.Boost
+import com.zspirytus.booster.annotation.BoostFactory
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
@@ -20,6 +21,17 @@ abstract class BaseProcessor : AbstractProcessor() {
                 .filter { it.kind == ElementKind.CLASS }
                 .filterNot { processingEnv.elementUtils.getPackageOf(it).isUnnamed }
                 .map {
+                    it as TypeElement
+                }
+        }
+
+    protected val RoundEnvironment.boostFactoryAnnotatedClasses: Sequence<TypeElement>
+        get() {
+            return getElementsAnnotatedWith(BoostFactory::class.java)
+                .asSequence()
+                .filter {
+                    it.kind == ElementKind.CLASS
+                }.map {
                     it as TypeElement
                 }
         }

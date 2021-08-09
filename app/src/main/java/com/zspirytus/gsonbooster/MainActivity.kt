@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.zspirytus.gsonbooster.data.Foo
-import com.zspirytus.gsonbooster.data.FooTypeAdapter
+import com.zspirytus.gsonbooster.factory.CustomTypeAdapterFactory
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -18,14 +18,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        val json = json()
         findViewById<Button>(R.id.testBtn).setOnClickListener {
             val common = GsonBuilder().create()
             val boost = GsonBuilder()
-                .registerTypeAdapter(Foo::class.java, FooTypeAdapter())
+                .registerTypeAdapterFactory(CustomTypeAdapterFactory.get())
                 .create()
 
-            val json = json()
             val commonTimeCost = traceOnceJson(common, json)
             val boostTimeCost = traceOnceJson(boost, json)
             findViewById<TextView>(R.id.result).text = """
