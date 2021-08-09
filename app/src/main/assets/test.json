@@ -4,6 +4,7 @@
         "bar_long": 0,
         "bar_string": ""
     },
+    "foo_test_num": "HI",
     "foo_boolean": false,
     "foo_double": 0.0,
     "foo_int": 0,

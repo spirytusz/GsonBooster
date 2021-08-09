@@ -1,11 +1,9 @@
 package com.zspirytus.booster.processor.helper
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.ParameterizedTypeName
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
@@ -46,6 +44,29 @@ object TypeHelper {
                 isSet(typeName.rawType)
             }
             else -> false
+        }
+    }
+
+    fun isEnum(typeName: TypeName): Boolean {
+        return when (typeName) {
+            is ClassName -> {
+                getElementFromClassName(typeName).kind == ElementKind.ENUM
+            }
+            is ParameterizedTypeName -> {
+                return isEnum(typeName.rawType)
+            }
+            is WildcardTypeName -> {
+                false
+            }
+            is Dynamic -> {
+                false
+            }
+            is LambdaTypeName -> {
+                false
+            }
+            is TypeVariableName -> {
+                false
+            }
         }
     }
 

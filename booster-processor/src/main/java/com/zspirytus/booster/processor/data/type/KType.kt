@@ -14,9 +14,11 @@ abstract class KType(val typeName: TypeName) {
         fun makeKTypeByTypeName(typeName: TypeName): KType {
             return when {
                 PrimitiveKType.isPrimitive(typeName) -> {
+                    // 原始类型
                     PrimitiveKType(typeName as ClassName)
                 }
                 TypeHelper.isList(typeName) || TypeHelper.isSet(typeName) -> {
+                    // 集合类型
                     val parameterizedTypeName = typeName as ParameterizedTypeName
                     val generic = parameterizedTypeName.typeArguments.first()
                     if (generic is ClassName) {
@@ -29,10 +31,16 @@ abstract class KType(val typeName: TypeName) {
                         BackoffKType(typeName)
                     }
                 }
+                TypeHelper.isEnum(typeName) && typeName is ClassName -> {
+                    // 不带泛型的枚举类型
+                    EnumKType(typeName)
+                }
                 typeName is ClassName -> {
+                    // 不带泛型的Class<*>类型
                     ObjectKType(typeName)
                 }
                 else -> {
+                    // 退避类型，这种类型托管给gson自带的TypeAdapter解析
                     BackoffKType(typeName)
                 }
             }

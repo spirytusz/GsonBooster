@@ -2,8 +2,8 @@ package com.zspirytus.booster.processor.strategy.write
 
 import com.squareup.kotlinpoet.CodeBlock
 import com.zspirytus.booster.processor.data.KField
-import com.zspirytus.booster.processor.data.type.BackoffKType
 import com.zspirytus.booster.processor.data.type.CollectionKType
+import com.zspirytus.booster.processor.data.type.EnumKType
 import com.zspirytus.booster.processor.data.type.ObjectKType
 import com.zspirytus.booster.processor.data.type.PrimitiveKType
 
@@ -20,6 +20,10 @@ internal class FieldWriteStrategy : IFieldWriteStrategy {
         CollectionFieldWriteStrategy()
     }
 
+    private val enumTypeWriteStrategy by lazy {
+        EnumFieldWriteStrategy()
+    }
+
     override fun write(kField: KField): CodeBlock {
         return when (kField.kType) {
             is PrimitiveKType -> {
@@ -30,6 +34,9 @@ internal class FieldWriteStrategy : IFieldWriteStrategy {
             }
             is CollectionKType -> {
                 collectionTypeStrategy.write(kField)
+            }
+            is EnumKType -> {
+                enumTypeWriteStrategy.write(kField)
             }
             else -> {
                 objectTypeWriteStrategy.write(kField)

@@ -30,7 +30,9 @@ data class Foo(
     @SerializedName("foo_list_set")
     val listSet: List<Set<Long>> = listOf(),
     @SerializedName("foo_nullable_bean")
-    val nullableBean: NullableBean = NullableBean()
+    val nullableBean: NullableBean = NullableBean(),
+    @SerializedName("foo_test_enum")
+    val testEnum: TestEnum = TestEnum.HELLO
 )
 
 @Boost
@@ -62,3 +64,11 @@ data class NullableBean(
     @SerializedName("nullable_list_bar")
     val listBar: List<Bar>? = null
 )
+
+
+enum class TestEnum(val intValue: Int) {
+    HELLO(1),
+    HI(2),
+    FINE(3),
+    THANKS(4)
+}

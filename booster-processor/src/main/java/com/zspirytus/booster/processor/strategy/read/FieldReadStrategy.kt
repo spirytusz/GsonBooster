@@ -2,10 +2,7 @@ package com.zspirytus.booster.processor.strategy.read
 
 import com.squareup.kotlinpoet.CodeBlock
 import com.zspirytus.booster.processor.data.KField
-import com.zspirytus.booster.processor.data.type.BackoffKType
-import com.zspirytus.booster.processor.data.type.CollectionKType
-import com.zspirytus.booster.processor.data.type.ObjectKType
-import com.zspirytus.booster.processor.data.type.PrimitiveKType
+import com.zspirytus.booster.processor.data.type.*
 
 internal class FieldReadStrategy : IFieldReadStrategy {
 
@@ -21,6 +18,10 @@ internal class FieldReadStrategy : IFieldReadStrategy {
         CollectionFieldReadStrategy()
     }
 
+    private val enumFieldReadStrategy by lazy {
+        EnumFieldReadStrategy()
+    }
+
     override fun read(kField: KField): CodeBlock {
         return when (kField.kType) {
             is PrimitiveKType -> {
@@ -31,6 +32,9 @@ internal class FieldReadStrategy : IFieldReadStrategy {
             }
             is CollectionKType -> {
                 collectionFieldReadStrategy.read(kField)
+            }
+            is EnumKType -> {
+                enumFieldReadStrategy.read(kField)
             }
             else -> {
                 objectTypeReadStrategy.read(kField)

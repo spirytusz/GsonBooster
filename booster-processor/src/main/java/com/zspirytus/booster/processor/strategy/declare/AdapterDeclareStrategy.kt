@@ -21,6 +21,10 @@ internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
         }
     }
 
+    private val enumAdapterDeclareStrategy by lazy {
+        EnumTypeAdapterDeclareStrategy()
+    }
+
     private val backoffAdapterDeclareStrategy by lazy {
         BackoffAdapterDeclareStrategy()
     }
@@ -39,6 +43,9 @@ internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
             }
             is ObjectKType -> {
                 objectAdapterDeclareStrategy.declare(kType)
+            }
+            is EnumKType -> {
+                enumAdapterDeclareStrategy.declare(kType)
             }
             is BackoffKType -> {
                 backoffAdapterDeclareStrategy.declare(kType)
