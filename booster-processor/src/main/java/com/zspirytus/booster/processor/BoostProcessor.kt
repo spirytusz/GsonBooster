@@ -87,7 +87,7 @@ class BoostProcessor : BaseProcessor() {
         val fields = clazz.enclosedElements.asSequence().filter {
             it.kind == ElementKind.FIELD && !it.modifiers.contains(Modifier.STATIC)
         }.filter {
-            it.getAnnotation(Transient::class.java) == null
+            !it.modifiers.contains(Modifier.TRANSIENT)
         }.map {
             val serializedName = it.getAnnotation(SerializedName::class.java)
             val alternateKeys = serializedName?.alternate?.toMutableSet() ?: mutableSetOf()
