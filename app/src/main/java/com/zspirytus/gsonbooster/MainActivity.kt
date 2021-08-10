@@ -3,6 +3,7 @@ package com.zspirytus.gsonbooster
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,11 @@ import com.zspirytus.gsonbooster.factory.CustomTypeAdapterFactory
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "MainActivityTest"
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +42,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun traceOnceJson(gson: Gson, json: String): Long {
         val start = SystemClock.elapsedRealtimeNanos()
-        gson.fromJson<Foo>(json, Foo::class.java)
+        val bean = kotlin.runCatching {
+            gson.fromJson<Foo>(json, Foo::class.java)
+        }.onFailure {
+            Log.d(TAG, Log.getStackTraceString(it))
+        }.getOrNull()
         val end = SystemClock.elapsedRealtimeNanos()
+        Log.d(TAG, "$bean")
         return end - start
     }
 

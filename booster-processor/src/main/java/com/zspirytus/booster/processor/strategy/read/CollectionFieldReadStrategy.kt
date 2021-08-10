@@ -8,6 +8,7 @@ import com.zspirytus.booster.processor.const.NULLABLE_FIELD_FLAG_PREFIX
 import com.zspirytus.booster.processor.const.READER
 import com.zspirytus.booster.processor.data.KField
 import com.zspirytus.booster.processor.data.type.CollectionKType
+import com.zspirytus.booster.processor.data.type.KType
 import com.zspirytus.booster.processor.data.type.PrimitiveKType
 import com.zspirytus.booster.processor.extensions.firstChatUpperCase
 import com.zspirytus.booster.processor.extensions.kotlinType
@@ -32,88 +33,94 @@ internal class CollectionFieldReadStrategy : IFieldReadStrategy {
 
     private fun readGenericsPrimitiveCollections(kField: KField): CodeBlock {
         val collectionKType = kField.kType as CollectionKType
+        val genericsKType = KType.makeKTypeByTypeName(kField.kType.genericType)
         val primitiveTypeName =
             PrimitiveKType.getPrimitiveTypeNameForJsonReader(collectionKType.genericType)
         return CodeBlock.Builder().addStatement(
             """
-            if (%L.peek() != %T.NULL) {
+            val collectionPeeked = ${READER}.peek()
+            if (collectionPeeked == %T.%L) {
                 val tempList = mutableListOf<%T>()
-                %L.beginArray()
-                while (%L.hasNext()) {
-                    if (%L.peek() != %T.NULL) {
-                        tempList.add(%L.next$primitiveTypeName())
+                ${READER}.beginArray()
+                while (${READER}.hasNext()) {
+                    val peeked = ${READER}.peek()
+                    if (peeked == %T.%L) {
+                        tempList.add(${READER}.next$primitiveTypeName())
+                    } else if (peeked == %T.NULL) {
+                        ${READER}.nextNull()
                     } else {
-                        %L.skipValue()
+                        ${READER}.skipValue()
                     }
                 }
-                %L.endArray()
+                ${READER}.endArray()
                 %L = tempList%L
+            } else if (collectionPeeked == %T.NULL) {
+                ${READER}.nextNull()
             } else {
-                %L.nextNull()
+                ${READER}.skipValue()
             }
             """.trimIndent(),
-            READER,
             JsonToken::class.java,
+            collectionKType.jsonTokenName,
             collectionKType.genericType.kotlinType(),
-            READER,
-            READER,
-            READER,
             JsonToken::class.java,
-            READER,
-            READER,
-            READER,
+            genericsKType.jsonTokenName,
+            JsonToken::class.java,
             kField.fieldName,
             if (isSet(collectionKType)) {
                 ".toSet()"
             } else {
                 ""
             },
-            READER
+            JsonToken::class.java
         ).build()
     }
 
     private fun readGenericsObjectCollections(kField: KField): CodeBlock {
         val collectionKType = kField.kType as CollectionKType
+        val genericsKType = KType.makeKTypeByTypeName(collectionKType.genericType)
         val codeBlock = CodeBlock.Builder()
         if (kField.nullable) {
             codeBlock.addStatement("$NULLABLE_FIELD_FLAG_PREFIX${kField.fieldName.firstChatUpperCase()} = true")
         }
         return codeBlock.addStatement(
             """
-            if (%L.peek() != %T.NULL) {
+            val collectionPeeked = ${READER}.peek()
+            if (collectionPeeked == %T.%L) {
                 val tempList = mutableListOf<%L>()
-                %L.beginArray()
-                while (%L.hasNext()) {
-                    if (%L.peek() != %T.NULL) {
-                        tempList.add(%L.read(%L))
+                ${READER}.beginArray()
+                while (${READER}.hasNext()) {
+                    val peeked = ${READER}.peek()
+                    if (peeked == %T.%L) {
+                        tempList.add(%L.read(${READER}))
+                    } else if (peeked == %T.NULL) {
+                        ${READER}.nextNull()
                     } else {
-                        %L.skipValue()
+                        ${READER}.skipValue()
                     }
                 }
-                %L.endArray()
+                ${READER}.endArray()
                 %L = tempList%L
+            } else if (collectionPeeked == %T.NULL) {
+                ${READER}.nextNull()
             } else {
-                %L.nextNull()
+                ${READER}.skipValue()
             }
             """.trimIndent(),
-            READER,
             JsonToken::class.java,
-            collectionKType.genericType,
-            READER,
-            READER,
-            READER,
+            collectionKType.jsonTokenName,
+            collectionKType.genericType.kotlinType(),
             JsonToken::class.java,
+            genericsKType.jsonTokenName,
             collectionKType.adapterFieldName,
-            READER,
-            READER,
-            READER,
+            JsonToken::class.java,
             kField.fieldName,
             if (isSet(collectionKType)) {
                 ".toSet()"
             } else {
                 ""
             },
-            READER
+            JsonToken::class.java
         ).build()
     }
 }

@@ -1,5 +1,6 @@
 package com.zspirytus.booster.processor.data.type
 
+import com.google.gson.stream.JsonToken
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
 import com.zspirytus.booster.processor.extensions.kotlinType
@@ -11,8 +12,24 @@ data class PrimitiveKType(
     override val adapterFieldName: String
         get() = ""
 
+    override val jsonTokenName: String
+        get() = _jsonTokenName
+
+    private val _jsonTokenName by lazy {
+        getJsonTokenNameInternal()
+    }
+
     fun getPrimitiveTypeNameForJsonReader(): String {
         return getPrimitiveTypeNameForJsonReader(className)
+    }
+
+    private fun getJsonTokenNameInternal(): String {
+        return when (getPrimitiveTypeNameForJsonReader()) {
+            "Int", "Long", "Double" -> JsonToken.NUMBER.name
+            "Boolean" -> JsonToken.BOOLEAN.name
+            "String" -> JsonToken.STRING.name
+            else -> throw IllegalStateException("unknown primitive type $className to cast JsonToken")
+        }
     }
 
     companion object {

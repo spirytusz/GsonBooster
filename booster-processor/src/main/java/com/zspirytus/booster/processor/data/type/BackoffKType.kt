@@ -1,5 +1,6 @@
 package com.zspirytus.booster.processor.data.type
 
+import com.google.gson.stream.JsonToken
 import com.squareup.kotlinpoet.*
 import com.zspirytus.booster.processor.const.TYPE_ADAPTER_NAME
 import com.zspirytus.booster.processor.extensions.firstCharLowerCase
@@ -14,6 +15,9 @@ data class BackoffKType(
     private val _adapterFieldName: String by lazy {
         getAdapterFieldName(typeName)
     }
+
+    override val jsonTokenName: String
+        get() = JsonToken.BEGIN_OBJECT.name
 
     private fun getAdapterFieldName(typeName: TypeName): String {
         val adapterFieldName = getAdapterFieldNameRecursively(typeName).joinToString("")

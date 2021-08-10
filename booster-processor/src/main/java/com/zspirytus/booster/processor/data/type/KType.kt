@@ -9,6 +9,8 @@ abstract class KType(val typeName: TypeName) {
 
     abstract val adapterFieldName: String
 
+    abstract val jsonTokenName: String
+
     companion object {
 
         fun makeKTypeByTypeName(typeName: TypeName): KType {

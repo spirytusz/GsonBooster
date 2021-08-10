@@ -15,17 +15,19 @@ internal class PrimitiveFieldReadStrategy : IFieldReadStrategy {
         val primitiveKType = kField.kType as PrimitiveKType
         codeBlock.addStatement(
             """
-            if (%L.peek() != %T.NULL) {
-                %L = %L.next${primitiveKType.getPrimitiveTypeNameForJsonReader()}()
+            val peeked = ${READER}.peek()
+            if (peeked == %T.%L) {
+                %L = ${READER}.next${primitiveKType.getPrimitiveTypeNameForJsonReader()}()
+            } else if (peeked == %T.NULL) {
+                ${READER}.nextNull()
             } else {
-                %L.nextNull()
+                ${READER}.skipValue()
             }
             """.trimIndent(),
-            READER,
             JsonToken::class.java,
+            primitiveKType.jsonTokenName,
             kField.fieldName,
-            READER,
-            READER
+            JsonToken::class.java
         )
         return codeBlock.build()
     }

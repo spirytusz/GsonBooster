@@ -15,18 +15,20 @@ internal class ObjectFieldReadStrategy : IFieldReadStrategy {
         }
         codeBlock.addStatement(
             """
-            if (%L.peek() != %T.NULL) {
-                %L = %L.read(%L)
+            val peeked = ${READER}.peek()
+            if (peeked == %T.%L) {
+                %L = %L.read(${READER})
+            } else if (peeked == %T.NULL) {
+                ${READER}.nextNull()
             } else {
-                %L.nextNull()
+                ${READER}.skipValue()
             }
             """.trimIndent(),
-            READER,
             JsonToken::class.java,
+            kField.kType.jsonTokenName,
             kField.fieldName,
             kField.kType.adapterFieldName,
-            READER,
-            READER
+            JsonToken::class.java
         )
         return codeBlock.build()
     }

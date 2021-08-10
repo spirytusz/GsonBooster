@@ -15,18 +15,20 @@ internal class EnumFieldReadStrategy : IFieldReadStrategy {
         val enumKType = kField.kType as EnumKType
         codeBlock.addStatement(
             """
-            if (%L.peek() != %T.NULL) {
-                %L = %T.valueOf(%L.nextString())
+            val peeked = ${READER}.peek()
+            if (peeked == %T.%L) {
+                %L = %T.valueOf(${READER}.nextString())
+            } else if (peeked == %T.NULL) {
+                ${READER}.nextNull()
             } else {
-                %L.nextNull()
+                ${READER}.skipValue()
             }
             """.trimIndent(),
-            READER,
             JsonToken::class.java,
+            enumKType.jsonTokenName,
             kField.fieldName,
             enumKType.className,
-            READER,
-            READER
+            JsonToken::class.java
         )
         return codeBlock.build()
     }

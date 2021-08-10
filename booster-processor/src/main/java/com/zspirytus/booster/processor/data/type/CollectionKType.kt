@@ -1,5 +1,6 @@
 package com.zspirytus.booster.processor.data.type
 
+import com.google.gson.stream.JsonToken
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.zspirytus.booster.processor.const.TYPE_ADAPTER_NAME
@@ -22,4 +23,7 @@ data class CollectionKType(
 
     override val adapterFieldName: String
         get() = _adapterFieldName
+
+    override val jsonTokenName: String
+        get() = JsonToken.BEGIN_ARRAY.name
 }
