@@ -1,18 +1,18 @@
 {
     "foo_bar": {
-        "bar_int": 0,
-        "bar_long": 0,
-        "bar_string": ""
+        "bar_int": 4745,
+        "bar_long": 24532,
+        "bar_string": "tht "
     },
     "foo_test_num": "HI",
-    "foo_boolean": false,
-    "foo_double": 0.0,
-    "foo_int": 0,
+    "foo_boolean": true,
+    "foo_double": 3453.0,
+    "foo_int": 123,
     "foo_list": [
         233,
         666,
         777,
-        999
+        "999"
     ],
     "foo_list_bar": [
         {
@@ -45,7 +45,7 @@
             456
         ]
     ],
-    "foo_long": 0,
+    "foo_long": 5678,
     "foo_list_list": [
         [
             233,
@@ -61,14 +61,33 @@
         ]
     ],
     "foo_nullable_bean": {
-        "nullable_bar": null,
-        "nullable_boolean": null,
-        "nullable_double": null,
-        "nullable_int": null,
-        "nullable_list": null,
-        "nullable_list_bar": null,
-        "nullable_long": null,
-        "nullable_string": null
+        "nullable_bar": {
+            "bar_int": 56846,
+            "bar_long": 2453462,
+            "bar_string": "thersdf ag t "
+        },
+        "nullable_boolean": true,
+        "nullable_double": 0.12,
+        "nullable_int": 2342345,
+        "nullable_list": [
+            980,
+            356,
+            3455
+        ],
+        "nullable_list_bar": [
+            {
+                "bar_int": 4356,
+                "bar_long": 12345,
+                "bar_string": "df er "
+            },
+            {
+                "bar_int": 5687,
+                "bar_long": 345,
+                "bar_string": "thds tertg "
+            }
+        ],
+        "nullable_long": 345635,
+        "nullable_string": "34sga"
     },
     "foo_set": [
         114.0,
@@ -93,5 +112,5 @@
             "bar_string": "18"
         }
     ],
-    "foo_string": ""
+    "foo_string": "356534"
 }
