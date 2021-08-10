@@ -17,17 +17,17 @@ data class Foo(
     val doubleValue: Double = 0.0,
     @SerializedName("foo_bar")
     val bar: Bar = Bar(),
-    @SerializedName("foo_list")
+    @SerializedName("foo_list_long")
     val list: List<Long> = listOf(),
     @SerializedName("foo_list_bar")
     val listBar: List<Bar> = listOf(),
-    @SerializedName("foo_set")
+    @SerializedName("foo_set_double")
     val set: Set<Double> = setOf(),
     @SerializedName("foo_set_bar")
     val setBar: Set<Bar> = setOf(),
-    @SerializedName("foo_list_list")
+    @SerializedName("foo_list_list_long")
     val nestedList: List<List<Long>> = listOf(),
-    @SerializedName("foo_list_set")
+    @SerializedName("foo_list_set_long")
     val listSet: List<Set<Long>> = listOf(),
     @SerializedName("foo_nullable_bean")
     val nullableBean: NullableBean = NullableBean(),
@@ -59,7 +59,7 @@ data class NullableBean(
     val doubleValue: Double? = null,
     @SerializedName("nullable_bar")
     val bar: Bar? = null,
-    @SerializedName("nullable_list")
+    @SerializedName("nullable_list_long")
     val list: List<Long>? = null,
     @SerializedName("nullable_list_bar")
     val listBar: List<Bar>? = null

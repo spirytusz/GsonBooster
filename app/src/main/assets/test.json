@@ -8,7 +8,7 @@
     "foo_boolean": true,
     "foo_double": 3453.0,
     "foo_int": 123,
-    "foo_list": [
+    "foo_list_long": [
         233,
         666,
         777,
@@ -31,7 +31,7 @@
             "bar_string": "9"
         }
     ],
-    "foo_list_set": [
+    "foo_list_set_long": [
         [
             233,
             666,
@@ -46,7 +46,7 @@
         ]
     ],
     "foo_long": 5678,
-    "foo_list_list": [
+    "foo_list_list_long": [
         [
             233,
             666,
@@ -69,7 +69,7 @@
         "nullable_boolean": true,
         "nullable_double": 0.12,
         "nullable_int": 2342345,
-        "nullable_list": [
+        "nullable_list_long": [
             980,
             356,
             3455
@@ -89,7 +89,7 @@
         "nullable_long": 345635,
         "nullable_string": "34sga"
     },
-    "foo_set": [
+    "foo_set_double": [
         114.0,
         514.0,
         233.0,
