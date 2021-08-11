@@ -117,18 +117,6 @@ class BoostProcessor : BaseProcessor() {
                     .build()
             )
 
-        typeAdapterBuilder.addProperty(
-            PropertySpec.builder(GSON, Gson::class, KModifier.PRIVATE)
-                .delegate(
-                    CodeBlock.Builder()
-                        .beginControlFlow("lazy")
-                        .addStatement("%T()", Gson::class)
-                        .endControlFlow()
-                        .build()
-                )
-                .build()
-        )
-
         fields.asSequence().filter {
             // 原始类型不需要typeAdapter
             it.kType.adapterFieldName.isNotEmpty()
@@ -209,7 +197,7 @@ class BoostProcessor : BaseProcessor() {
                     %L
                 }
             """.trimIndent(),
-                "real_${it.fieldName}",
+                it.nullableFieldRealFieldName,
                 it.fetchFlagFieldName,
                 it.fieldName,
                 "defaultValue.${it.fieldName}"
@@ -229,7 +217,7 @@ class BoostProcessor : BaseProcessor() {
                 readFunc.addStatement(
                     "%L = %L%L",
                     field.fieldName,
-                    "real_${field.fieldName}",
+                    field.nullableFieldRealFieldName,
                     suffix
                 )
             } else {
