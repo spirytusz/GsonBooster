@@ -32,7 +32,9 @@ data class Foo(
     @SerializedName("foo_nullable_bean")
     val nullableBean: NullableBean = NullableBean(),
     @SerializedName("foo_test_enum")
-    val testEnum: TestEnum = TestEnum.HELLO
+    val testEnum: TestEnum = TestEnum.HELLO,
+    @SerializedName("var_bean")
+    val varFieldBean: VarFieldBean = VarFieldBean()
 )
 
 @Boost
@@ -64,6 +66,20 @@ data class NullableBean(
     @SerializedName("nullable_list_bar")
     val listBar: List<Bar>? = null
 )
+
+@Boost
+data class VarFieldBean(
+    @SerializedName("var_int")
+    var intValue: Int = 0,
+    @SerializedName("var_long")
+    var longValue: Long = 0L,
+    @SerializedName("val_double")
+    val doubleValue: Double = 0.0
+) {
+
+    @SerializedName("var_out_constructor_list_long")
+    var outConstructorListLongValue: List<Long> = listOf()
+}
 
 
 enum class TestEnum(val intValue: Int) {

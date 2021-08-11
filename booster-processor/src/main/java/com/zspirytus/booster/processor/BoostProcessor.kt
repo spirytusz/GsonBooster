@@ -99,7 +99,8 @@ class BoostProcessor : BaseProcessor() {
                 keys = keys,
                 kType = KType.makeKTypeByTypeName(it.asType().asTypeName()),
                 fieldName = it.simpleName.toString(),
-                nullable = it.getAnnotation(Nullable::class.java) != null
+                nullable = it.getAnnotation(Nullable::class.java) != null,
+                isFinal = it.modifiers.contains(Modifier.FINAL)
             )
         }.toList()
 
@@ -205,33 +206,65 @@ class BoostProcessor : BaseProcessor() {
             readFunc.addCode(ifCodeBlock.build())
         }
 
-        readFunc.addStatement("return %T(", clazz.asType())
+        fun generateReturnStatement(typeName: TypeName, fields: List<KField>): CodeBlock {
+            val returnStatement = CodeBlock.Builder()
+            returnStatement.addStatement("val returnValue = %T(", typeName)
+            // val field
+            fields.filter {
+                it.isFinal
+            }.apply {
+                val finalFieldListSize = this.size
+                forEachIndexed { index, kField ->
+                    val suffix = if (index == finalFieldListSize - 1) {
+                        ""
+                    } else {
+                        ","
+                    }
+                    if (kField.nullable) {
+                        returnStatement.addStatement(
+                            "%L = %L%L",
+                            kField.fieldName,
+                            kField.nullableFieldRealFieldName,
+                            suffix
+                        )
+                    } else {
+                        returnStatement.addStatement(
+                            "%L = %L ?: %L%L",
+                            kField.fieldName,
+                            kField.fieldName,
+                            "defaultValue.${kField.fieldName}",
+                            suffix
+                        )
+                    }
+                }
+            }
+            returnStatement.addStatement(")")
 
-        fields.forEachIndexed { index, field ->
-            val suffix = if (index == fields.size - 1) {
-                ""
-            } else {
-                ","
-            }
-            if (field.nullable) {
-                readFunc.addStatement(
-                    "%L = %L%L",
-                    field.fieldName,
-                    field.nullableFieldRealFieldName,
-                    suffix
+            // var field
+            fields.filterNot {
+                it.isFinal
+            }.forEach { kField ->
+                if (kField.nullable) {
+                    returnStatement.beginControlFlow("if (${kField.fetchFlagFieldName})")
+                }
+                returnStatement.addStatement(
+                    "%L.%L = %L ?: %L.%L",
+                    "returnValue",
+                    kField.fieldName,
+                    kField.fieldName,
+                    "defaultValue",
+                    kField.fieldName
                 )
-            } else {
-                readFunc.addStatement(
-                    "%L = %L ?: %L%L",
-                    field.fieldName,
-                    field.fieldName,
-                    "defaultValue.${field.fieldName}",
-                    suffix
-                )
+                if (kField.nullable) {
+                    returnStatement.endControlFlow()
+                }
             }
+
+            returnStatement.addStatement("return returnValue")
+            return returnStatement.build()
         }
 
-        readFunc.addStatement(")")
+        readFunc.addCode(generateReturnStatement(clazz.asType().asTypeName(), fields))
 
         return readFunc.build()
     }
