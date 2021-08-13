@@ -10,15 +10,15 @@ GsonBooster是一个自动化生成Gson TypeAdapter的工具库，帮助你提�
 allprojects {
     repositories {
         ...
-		maven { url 'https://jitpack.io' }
-	}
+        maven { url 'https://jitpack.io' }
+    }
 }
 ```
 
 在app的build.gradle加入
 ```
 dependencies {
-	implementation 'com.github.zkw012300:GsonBooster:Tag'
+    implementation 'com.github.zkw012300:GsonBooster:Tag'
 }
 ```
 
