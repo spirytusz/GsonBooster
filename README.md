@@ -5,6 +5,23 @@ GsonBooster是一个自动化生成Gson TypeAdapter的工具库，帮助你提�
 
 ## 如何使用
 
+在project的build.gradle加入
+```
+allprojects {
+    repositories {
+        ...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+在app的build.gradle加入
+```
+dependencies {
+	implementation 'com.github.zkw012300:GsonBooster:Tag'
+}
+```
+
 为需要生成TypeAdapter的类加上@Kson注解，使得Booster注解处理器能够识别并生成对应的TypeAdapter
 
 ```
