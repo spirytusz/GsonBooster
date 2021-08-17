@@ -118,17 +118,11 @@ class BoostProcessor : BaseProcessor() {
                     .build()
             )
 
-        fields.asSequence().filter {
-            // 原始类型不需要typeAdapter
-            it.kType.adapterFieldName.isNotEmpty()
-        }.distinctBy {
+        fields.asSequence().distinctBy {
             // 过滤掉重复的type adapter声明
             it.kType.adapterFieldName
         }.mapNotNull {
             // 过滤掉不生成type adapter的类型
-            if (it.kType is BackoffKType) {
-                log("it.kType.name = ${it.kType.adapterFieldName}")
-            }
             adapterDeclareStrategy.declare(it.kType)
         }.forEach { propertySpec ->
             typeAdapterBuilder.addProperty(propertySpec)

@@ -18,6 +18,8 @@ internal class AdapterDeclareStrategy : IAdapterDeclareStrategy {
         CollectionAdapterDeclareStrategy().apply {
             this.objectAdapterDeclareStrategy =
                 this@AdapterDeclareStrategy.objectAdapterDeclareStrategy
+            this.primitiveAdapterDeclareStrategy =
+                this@AdapterDeclareStrategy.primitiveAdapterDeclareStrategy
         }
     }
 

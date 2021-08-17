@@ -8,13 +8,15 @@ import com.spirytusz.booster.processor.data.type.PrimitiveKType
 internal class CollectionAdapterDeclareStrategy : IAdapterDeclareStrategy {
 
     var objectAdapterDeclareStrategy: ObjectAdapterDeclareStrategy? = null
+    var primitiveAdapterDeclareStrategy: PrimitiveAdapterDeclareStrategy? = null
 
     override fun declare(kType: KType): PropertySpec? {
         kType as CollectionKType
-        if (PrimitiveKType.isPrimitive(kType.rawType)) {
-            return null
-        }
         val genericsKType = KType.makeKTypeByTypeName(kType.genericType)
-        return objectAdapterDeclareStrategy?.declare(genericsKType)
+        return if (PrimitiveKType.isPrimitive(kType.genericType)) {
+            primitiveAdapterDeclareStrategy?.declare(genericsKType)
+        } else {
+            objectAdapterDeclareStrategy?.declare(genericsKType)
+        }
     }
 }
