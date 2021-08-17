@@ -3,6 +3,8 @@ plugins {
     id 'kotlin'
 }
 
+apply from: "${project.rootProject.rootDir}/upload.gradle"
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
