@@ -1,11 +1,20 @@
 package com.spirytusz.booster.processor.strategy.declare
 
-import com.squareup.kotlinpoet.PropertySpec
 import com.spirytusz.booster.processor.data.type.CollectionKType
 import com.spirytusz.booster.processor.data.type.KType
 import com.spirytusz.booster.processor.data.type.PrimitiveKType
+import com.squareup.kotlinpoet.PropertySpec
 
-internal class CollectionAdapterDeclareStrategy : IAdapterDeclareStrategy {
+/**
+ * Input:  [KType] = List<Foo>
+ *
+ * Output: private val fooTypeAdapter by lazy { FooTypeAdapter() }
+ *
+ * Input:  KType = List<Int>
+ *
+ * Output: null
+ */
+class CollectionAdapterDeclareStrategy : IAdapterDeclareStrategy {
 
     var objectAdapterDeclareStrategy: ObjectAdapterDeclareStrategy? = null
     var primitiveAdapterDeclareStrategy: PrimitiveAdapterDeclareStrategy? = null

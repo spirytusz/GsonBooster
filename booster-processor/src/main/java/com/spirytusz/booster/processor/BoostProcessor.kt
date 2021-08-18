@@ -6,24 +6,24 @@ import com.google.gson.TypeAdapter
 import com.google.gson.annotations.SerializedName
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import com.squareup.kotlinpoet.*
 import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.base.BaseProcessor
-import com.spirytusz.booster.processor.const.*
 import com.spirytusz.booster.processor.const.GSON
 import com.spirytusz.booster.processor.const.OBJECT
 import com.spirytusz.booster.processor.const.READER
 import com.spirytusz.booster.processor.const.WRITER
 import com.spirytusz.booster.processor.data.KField
-import com.spirytusz.booster.processor.data.type.BackoffKType
 import com.spirytusz.booster.processor.data.type.KType
 import com.spirytusz.booster.processor.extensions.asNullable
 import com.spirytusz.booster.processor.extensions.kotlinType
 import com.spirytusz.booster.processor.extensions.parameterizedBy
+import com.spirytusz.booster.processor.extensions.toTypeAdapterClassName
+import com.spirytusz.booster.processor.helper.TypeAdapterFactoryGenerator
 import com.spirytusz.booster.processor.helper.TypeHelper
 import com.spirytusz.booster.processor.strategy.declare.AdapterDeclareStrategy
 import com.spirytusz.booster.processor.strategy.read.FieldReadStrategy
 import com.spirytusz.booster.processor.strategy.write.FieldWriteStrategy
+import com.squareup.kotlinpoet.*
 import org.jetbrains.annotations.Nullable
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -32,6 +32,14 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
+/**
+ * Kson注解处理器
+ *
+ * 负责：
+ *     1. 扫描获取所有被Kson注解的类
+ *     2. 生成TypeAdapter
+ *     3. 生成TypeAdapterFactory
+ */
 @AutoService(Processor::class)
 class BoostProcessor : BaseProcessor() {
 
@@ -53,37 +61,57 @@ class BoostProcessor : BaseProcessor() {
         TypeHelper.init(processingEnv)
     }
 
+    /**
+     * 注解处理器的入口，负责扫描和生成TypeAdapter & TypeAdapterFactory 代码
+     */
     override fun process(env: RoundEnvironment) {
-        scanAnnotatedByBoosterClasses(env)
+        log("process start >>>>>>>")
+        val start = System.currentTimeMillis()
 
+        // 1. 扫描所有被Kson注解的类
+        val ksonAnnotatedClassNames = scanAnnotatedByBoosterClasses(env)
+        if (ksonAnnotatedClassNames.isEmpty()) {
+            return
+        }
+
+        adapterDeclareStrategy.setRegisterTypeAdapters(ksonAnnotatedClassNames)
+
+        // 2. 为所有被Kson注解的类生成TypeAdapter
         val filer = processingEnv.filer
         env.boostAnnotatedClasses.forEach {
-            val adapterClass = it.asClassName()
+            val ksonAnnotatedClass = it.asClassName()
             val adapterSpec = generateTypeAdapter(it)
-            FileSpec.get(adapterClass.packageName, adapterSpec).writeTo(filer)
+            FileSpec.get(ksonAnnotatedClass.packageName, adapterSpec).writeTo(filer)
+            log("generate TypeAdapter finish >>> ${ksonAnnotatedClass.toTypeAdapterClassName()}")
         }
+
+        // 3. 生成TypeAdapterFactory
+        val generatedTypeAdapterFactory = TypeAdapterFactoryGenerator(processingEnv)
+            .generate(ksonAnnotatedClassNames.values.toList())
+        log("generate TypeAdapterFactory finish >>> $generatedTypeAdapterFactory")
+        log("process end >>>>>>> timeCost: [${System.currentTimeMillis() - start}]ms")
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(Boost::class.java.name)
     }
 
-    private fun scanAnnotatedByBoosterClasses(env: RoundEnvironment) {
-        val registerTypeAdapters: MutableMap<String, ClassName> = mutableMapOf()
-        env.boostAnnotatedClasses.forEach {
+    private fun scanAnnotatedByBoosterClasses(env: RoundEnvironment): Map<String, ClassName> {
+        return env.boostAnnotatedClasses.map {
             val className = it.asType().asTypeName() as ClassName
-            val adapterClassName = ClassName(
-                className.packageName,
-                "${className.simpleName}$TYPE_ADAPTER_NAME"
-            )
-            registerTypeAdapters[className.canonicalName] = adapterClassName
-        }
-        adapterDeclareStrategy.setRegisterTypeAdapters(registerTypeAdapters)
+            className.canonicalName to className
+        }.toMap()
     }
 
+    /**
+     * 为指定的类生成TypeAdapter
+     *
+     * @param clazz 被[Kson]注解的类
+     *
+     * @return 生成代码所代表的的对象实例
+     */
     private fun generateTypeAdapter(clazz: TypeElement): TypeSpec {
-        log("generateTypeAdapter() >>> $clazz")
-
+        // 1. 扫描该类（不包含父类&接口）的所有变量
         val fields = clazz.enclosedElements.asSequence().filter {
             it.kind == ElementKind.FIELD && !it.modifiers.contains(Modifier.STATIC)
         }.filter {
@@ -105,7 +133,7 @@ class BoostProcessor : BaseProcessor() {
         }.toList()
 
         val typeAdapterBuilder = TypeSpec
-            .classBuilder(clazz.asClassName().generateTypeAdapterName())
+            .classBuilder(clazz.asClassName().toTypeAdapterClassName())
             .superclass(TypeAdapter::class.parameterizedBy(clazz))
             .primaryConstructor(
                 FunSpec.constructorBuilder()
@@ -118,6 +146,7 @@ class BoostProcessor : BaseProcessor() {
                     .build()
             )
 
+        // 2. 为扫描出来的变量生成TypeAdapter声明语句
         fields.asSequence().distinctBy {
             // 过滤掉重复的type adapter声明
             it.kType.adapterFieldName
@@ -128,21 +157,31 @@ class BoostProcessor : BaseProcessor() {
             typeAdapterBuilder.addProperty(propertySpec)
         }
 
+        // 3. 生成read方法，即反序列化方法
         typeAdapterBuilder.addFunction(generateReadFunc(clazz, fields))
+        // 4. 生成write方法，即序列化方法
         typeAdapterBuilder.addFunction(generateWriteFunc(clazz, fields))
 
         return typeAdapterBuilder.build()
     }
 
+    /**
+     * 生成指定类的TypeAdapter的read方法
+     *
+     * @param clazz  被[Kson]注解的类
+     * @param fields 该类扫描出来的变量
+     */
     private fun generateReadFunc(
         clazz: TypeElement,
         fields: List<KField>
     ): FunSpec {
+        // 1. 生成方法签名
         val readFunc = FunSpec.builder("read")
             .addModifiers(KModifier.OVERRIDE)
             .addParameter(READER, JsonReader::class.java)
             .returns(clazz.asClassName().asNullable())
 
+        // 2. 生成每个字段的临时变量
         fields.forEach {
             readFunc.addStatement(
                 "var ${it.fieldName}: %L = null",
@@ -153,13 +192,12 @@ class BoostProcessor : BaseProcessor() {
             }
         }
 
-        readFunc.addStatement("%L.beginObject()", READER)
+        // 3. 生成读取json字符串的逻辑
+        readFunc.addStatement("$READER.beginObject()")
 
-        //region while
-        readFunc.beginControlFlow("while (%L.hasNext())", READER)
+        readFunc.beginControlFlow("while ($READER.hasNext())")
 
-        //region when
-        readFunc.beginControlFlow("when (%L.nextName())", READER)
+        readFunc.beginControlFlow("when ($READER.nextName())")
         fields.forEach {
             val conditionCodeBlock = CodeBlock.Builder()
             val keysFormat = it.keys.joinToString(separator = ", ") { "%S" }
@@ -169,14 +207,12 @@ class BoostProcessor : BaseProcessor() {
             conditionCodeBlock.endControlFlow()
             readFunc.addCode(conditionCodeBlock.build())
         }
-        readFunc.addStatement("else -> %L.skipValue()", READER)
+        readFunc.addStatement("else -> $READER.skipValue()")
         readFunc.endControlFlow()
-        //endregion when
 
         readFunc.endControlFlow()
-        //endregion while
 
-        readFunc.addStatement("%L.endObject()", READER)
+        readFunc.addStatement("$READER.endObject()")
 
         readFunc.addStatement("val defaultValue = ${clazz.simpleName}()")
 
@@ -191,7 +227,7 @@ class BoostProcessor : BaseProcessor() {
                 } else {
                     %L
                 }
-            """.trimIndent(),
+                """.trimIndent(),
                 it.nullableFieldRealFieldName,
                 it.fetchFlagFieldName,
                 it.fieldName,
@@ -200,6 +236,7 @@ class BoostProcessor : BaseProcessor() {
             readFunc.addCode(ifCodeBlock.build())
         }
 
+        // 4. 生成return语句
         fun generateReturnStatement(typeName: TypeName, fields: List<KField>): CodeBlock {
             val returnStatement = CodeBlock.Builder()
             returnStatement.addStatement("val returnValue = %T(", typeName)
@@ -263,26 +300,29 @@ class BoostProcessor : BaseProcessor() {
         return readFunc.build()
     }
 
+    /**
+     * 生成指定类的TypeAdapter的write方法
+     *
+     * @param clazz  被[Kson]注解的类
+     * @param fields 该类扫描出来的变量
+     */
     private fun generateWriteFunc(clazz: TypeElement, fields: List<KField>): FunSpec {
         val writeFunc = FunSpec.builder("write")
             .addModifiers(KModifier.OVERRIDE)
             .addParameter(WRITER, JsonWriter::class)
             .addParameter(OBJECT, clazz.asClassName().asNullable())
 
-        writeFunc.beginControlFlow("if (%L == null)", OBJECT)
-        writeFunc.addStatement("%L.nullValue()", WRITER)
+        writeFunc.beginControlFlow("if ($OBJECT == null)")
+        writeFunc.addStatement("$WRITER.nullValue()")
         writeFunc.addStatement("return")
         writeFunc.endControlFlow()
 
-        writeFunc.addStatement("%L.beginObject()", WRITER)
+        writeFunc.addStatement("$WRITER.beginObject()")
         fields.forEach {
             writeFunc.addCode(fieldWriteStrategy.write(it))
         }
-        writeFunc.addStatement("%L.endObject()", WRITER)
+        writeFunc.addStatement("$WRITER.endObject()")
 
         return writeFunc.build()
     }
-
-    private fun ClassName.generateTypeAdapterName(): String =
-        "${simpleName}$TYPE_ADAPTER_NAME"
 }

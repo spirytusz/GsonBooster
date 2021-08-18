@@ -1,7 +1,6 @@
 package com.spirytusz.booster.processor.base
 
 import com.spirytusz.booster.annotation.Boost
-import com.spirytusz.booster.annotation.BoostFactory
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
@@ -25,23 +24,14 @@ abstract class BaseProcessor : AbstractProcessor() {
                 }
         }
 
-    protected val RoundEnvironment.boostFactoryAnnotatedClasses: Sequence<TypeElement>
-        get() {
-            return getElementsAnnotatedWith(BoostFactory::class.java)
-                .asSequence()
-                .filter {
-                    it.kind == ElementKind.CLASS
-                }.map {
-                    it as TypeElement
-                }
-        }
-
     protected fun log(msg: String, kind: Diagnostic.Kind = Diagnostic.Kind.NOTE) {
         processingEnv.messager.printMessage(kind, "\n$CONSOLE_TAG ${javaClass.name}: $msg\n")
     }
 
     override fun process(annotations: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
-        process(env)
+        if (annotations.isNotEmpty()) {
+            process(env)
+        }
         return false
     }
 

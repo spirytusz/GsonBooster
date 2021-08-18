@@ -1,13 +1,13 @@
 package com.spirytusz.booster.processor.strategy.write
 
-import com.squareup.kotlinpoet.CodeBlock
 import com.spirytusz.booster.processor.data.KField
 import com.spirytusz.booster.processor.data.type.CollectionKType
 import com.spirytusz.booster.processor.data.type.EnumKType
 import com.spirytusz.booster.processor.data.type.ObjectKType
 import com.spirytusz.booster.processor.data.type.PrimitiveKType
+import com.squareup.kotlinpoet.CodeBlock
 
-internal class FieldWriteStrategy : IFieldWriteStrategy {
+class FieldWriteStrategy : IFieldWriteStrategy {
     private val primitiveTypeWriteStrategy by lazy {
         PrimitiveFieldWriteStrategy()
     }

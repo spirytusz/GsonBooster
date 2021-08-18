@@ -1,5 +1,6 @@
 package com.spirytusz.booster.processor.extensions
 
+import com.spirytusz.booster.processor.const.TYPE_ADAPTER_NAME
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.lang.model.element.TypeElement
@@ -15,6 +16,10 @@ fun KClass<*>.parameterizedBy(typeName: TypeName): ParameterizedTypeName {
     return with(ParameterizedTypeName) {
         asClassName().parameterizedBy(typeName)
     }
+}
+
+fun ClassName.toTypeAdapterClassName(): ClassName {
+    return ClassName(this.packageName, "${this.simpleName}$TYPE_ADAPTER_NAME")
 }
 
 fun TypeName.asNullable() = copy(nullable = true)

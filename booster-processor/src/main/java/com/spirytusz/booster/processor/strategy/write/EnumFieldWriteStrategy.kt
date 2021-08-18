@@ -1,36 +1,39 @@
 package com.spirytusz.booster.processor.strategy.write
 
-import com.squareup.kotlinpoet.CodeBlock
 import com.spirytusz.booster.processor.const.OBJECT
 import com.spirytusz.booster.processor.const.WRITER
 import com.spirytusz.booster.processor.data.KField
+import com.squareup.kotlinpoet.CodeBlock
 
-internal class EnumFieldWriteStrategy : IFieldWriteStrategy {
+/**
+ * Input: [KField] = val testEnum: TestEnum = TestEnum.HI
+ *
+ * Output:
+ * writer.value(testEnum.name)
+ */
+class EnumFieldWriteStrategy : IFieldWriteStrategy {
     override fun write(kField: KField): CodeBlock {
         val codeBlock = CodeBlock.Builder()
-        codeBlock.addStatement("%L.name(%S)", WRITER, kField.keys.first())
+        codeBlock.addStatement("$WRITER.name(%S)", kField.keys.first())
         if (kField.nullable) {
             codeBlock.addStatement(
-                "val %L = %L.%L?.name",
+                "val %L = $OBJECT.%L?.name",
                 kField.fieldName,
-                OBJECT,
                 kField.fieldName
             )
             codeBlock.addStatement(
                 """
                 if (%L != null) {
-                    %L.value(%L)
+                    $WRITER.value(%L)
                 } else {
-                    %L.nullValue()
+                    $WRITER.nullValue()
                 }
                 """.trimIndent(),
                 kField.fieldName,
-                WRITER,
-                kField.fieldName,
-                WRITER
+                kField.fieldName
             )
         } else {
-            codeBlock.addStatement("%L.value(%L.%L.name)", WRITER, OBJECT, kField.fieldName)
+            codeBlock.addStatement("$WRITER.value($OBJECT.%L.name)", kField.fieldName)
         }
         return codeBlock.build()
     }

@@ -1,36 +1,39 @@
 package com.spirytusz.booster.processor.strategy.write
 
-import com.squareup.kotlinpoet.CodeBlock
 import com.spirytusz.booster.processor.const.OBJECT
 import com.spirytusz.booster.processor.const.WRITER
 import com.spirytusz.booster.processor.data.KField
+import com.squareup.kotlinpoet.CodeBlock
 
-internal class PrimitiveFieldWriteStrategy : IFieldWriteStrategy {
+/**
+ * Input: [KField] = val longValue: Long = 0L
+ *
+ * Output:
+ * writer.value(longValue)
+ */
+class PrimitiveFieldWriteStrategy : IFieldWriteStrategy {
     override fun write(kField: KField): CodeBlock {
         val codeBlock = CodeBlock.Builder()
-        codeBlock.addStatement("%L.name(%S)", WRITER, kField.keys.first())
+        codeBlock.addStatement("$WRITER.name(%S)", kField.keys.first())
         if (kField.nullable) {
             codeBlock.addStatement(
-                "val %L = %L.%L",
+                "val %L = $OBJECT.%L",
                 kField.fieldName,
-                OBJECT,
                 kField.fieldName
             )
             codeBlock.addStatement(
                 """
                 if (%L != null) {
-                    %L.value(%L)
+                    $WRITER.value(%L)
                 } else {
-                    %L.nullValue()
+                    $WRITER.nullValue()
                 }
                 """.trimIndent(),
                 kField.fieldName,
-                WRITER,
-                kField.fieldName,
-                WRITER
+                kField.fieldName
             )
         } else {
-            codeBlock.addStatement("%L.value(%L.%L)", WRITER, OBJECT, kField.fieldName)
+            codeBlock.addStatement("$WRITER.value($OBJECT.%L)", kField.fieldName)
         }
         return codeBlock.build()
     }

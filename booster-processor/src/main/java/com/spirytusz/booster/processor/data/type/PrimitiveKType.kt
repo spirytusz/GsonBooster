@@ -1,10 +1,15 @@
 package com.spirytusz.booster.processor.data.type
 
 import com.google.gson.stream.JsonToken
+import com.spirytusz.booster.processor.extensions.kotlinType
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
-import com.spirytusz.booster.processor.extensions.kotlinType
 
+/**
+ * 代表一个原始类型
+ *
+ * @param className 类型名
+ */
 data class PrimitiveKType(
     val className: ClassName
 ) : KType(className) {
@@ -22,6 +27,8 @@ data class PrimitiveKType(
     fun getPrimitiveTypeNameForJsonReader(): String {
         return getPrimitiveTypeNameForJsonReader(className)
     }
+
+    fun isFloat(): Boolean = className.simpleName == "Float"
 
     private fun getJsonTokenNameInternal(): String {
         return when (getPrimitiveTypeNameForJsonReader()) {

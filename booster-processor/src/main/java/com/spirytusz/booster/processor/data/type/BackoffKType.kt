@@ -1,10 +1,13 @@
 package com.spirytusz.booster.processor.data.type
 
 import com.google.gson.stream.JsonToken
-import com.squareup.kotlinpoet.*
 import com.spirytusz.booster.processor.const.TYPE_ADAPTER_NAME
 import com.spirytusz.booster.processor.extensions.firstCharLowerCase
+import com.squareup.kotlinpoet.*
 
+/**
+ * 代表一个除[PrimitiveKType], [ObjectKType], [CollectionKType], [EnumKType]以外的类型
+ */
 data class BackoffKType(
     val backoffTypeName: TypeName
 ) : KType(backoffTypeName) {

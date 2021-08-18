@@ -1,40 +1,42 @@
 package com.spirytusz.booster.processor.strategy.write
 
-import com.squareup.kotlinpoet.CodeBlock
 import com.spirytusz.booster.processor.const.OBJECT
 import com.spirytusz.booster.processor.const.WRITER
 import com.spirytusz.booster.processor.data.KField
+import com.squareup.kotlinpoet.CodeBlock
 
-internal class ObjectTypeFieldWriteStrategy: IFieldWriteStrategy {
+/**
+ * Input: [KField] = val foo: Foo = Foo()
+ *
+ * Output:
+ * fooTypeAdapter.write(writer, foo)
+ */
+class ObjectTypeFieldWriteStrategy : IFieldWriteStrategy {
     override fun write(kField: KField): CodeBlock {
         val codeBlock = CodeBlock.Builder()
-        codeBlock.addStatement("%L.name(%S)", WRITER, kField.keys.first())
+        codeBlock.addStatement("$WRITER.name(%S)", kField.keys.first())
         if (kField.nullable) {
             codeBlock.addStatement(
-                "val %L = %L.%L",
+                "val %L = $OBJECT.%L",
                 kField.fieldName,
-                OBJECT,
                 kField.fieldName
             )
-            codeBlock.addStatement("""
-                        if (%L != null) {
-                            %L.write(%L, %L)
-                        } else {
-                            %L.nullValue()
-                        }
-                    """.trimIndent(),
+            codeBlock.addStatement(
+                """
+                    if (%L != null) {
+                        %L.write($WRITER, %L)
+                    } else {
+                        $WRITER.nullValue()
+                    }
+                """.trimIndent(),
                 kField.fieldName,
                 kField.kType.adapterFieldName,
-                WRITER,
-                kField.fieldName,
-                WRITER
+                kField.fieldName
             )
         } else {
             codeBlock.addStatement(
-                "%L.write(%L, %L.%L)",
+                "%L.write($WRITER, $OBJECT.%L)",
                 kField.kType.adapterFieldName,
-                WRITER,
-                OBJECT,
                 kField.fieldName
             )
         }

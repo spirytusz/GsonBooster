@@ -1,13 +1,33 @@
 package com.spirytusz.booster.processor.strategy.write
 
-import com.squareup.kotlinpoet.CodeBlock
 import com.spirytusz.booster.processor.const.OBJECT
 import com.spirytusz.booster.processor.const.WRITER
 import com.spirytusz.booster.processor.data.KField
 import com.spirytusz.booster.processor.data.type.CollectionKType
 import com.spirytusz.booster.processor.data.type.PrimitiveKType
+import com.squareup.kotlinpoet.CodeBlock
 
-internal class CollectionFieldWriteStrategy : IFieldWriteStrategy {
+/**
+ * Input: [KField] = val listLong: List<Long>
+ *
+ * Output:
+ * writer.beginArray()
+ * obj.listLong.forEach {
+ *     writer.value(it)
+ * }
+ * writer.endArray()
+ *
+ *
+ * Input: [KField] = val listFoo: List<Foo>
+ *
+ * Output:
+ * writer.beginArray()
+ * obj.listFoo.forEach {
+ *     fooTypeAdapter.write(writer, it)
+ * }
+ * writer.endArray()
+ */
+class CollectionFieldWriteStrategy : IFieldWriteStrategy {
     override fun write(kField: KField): CodeBlock {
         val collectionKType = kField.kType as CollectionKType
         return if (PrimitiveKType.isPrimitive(collectionKType.genericType)) {
@@ -20,46 +40,37 @@ internal class CollectionFieldWriteStrategy : IFieldWriteStrategy {
     private fun writeGenericsPrimitiveCollections(kField: KField): CodeBlock {
         return if (kField.nullable) {
             CodeBlock.Builder().addStatement(
-                "%L.name(%S)", WRITER, kField.keys.first()
+                "$WRITER.name(%S)", kField.keys.first()
             ).addStatement(
                 """
-                    val %L = %L.%L
+                    val %L = $OBJECT.%L
                     if (%L != null) {
-                        %L.beginArray()
+                        $WRITER.beginArray()
                         %L.forEach {
-                            %L.value(it)
+                            $WRITER.value(it)
                         }
-                        %L.endArray()
+                        $WRITER.endArray()
                     } else {
-                        %L.nullValue()
+                        $WRITER.nullValue()
                     }
                 """.trimIndent(),
                 kField.fieldName,
-                OBJECT,
                 kField.fieldName,
                 kField.fieldName,
-                WRITER,
-                kField.fieldName,
-                WRITER,
-                WRITER,
-                WRITER
+                kField.fieldName
             )
         } else {
             CodeBlock.Builder().addStatement(
-                "%L.name(%S)", WRITER, kField.keys.first()
+                "$WRITER.name(%S)", kField.keys.first()
             ).addStatement(
                 """
-                    %L.beginArray()
-                    %L.%L.forEach {
-                        %L.value(it)
+                    $WRITER.beginArray()
+                    $OBJECT.%L.forEach {
+                        $WRITER.value(it)
                     }
-                    %L.endArray()
+                    $WRITER.endArray()
                 """.trimIndent(),
-                WRITER,
-                OBJECT,
-                kField.fieldName,
-                WRITER,
-                WRITER
+                kField.fieldName
             )
         }.build()
     }
@@ -67,48 +78,39 @@ internal class CollectionFieldWriteStrategy : IFieldWriteStrategy {
     private fun writeGenericsObjectCollections(kField: KField): CodeBlock {
         return if (kField.nullable) {
             CodeBlock.Builder().addStatement(
-                "%L.name(%S)", WRITER, kField.keys.first()
+                "$WRITER.name(%S)", kField.keys.first()
             ).addStatement(
                 """
-                   val %L = %L.%L
+                   val %L = $OBJECT.%L
                     if (%L != null) {
-                        %L.beginArray()
+                        $WRITER.beginArray()
                         %L.forEach {
-                            %L.write(%L, it)
+                            %L.write($WRITER, it)
                         }
-                        %L.endArray()
+                        $WRITER.endArray()
                     } else {
-                        %L.nullValue()
+                        $WRITER.nullValue()
                     }
                 """.trimIndent(),
                 kField.fieldName,
-                OBJECT,
                 kField.fieldName,
                 kField.fieldName,
-                WRITER,
                 kField.fieldName,
-                kField.kType.adapterFieldName,
-                WRITER,
-                WRITER,
-                WRITER
+                kField.kType.adapterFieldName
             )
         } else {
             CodeBlock.Builder().addStatement(
-                "%L.name(%S)", WRITER, kField.keys.first()
+                "$WRITER.name(%S)", kField.keys.first()
             ).addStatement(
                 """
-                    %L.beginArray()
-                    %L.%L.forEach {
-                        %L.write(%L, it)
+                    $WRITER.beginArray()
+                    $OBJECT.%L.forEach {
+                        %L.write($WRITER, it)
                     }
-                    %L.endArray()
+                    $WRITER.endArray()
                 """.trimIndent(),
-                WRITER,
-                OBJECT,
                 kField.fieldName,
-                kField.kType.adapterFieldName,
-                WRITER,
-                WRITER
+                kField.kType.adapterFieldName
             )
         }.build()
     }

@@ -2,17 +2,25 @@ package com.spirytusz.booster.processor.strategy.declare
 
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
-import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.spirytusz.booster.processor.const.GSON
 import com.spirytusz.booster.processor.data.type.KType
 import com.spirytusz.booster.processor.extensions.kotlinType
+import com.squareup.kotlinpoet.*
 
-internal class BackoffAdapterDeclareStrategy : IAdapterDeclareStrategy {
+/**
+ * Input:  [KType] = Foo<Int>
+ *
+ * Output: private val fooIntTypeAdapter by lazy { gson.getAdapter(object: TypeToken<Foo<Int>>() {}) }
+ */
+class BackoffAdapterDeclareStrategy : IAdapterDeclareStrategy {
     override fun declare(kType: KType): PropertySpec? {
         val typeAdapterCodeBlock = CodeBlock.Builder()
             .beginControlFlow("lazy")
-            .addStatement("%L.getAdapter(object: %T<%L>() {})", GSON, TypeToken::class.java, kType.typeName.kotlinType())
+            .addStatement(
+                "$GSON.getAdapter(object: %T<%L>() {})",
+                TypeToken::class.java,
+                kType.typeName.kotlinType()
+            )
             .endControlFlow()
             .build()
         val adapterType = with(ParameterizedTypeName.Companion) {

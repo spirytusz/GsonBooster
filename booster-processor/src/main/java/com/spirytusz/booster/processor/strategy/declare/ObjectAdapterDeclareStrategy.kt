@@ -1,11 +1,17 @@
 package com.spirytusz.booster.processor.strategy.declare
 
 import com.google.gson.TypeAdapter
-import com.squareup.kotlinpoet.*
 import com.spirytusz.booster.processor.const.GSON
 import com.spirytusz.booster.processor.data.type.KType
+import com.spirytusz.booster.processor.extensions.toTypeAdapterClassName
+import com.squareup.kotlinpoet.*
 
-internal class ObjectAdapterDeclareStrategy : IAdapterDeclareStrategy {
+/**
+ * Input:  [KType] = Foo
+ *
+ * Output: private val fooTypeAdapter by lazy { FooTypeAdapter() }
+ */
+class ObjectAdapterDeclareStrategy : IAdapterDeclareStrategy {
 
     var registerTypeAdapters = mapOf<String, ClassName>()
 
@@ -18,15 +24,17 @@ internal class ObjectAdapterDeclareStrategy : IAdapterDeclareStrategy {
             kType.typeName
         }
         val typeAdapterCodeBlock = if (isRegisteredType) {
+            // 已经注册的，使用XXXTypeAdapter()
             CodeBlock.Builder()
                 .beginControlFlow("lazy")
-                .addStatement("%T(%L)", type, GSON)
+                .addStatement("%T($GSON)", (type as ClassName).toTypeAdapterClassName())
                 .endControlFlow()
                 .build()
         } else {
+            // 没有注册的，使用gson.getAdapter(XXX::class.java)
             CodeBlock.Builder()
                 .beginControlFlow("lazy")
-                .addStatement("%L.getAdapter(%T::class.java)", GSON, type)
+                .addStatement("$GSON.getAdapter(%T::class.java)", type)
                 .endControlFlow()
                 .build()
         }
