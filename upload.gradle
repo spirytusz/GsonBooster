@@ -41,6 +41,7 @@ if (hasSigningKeyId && hasSigningPassword && hasSecretKeyRingFile) {
         sign publishing.publications
     }
 } else {
+    println(">>>>> Not found sign info <<<<<")
     println(">>>>> hasSigningKeyId: $hasSigningKeyId <<<<<")
     println(">>>>> hasSigningPassword: $hasSigningPassword <<<<<")
     println(">>>>> hasSecretKeyRingFile: $hasSecretKeyRingFile <<<<<")
@@ -72,7 +73,6 @@ publishing {
                         email = 'zhangwel26171@gmail.com'
                     }
                 }
-                // 版本控制仓库地址
                 scm {
                     url = 'https://github.com/zkw012300/GsonBooster'
                     connection = 'scm:git:git://github.com/zkw012300/GsonBooster.git'
@@ -82,6 +82,14 @@ publishing {
         }
     }
     repositories {
+        def hasUsername = project.hasProperty("nexus.username")
+        def hasPassword = project.hasProperty("nexus.password")
+        if (!hasUsername || !hasPassword) {
+            println(">>>>> Not found username or password <<<<<")
+            println(">>>>> hasUsername: $hasUsername <<<<<")
+            println(">>>>> hasPassword: $hasPassword <<<<<")
+            return
+        }
         maven {
             url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
