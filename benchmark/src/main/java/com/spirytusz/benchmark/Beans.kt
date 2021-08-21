@@ -29,7 +29,7 @@ data class BarTest(
     val classTest: ClassTest = ClassTest()
 ) {
 
-    @SerializedName("bar_test_out_constructor_list_long")
+    @SerializedName("bar_test_var_outer_constructor_list_long")
     var outerConstructorListLong = listOf<Long>()
 
     override fun equals(other: Any?): Boolean {
@@ -51,6 +51,7 @@ data class BarTest(
     }
 }
 
+@Boost
 class ClassTest(
     @SerializedName("class_test_constructor_long")
     val constructorLong: Long = 0L
