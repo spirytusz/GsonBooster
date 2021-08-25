@@ -67,10 +67,17 @@ publishing {
 
             pom {
                 name = MAVEN_NAME
+                description = MAVEN_POM_DESCRIPTION
+                url = 'https://github.com/zkw012300/GsonBooster'
                 developers {
                     developer {
                         name = 'ZSpirytus'
                         email = 'zhangwel26171@gmail.com'
+                    }
+                }
+                licenses {
+                    license {
+                        name = 'MIT License'
                     }
                 }
                 scm {
@@ -91,7 +98,7 @@ publishing {
             return
         }
         maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
                 String nexusUserName = project["nexus.username"]
                 String nexusPassword = project["nexus.password"]
