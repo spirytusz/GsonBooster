@@ -109,3 +109,8 @@ data class OverflowIntValueBean(
 data class OverflowFloatValueBean(
     val key: Float = 0f
 )
+
+@Boost
+data class InvalidJsonTestBean(
+    val key: Int = 0
+)

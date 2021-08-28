@@ -1,6 +1,7 @@
 package com.spirytusz.booster.test
 
 import com.spirytusz.booster.test.cases.CommonCase
+import com.spirytusz.booster.test.cases.InvalidJsonCase
 import com.spirytusz.booster.test.cases.NullableCase
 import com.spirytusz.booster.test.cases.OverflowCase
 import com.spirytusz.booster.test.cases.unexpecttype.UnExpectTypeCase
@@ -26,5 +27,10 @@ class DeserializeTest {
     @Test
     fun testOverflow() {
         OverflowCase().check()
+    }
+
+    @Test
+    fun testInvalidJson() {
+        InvalidJsonCase().check()
     }
 }
