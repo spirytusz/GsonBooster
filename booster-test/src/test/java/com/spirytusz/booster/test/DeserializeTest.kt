@@ -2,6 +2,7 @@ package com.spirytusz.booster.test
 
 import com.spirytusz.booster.test.cases.CommonCase
 import com.spirytusz.booster.test.cases.NullableCase
+import com.spirytusz.booster.test.cases.unexpecttype.UnExpectTypeCase
 import org.junit.Test
 
 class DeserializeTest {
@@ -14,5 +15,10 @@ class DeserializeTest {
     @Test
     fun testNullable() {
         NullableCase().check()
+    }
+
+    @Test
+    fun testUnExpectType() {
+        UnExpectTypeCase().check()
     }
 }

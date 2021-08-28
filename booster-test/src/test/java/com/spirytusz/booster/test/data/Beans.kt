@@ -47,3 +47,55 @@ class SomeClass {
         return longValue.hashCode()
     }
 }
+
+@Boost
+data class IntValueBean(
+    val key: Int = 0
+)
+
+@Boost
+data class LongValueBean(
+    val key: Long = 0L
+)
+
+@Boost
+data class FloatValueBean(
+    val key: Float = 0f
+)
+
+@Boost
+data class DoubleValueBean(
+    val key: Double = 0.0
+)
+
+@Boost
+data class StringValueBean(
+    val key: String = ""
+)
+
+@Boost
+data class BooleanValueBean(
+    val key: Boolean = false
+)
+
+class Test {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+}
+
+@Boost
+data class ObjectValueBean(
+    val key: Test = Test()
+)
+
+@Boost
+data class ArrayValueBean(
+    val key: List<Long> = listOf()
+)
