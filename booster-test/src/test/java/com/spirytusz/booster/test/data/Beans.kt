@@ -99,3 +99,13 @@ data class ObjectValueBean(
 data class ArrayValueBean(
     val key: List<Long> = listOf()
 )
+
+@Boost
+data class OverflowIntValueBean(
+    val key: Int = 0
+)
+
+@Boost
+data class OverflowFloatValueBean(
+    val key: Float = 0f
+)

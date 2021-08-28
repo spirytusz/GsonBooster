@@ -2,6 +2,7 @@ package com.spirytusz.booster.test
 
 import com.spirytusz.booster.test.cases.CommonCase
 import com.spirytusz.booster.test.cases.NullableCase
+import com.spirytusz.booster.test.cases.OverflowCase
 import com.spirytusz.booster.test.cases.unexpecttype.UnExpectTypeCase
 import org.junit.Test
 
@@ -20,5 +21,10 @@ class DeserializeTest {
     @Test
     fun testUnExpectType() {
         UnExpectTypeCase().check()
+    }
+
+    @Test
+    fun testOverflow() {
+        OverflowCase().check()
     }
 }
