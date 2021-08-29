@@ -1,11 +1,19 @@
 # GsonBooster
-GsonBooster是一个自动化生成Gson TypeAdapter的工具库，帮助你提升在使用Gson进行Json序列化和反序列化的时间性能。
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.spirytusz/booster-annotation/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.spirytusz/booster-annotation)
 
-灵感来自[Kson](https://github.com/aafanasev/kson)，对其进行改进，并拓展出新的功能。
+GsonBooster是一个自动化生成Gson TypeAdapter的工具库。
 
-## 如何使用
+思路由[Kson](https://github.com/aafanasev/kson)提供，GsonBooster是对Kson的改进和拓展。
 
-为需要生成TypeAdapter的类加上@Kson注解，使得Booster注解处理器能够识别并生成对应的TypeAdapter
+## 接入
+```
+implementation "com.spirytusz:booster-annotation:1.1.0"
+kapt "com.spirytusz:booster-processor:1.1.0"
+```
+
+## 使用
+
+为需要生成TypeAdapter的类加上`@Kson`注解
 
 ```
 @Booster
@@ -17,64 +25,67 @@ data class Foo(
 )
 ```
 
-加上@BoosterFactory，使得Kson注解处理器能够识别并生成TypeAdapterFactory
-
-```
-@BoosterFactory
-object CustomTypeAdapterFactory {
-    // BoosterCustomTypeAdapterFactory是Kson注解处理器自动生成的类
-    fun get() = BoosterCustomTypeAdapterFactory()
-}
-```
-
-为Gson实例添加自动生成的TypeAdapterFactory
+为Gson实例添加自动生成的`BoosterTypeAdapterFactory `
 
 ```
 val gson = GsonBuilder()
-        .registerTypeAdapterFactory(CustomTypeAdapterFactory.get())
+        .registerTypeAdapterFactory(BoosterTypeAdapterFactory())
         .create()
 ```
 
 ## 功能
 Kson支持以下场景：
 
-1. 支持默认值，如果没有找到对应key，或者对应key的类型不正确，则使用默认值；
+1. 支持默认值；
 2. 支持可空变量；
 3. 支持枚举；
 4. 支持简单集合类（泛型为原始类型或者不带泛型的Object类型）的序列化、反序列化加速；
+5. 一定的容错性，类型不对会使用默认值。（详见[测试报告](booster-test/TestingReport.md)）
 
-不仅如此，GsonBooster生成的TypeAdapter在反序列化时具有一定的容错性：
+## 约定
 
-遇到value为期望以外的类型（比如需要一个NUMBER, 但是是BEGIN_OBJECT），则会**跳过**该值的解析，使用默认值。
+GsonBooster简单用法的背后，需要接入方的支持：
 
-生成的代码就像这样：
+1. 集合类泛型不能是可空的；
+2. Json Array必须声明为List或Set；
+3. 不使用Kotlin关键词为变量命名；
+4. 类需要提供一个无参构造方法，或者构造方法的所有参数必须有默认值；
+5. 如果继承了类或实现了接口，父类和接口需要序列化 or 反序列化的字段需要体现在构造方法上；
+
+## Benchmark
+
+* OS: Mac OS X
+* JVM: JDK 1.8.0_302, OpenJDK 64-Bit Server VM, 25.302-b08
+* CPU: Intel Core i7
+* Core: 4
 
 ```
-"foo_bean_double" -> {
-     val peeked = reader.peek()
-     if (peeked == JsonToken.NUMBER) {
-          doubleValue = reader.nextDouble()
-     } else if (peeked == JsonToken.NULL) {
-          reader.nextNull()
-     } else {
-          reader.skipValue()
-     }
-}
+Benchmark                         Mode  Cnt      Score      Error  Units
+Benchmarks.generatedTypeAdapter   avgt    6  31265.404 ± 8870.324  ns/op
+Benchmarks.reflectiveTypeAdapter  avgt    6  40666.818 ± 2422.591  ns/op
 ```
 
-## 限制
+## License
+```
+MIT License
 
-GsonBooster是在以下规则下运作的：
+Copyright (c) 2021 ZSpirytus
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-|  限制  | 是否可选  |
-|  ---  | ---  |
-| 集合类泛型不可空 | **必选** |
-| 集合类必须声明为List或Set的顶级接口 | **必选** |
-| 不使用kotlin关键词来命名变量 | **必选** |
-| 类需要提供一个**无参**构造方法，和一个包含所有需要序列化&反序列化（**包括父类、接口的**）**不可变**字段的构造方法 | **必选** |
-| 如果继承了类或实现了接口，父类或接口需要序列化&反序列化的字段需要体现在构造方法上 | **必选** |
-| 避免使用类泛型 | 可选 |
-| 集合类泛型不使用协变、逆变以及通配符 | 可选 |
-| 避免使用嵌套集合类型、以及泛型嵌套类型 | 可选 |
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

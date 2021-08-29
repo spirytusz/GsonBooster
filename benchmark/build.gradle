@@ -12,8 +12,13 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.6"
 
     implementation "org.openjdk.jmh:jmh-core:1.28"
-    kapt "org.openjdk.jmh:jmh-generator-annprocess:1.28"
+    implementation "org.openjdk.jmh:jmh-generator-annprocess:1.28"
 
     implementation project(":booster-annotation")
     kapt project(":booster-processor")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

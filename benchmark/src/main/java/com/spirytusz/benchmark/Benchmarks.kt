@@ -2,6 +2,7 @@ package com.spirytusz.benchmark
 
 import org.openjdk.jmh.Main
 import org.openjdk.jmh.annotations.*
+import org.openjdk.jmh.infra.Blackhole
 import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
@@ -21,8 +22,8 @@ open class Benchmarks {
     @Warmup(iterations = WARM_UP)
     @Measurement(iterations = ITERATIONS)
     @OutputTimeUnit(value = TimeUnit.NANOSECONDS)
-    fun reflectiveTypeAdapter(gsonState: GsonState, jsonState: JsonState, blackHoleState: BlackHoleState) {
-        blackHoleState.blackHole.accept(gsonState.gson.fromJson(jsonState.json, FooTest::class.java))
+    fun reflectiveTypeAdapter(gsonState: GsonState, jsonState: JsonState, blackhole: Blackhole) {
+        blackhole.consume(gsonState.gson.fromJson(jsonState.json, FooTest::class.java))
     }
 
     @Benchmark
@@ -31,7 +32,11 @@ open class Benchmarks {
     @Warmup(iterations = WARM_UP)
     @Measurement(iterations = ITERATIONS)
     @OutputTimeUnit(value = TimeUnit.NANOSECONDS)
-    fun generatedTypeAdapter(boosterState: BoosterState, jsonState: JsonState, blackHoleState: BlackHoleState) {
-        blackHoleState.blackHole.accept(boosterState.gson.fromJson(jsonState.json, FooTest::class.java))
+    fun generatedTypeAdapter(
+        boosterState: BoosterState,
+        jsonState: JsonState,
+        blackhole: Blackhole
+    ) {
+        blackhole.consume(boosterState.gson.fromJson(jsonState.json, FooTest::class.java))
     }
 }

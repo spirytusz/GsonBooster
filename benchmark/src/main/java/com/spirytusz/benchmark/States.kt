@@ -7,14 +7,13 @@ import org.openjdk.jmh.annotations.Level
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.Setup
 import org.openjdk.jmh.annotations.State
-import java.util.function.Consumer
 
 @State(Scope.Benchmark)
 open class GsonState {
 
     lateinit var gson: Gson
 
-    @Setup(Level.Trial)
+    @Setup(Level.Iteration)
     fun setUp() {
         gson = GsonBuilder().create()
     }
@@ -25,7 +24,7 @@ open class BoosterState {
 
     lateinit var gson: Gson
 
-    @Setup(Level.Trial)
+    @Setup(Level.Iteration)
     fun setUp() {
         gson = GsonBuilder().registerTypeAdapterFactory(BoosterTypeAdapterFactory()).create()
     }
@@ -36,19 +35,8 @@ open class JsonState {
 
     lateinit var json: String
 
-    @Setup(Level.Trial)
+    @Setup(Level.Iteration)
     fun setUp() {
         json = javaClass.getResourceAsStream("/test.json").bufferedReader().use { it.readText() }
-    }
-}
-
-@State(Scope.Benchmark)
-open class BlackHoleState {
-
-    lateinit var blackHole: Consumer<Any>
-
-    @Setup(Level.Trial)
-    fun setUp() {
-        blackHole = Consumer {  }
     }
 }
