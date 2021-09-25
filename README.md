@@ -13,7 +13,7 @@ kapt "com.spirytusz:booster-processor:1.1.0"
 
 ## 使用
 
-为需要生成TypeAdapter的类加上`@Kson`注解
+为需要生成TypeAdapter的类加上`@Boost`注解
 
 ```
 @Boost
@@ -34,7 +34,7 @@ val gson = GsonBuilder()
 ```
 
 ## 功能
-Kson支持以下场景：
+GsonBooster支持以下场景：
 
 1. 支持默认值；
 2. 支持可空变量；
