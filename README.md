@@ -16,7 +16,7 @@ kapt "com.spirytusz:booster-processor:1.1.0"
 为需要生成TypeAdapter的类加上`@Kson`注解
 
 ```
-@Booster
+@Boost
 data class Foo(
     @SerializedName("foo_int")
     val intValue: Int = 0,
