@@ -3,12 +3,28 @@
 
 GsonBooster是一个自动化生成Gson TypeAdapter的工具库。
 
-思路由[Kson](https://github.com/aafanasev/kson)提供，GsonBooster是对Kson的改进和拓展。
-
 ## 接入
 ```
-implementation "com.spirytusz:booster-annotation:1.1.0"
-kapt "com.spirytusz:booster-processor:1.1.0"
+plugins {
+    // 引入kapt
+    id 'kotlin-kapt'
+}
+
+...
+
+dependencies {
+    // 添加依赖
+    implementation "com.spirytusz:booster-annotation:1.1.0"
+    kapt "com.spirytusz:booster-processor:1.1.0"
+}
+
+kapt {
+    arguments {
+        // 设置生成TypeAdapterFactory的名称
+        // 默认为com.spirytusz.booster.BoosterTypeAdapterFactory
+        arg("factory", "com.example.BoosterTypeAdapterFactory")
+    }
+}
 ```
 
 ## 使用
@@ -28,6 +44,8 @@ data class Foo(
 为Gson实例添加自动生成的`BoosterTypeAdapterFactory `
 
 ```
+import com.example.BoosterTypeAdapterFactory
+
 val gson = GsonBuilder()
         .registerTypeAdapterFactory(BoosterTypeAdapterFactory())
         .create()
