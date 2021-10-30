@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
 import com.google.gson.reflect.TypeToken
+import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.const.GSON
 import com.spirytusz.booster.processor.const.TYPE_TOKEN
 import com.spirytusz.booster.processor.extensions.asNullable
@@ -11,7 +12,6 @@ import com.spirytusz.booster.processor.extensions.parameterizedBy
 import com.spirytusz.booster.processor.extensions.toTypeAdapterClassName
 import com.squareup.kotlinpoet.*
 import javax.annotation.processing.ProcessingEnvironment
-import com.spirytusz.booster.annotation.Boost
 
 /**
  * 给定了allBoostAnnotatedClassName后，负责生成TypeAdapterFactory
@@ -21,13 +21,11 @@ class TypeAdapterFactoryGenerator(
 ) {
 
     companion object {
-        /**
-         * 生成的TypeAdapterFactory的默认canonicalName
-         * 先写死
-         */
-        private val DEFAULT_TYPE_ADAPTER_FACTORY_NAME by lazy {
-            ClassName("com.spirytusz.booster", "BoosterTypeAdapterFactory")
-        }
+        private const val KEY_FACTORY_NAME = "factory"
+
+        private const val DEFAULT_FACTORY_PACKAGE_NAME = "com.spirytusz.booster"
+
+        private const val DEFAULT_FACTORY_SIMPLE_NAME = "BoosterTypeAdapterFactory"
     }
 
     /**
@@ -38,14 +36,34 @@ class TypeAdapterFactoryGenerator(
      * @return 生成的TypeAdapterFactory的[ClassName]
      */
     fun generate(
-        allBoostAnnotatedClassName: List<ClassName>,
-        factoryName: ClassName = DEFAULT_TYPE_ADAPTER_FACTORY_NAME
+        allBoostAnnotatedClassName: List<ClassName>
     ): ClassName {
+        val factoryName = getFactoryName()
         FileSpec.get(
             factoryName.packageName,
             generateTypeAdapterFactory(allBoostAnnotatedClassName, factoryName)
         ).writeTo(processingEnv.filer)
         return factoryName
+    }
+
+    private fun getFactoryName(): ClassName {
+        val defaultFactoryName =
+            ClassName(DEFAULT_FACTORY_PACKAGE_NAME, DEFAULT_FACTORY_SIMPLE_NAME)
+
+        val factoryName = processingEnv.options[KEY_FACTORY_NAME]
+            ?: return defaultFactoryName
+
+        val factoryNameSplit = factoryName.split(".")
+        if (factoryNameSplit.size <= 1) {
+            return defaultFactoryName
+        }
+
+        val packageName = factoryNameSplit
+            .subList(0, factoryNameSplit.size - 1)
+            .joinToString(separator = ".") { it }
+        val simpleName = factoryNameSplit.last()
+
+        return ClassName(packageName, simpleName)
     }
 
     /**
