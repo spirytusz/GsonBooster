@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.spirytusz.booster.BoosterTypeAdapterFactory
 import com.spirytusz.gsonbooster.data.Foo
 import java.util.concurrent.TimeUnit
 
@@ -28,7 +27,6 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.testBtn).setOnClickListener {
             val common = GsonBuilder().create()
             val boost = GsonBuilder()
-                .registerTypeAdapterFactory(BoosterTypeAdapterFactory())
                 .create()
 
             val commonTimeCost = traceOnceJson(common, json)
