@@ -11,9 +11,10 @@ import com.spirytusz.booster.processor.extensions.parameterizedBy
 import com.spirytusz.booster.processor.extensions.toTypeAdapterClassName
 import com.squareup.kotlinpoet.*
 import javax.annotation.processing.ProcessingEnvironment
+import com.spirytusz.booster.annotation.Boost
 
 /**
- * 给定了allKsonAnnotatedClassName后，负责生成TypeAdapterFactory
+ * 给定了allBoostAnnotatedClassName后，负责生成TypeAdapterFactory
  */
 class TypeAdapterFactoryGenerator(
     private val processingEnv: ProcessingEnvironment
@@ -32,17 +33,17 @@ class TypeAdapterFactoryGenerator(
     /**
      * 生成TypeAdapterFactory.kt
      *
-     * @param allKsonAnnotatedClassName 所有被[Kson]所注解的类
+     * @param allBoostAnnotatedClassName 所有被[Boost]所注解的类
      *
      * @return 生成的TypeAdapterFactory的[ClassName]
      */
     fun generate(
-        allKsonAnnotatedClassName: List<ClassName>,
+        allBoostAnnotatedClassName: List<ClassName>,
         factoryName: ClassName = DEFAULT_TYPE_ADAPTER_FACTORY_NAME
     ): ClassName {
         FileSpec.get(
             factoryName.packageName,
-            generateTypeAdapterFactory(allKsonAnnotatedClassName, factoryName)
+            generateTypeAdapterFactory(allBoostAnnotatedClassName, factoryName)
         ).writeTo(processingEnv.filer)
         return factoryName
     }
@@ -50,30 +51,30 @@ class TypeAdapterFactoryGenerator(
     /**
      * 生成TypeAdapterFactory代码
      *
-     * @param allKsonAnnotatedClassName 所有被[Kson]所注解的类
+     * @param allBoostAnnotatedClassName 所有被[Boost]所注解的类
      * @param factoryName 生成TypeAdapterFactory的[ClassName]
      *
      * @return 生成的代码
      */
     private fun generateTypeAdapterFactory(
-        allKsonAnnotatedClassName: List<ClassName>,
+        allBoostAnnotatedClassName: List<ClassName>,
         factoryName: ClassName
     ): TypeSpec {
         return TypeSpec
             .classBuilder(factoryName)
             .addSuperinterface(TypeAdapterFactory::class.java)
-            .addFunction(generateCreateFunc(allKsonAnnotatedClassName))
+            .addFunction(generateCreateFunc(allBoostAnnotatedClassName))
             .build()
     }
 
     /**
      * 生成TypeAdapterFactory.create方法
      *
-     * @param allKsonAnnotatedClassName 所有被[Kson]所注解的类
+     * @param allBoostAnnotatedClassName 所有被[Boost]所注解的类
      *
      * @return create方法代码
      */
-    private fun generateCreateFunc(allKsonAnnotatedClassName: List<ClassName>): FunSpec {
+    private fun generateCreateFunc(allBoostAnnotatedClassName: List<ClassName>): FunSpec {
         val returnType = TypeAdapter::class.parameterizedBy(TypeVariableName.invoke("T"))
 
         val createFun = FunSpec.builder("create")
@@ -93,7 +94,7 @@ class TypeAdapterFactoryGenerator(
 
         val codeBlock = CodeBlock.Builder()
         codeBlock.beginControlFlow("val typeAdapter = when")
-        allKsonAnnotatedClassName.forEach {
+        allBoostAnnotatedClassName.forEach {
             codeBlock.addStatement(
                 "%T::class.java.isAssignableFrom(%L.rawType) -> %T(%L)",
                 it,

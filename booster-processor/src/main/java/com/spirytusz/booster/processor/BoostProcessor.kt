@@ -33,10 +33,10 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
 /**
- * Kson注解处理器
+ * [Boost]注解处理器
  *
  * 负责：
- *     1. 扫描获取所有被Kson注解的类
+ *     1. 扫描获取所有被[Boost]注解的类
  *     2. 生成TypeAdapter
  *     3. 生成TypeAdapterFactory
  */
@@ -68,26 +68,26 @@ class BoostProcessor : BaseProcessor() {
         log("process start >>>>>>>")
         val start = System.currentTimeMillis()
 
-        // 1. 扫描所有被Kson注解的类
-        val ksonAnnotatedClassNames = scanAnnotatedByBoosterClasses(env)
-        if (ksonAnnotatedClassNames.isEmpty()) {
+        // 1. 扫描所有被Boost注解的类
+        val boostAnnotatedClassNames = scanAnnotatedByBoosterClasses(env)
+        if (boostAnnotatedClassNames.isEmpty()) {
             return
         }
 
-        adapterDeclareStrategy.setRegisterTypeAdapters(ksonAnnotatedClassNames)
+        adapterDeclareStrategy.setRegisterTypeAdapters(boostAnnotatedClassNames)
 
-        // 2. 为所有被Kson注解的类生成TypeAdapter
+        // 2. 为所有被Boost注解的类生成TypeAdapter
         val filer = processingEnv.filer
         env.boostAnnotatedClasses.forEach {
-            val ksonAnnotatedClass = it.asClassName()
+            val boostAnnotatedClass = it.asClassName()
             val adapterSpec = generateTypeAdapter(it)
-            FileSpec.get(ksonAnnotatedClass.packageName, adapterSpec).writeTo(filer)
-            log("generate TypeAdapter finish >>> ${ksonAnnotatedClass.toTypeAdapterClassName()}")
+            FileSpec.get(boostAnnotatedClass.packageName, adapterSpec).writeTo(filer)
+            log("generate TypeAdapter finish >>> ${boostAnnotatedClass.toTypeAdapterClassName()}")
         }
 
         // 3. 生成TypeAdapterFactory
         val generatedTypeAdapterFactory = TypeAdapterFactoryGenerator(processingEnv)
-            .generate(ksonAnnotatedClassNames.values.toList())
+            .generate(boostAnnotatedClassNames.values.toList())
         log("generate TypeAdapterFactory finish >>> $generatedTypeAdapterFactory")
         log("process end >>>>>>> timeCost: [${System.currentTimeMillis() - start}]ms")
     }
@@ -106,7 +106,7 @@ class BoostProcessor : BaseProcessor() {
     /**
      * 为指定的类生成TypeAdapter
      *
-     * @param clazz 被[Kson]注解的类
+     * @param clazz 被[Boost]注解的类
      *
      * @return 生成代码所代表的的对象实例
      */
@@ -168,7 +168,7 @@ class BoostProcessor : BaseProcessor() {
     /**
      * 生成指定类的TypeAdapter的read方法
      *
-     * @param clazz  被[Kson]注解的类
+     * @param clazz  被[Boost]注解的类
      * @param fields 该类扫描出来的变量
      */
     private fun generateReadFunc(
@@ -303,7 +303,7 @@ class BoostProcessor : BaseProcessor() {
     /**
      * 生成指定类的TypeAdapter的write方法
      *
-     * @param clazz  被[Kson]注解的类
+     * @param clazz  被[Boost]注解的类
      * @param fields 该类扫描出来的变量
      */
     private fun generateWriteFunc(clazz: TypeElement, fields: List<KField>): FunSpec {
