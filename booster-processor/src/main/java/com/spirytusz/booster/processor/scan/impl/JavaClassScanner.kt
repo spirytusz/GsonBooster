@@ -1,4 +1,4 @@
-package com.spirytusz.booster.processor.scan
+package com.spirytusz.booster.processor.scan.impl
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -7,6 +7,7 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Modifier
 import com.spirytusz.booster.processor.data.PropertyDescriptor
+import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 
 /**
  * Java类扫描器

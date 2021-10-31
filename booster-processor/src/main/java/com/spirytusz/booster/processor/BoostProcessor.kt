@@ -5,7 +5,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.base.BaseSymbolProcessor
-import com.spirytusz.booster.processor.scan.ClassScannerFactory
+import com.spirytusz.booster.processor.scan.ClassScanProcessor
 
 /**
  * [Boost]注解处理器
@@ -20,14 +20,14 @@ class BoostProcessor(
 ) : BaseSymbolProcessor(environment) {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        resolver.boostAnnotatedClasses.forEach { boostAnnotatedClass ->
-            val classScanner = ClassScannerFactory
-                .createClassScanner(resolver, environment, boostAnnotatedClass)
+        ClassScanProcessor(resolver, environment).process().forEach { classScanner ->
+            val ksClassSimpleName = classScanner.ksClass.simpleName.asString()
+            val classScannerSimpleName = classScanner::class.java.simpleName
             classScanner.primaryConstructorProperties.forEach {
-                logger.warn("${boostAnnotatedClass.simpleName.asString()} [${classScanner::class.java.simpleName}] primaryConstructorProperties $it")
+                logger.warn("$ksClassSimpleName [$classScannerSimpleName] primaryConstructorProperties $it")
             }
             classScanner.classProperties.forEach {
-                logger.warn("${boostAnnotatedClass.simpleName.asString()} [${classScanner::class.java.simpleName}] classProperties $it")
+                logger.warn("$ksClassSimpleName [$classScannerSimpleName] classProperties $it")
             }
         }
         return emptyList()

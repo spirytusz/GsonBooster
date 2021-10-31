@@ -1,4 +1,4 @@
-package com.spirytusz.booster.processor.scan
+package com.spirytusz.booster.processor.scan.api
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -10,7 +10,7 @@ import com.spirytusz.booster.processor.scan.resolver.JsonTokenNameResolver
 abstract class AbstractClassScanner(
     private val environment: SymbolProcessorEnvironment,
     private val resolver: Resolver,
-    private val ksClass: KSClassDeclaration
+    val ksClass: KSClassDeclaration
 ) {
 
     companion object {

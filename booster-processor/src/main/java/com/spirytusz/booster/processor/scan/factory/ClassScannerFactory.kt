@@ -1,8 +1,11 @@
-package com.spirytusz.booster.processor.scan
+package com.spirytusz.booster.processor.scan.factory
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
+import com.spirytusz.booster.processor.scan.impl.JavaClassScanner
+import com.spirytusz.booster.processor.scan.impl.KotlinClassScanner
 
 object ClassScannerFactory {
 
