@@ -4,6 +4,7 @@ import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.spirytusz.booster.processor.data.JsonTokenName
 import kotlin.reflect.KClass
 
@@ -28,12 +29,12 @@ class JsonTokenNameResolver(
     }
 
     private fun KSType.isChildTypeOf(kClass: KClass<*>): Boolean {
-        val type = getKSTypeFromName(kClass.qualifiedName.toString()) ?: return false
+        val type = getKSTypeFromName(kClass.qualifiedName.toString(), arguments) ?: return false
         return isAssignableFrom(type)
     }
 
-    private fun getKSTypeFromName(canonicalName: String): KSType? {
+    private fun getKSTypeFromName(canonicalName: String, arguments: List<KSTypeArgument>): KSType? {
         val declaration = resolver.getClassDeclarationByName(canonicalName)
-        return declaration?.asType(typeArguments = listOf())
+        return declaration?.asType(arguments)
     }
 }
