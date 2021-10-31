@@ -63,7 +63,8 @@ abstract class AbstractClassScanner(
             nullability = ksType.nullability,
             variance = Variance.INVARIANT,
             jsonTokenName = jsonTokenNameResolver.resolve(ksType),
-            typeArguments = typeArguments
+            typeArguments = typeArguments,
+            origin = ksType
         )
     }
 

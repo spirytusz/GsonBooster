@@ -1,5 +1,6 @@
 package com.spirytusz.booster.processor.data
 
+import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.Nullability
 import com.google.devtools.ksp.symbol.Variance
 
@@ -10,13 +11,15 @@ import com.google.devtools.ksp.symbol.Variance
  * @param nullability 可空性
  * @param variance 协变、逆变、不变、通配符
  * @param typeArguments 泛型
+ * @param origin KSP的类型
  */
 data class TypeDescriptor(
     val raw: String,
     val nullability: Nullability,
     val variance: Variance,
     val jsonTokenName: JsonTokenName,
-    val typeArguments: List<TypeDescriptor>
+    val typeArguments: List<TypeDescriptor>,
+    val origin: KSType
 ) {
 
     fun isPrimitive(): Boolean {
@@ -42,7 +45,8 @@ data class TypeDescriptor(
             nullability = nullability,
             variance = variance,
             jsonTokenName = jsonTokenName,
-            typeArguments = typeArguments
+            typeArguments = typeArguments,
+            origin = origin
         )
     }
 

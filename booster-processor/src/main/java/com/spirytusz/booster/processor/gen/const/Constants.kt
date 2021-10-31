@@ -11,4 +11,6 @@ object Constants {
     const val READER = "reader"
 
     const val WRITER = "writer"
+
+    const val OBJECT = "obj"
 }
