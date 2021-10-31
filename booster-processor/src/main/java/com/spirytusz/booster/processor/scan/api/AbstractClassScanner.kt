@@ -57,7 +57,7 @@ abstract class AbstractClassScanner(
         }.mapNotNull { (typeArgument, ksType) ->
             ksType ?: return@mapNotNull null
             createTypeDescriptorFromKSType(ksType).copy(variance = typeArgument.variance)
-        }.toSet()
+        }.toList()
         return TypeDescriptor(
             raw = ksType.declaration.qualifiedName?.asString().toString(),
             nullability = ksType.nullability,

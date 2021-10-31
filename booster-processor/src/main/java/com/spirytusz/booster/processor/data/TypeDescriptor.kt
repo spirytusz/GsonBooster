@@ -16,11 +16,19 @@ data class TypeDescriptor(
     val nullability: Nullability,
     val variance: Variance,
     val jsonTokenName: JsonTokenName,
-    val typeArguments: Set<TypeDescriptor>
+    val typeArguments: List<TypeDescriptor>
 ) {
+
+    fun isPrimitive(): Boolean {
+        return !isArray() && !isObject()
+    }
 
     fun isArray(): Boolean {
         return jsonTokenName in listOf(JsonTokenName.LIST, JsonTokenName.SET)
+    }
+
+    fun isObject(): Boolean {
+        return jsonTokenName == JsonTokenName.OBJECT
     }
 
     fun nullable(): Boolean = nullability == Nullability.NULLABLE
