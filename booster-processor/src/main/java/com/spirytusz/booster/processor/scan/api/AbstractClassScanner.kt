@@ -31,6 +31,10 @@ abstract class AbstractClassScanner(
         scanClassProperties()
     }
 
+    val allProperties: Set<PropertyDescriptor> by lazy {
+        (primaryConstructorProperties + classProperties).distinctBy { it.fieldName }.toSet()
+    }
+
     /**
      * constructor properties
      */

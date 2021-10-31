@@ -6,25 +6,20 @@ import com.spirytusz.booster.annotation.Boost
 @Boost
 data class Test(
     @SerializedName(alternate = ["rgag", "rgearherwa"], value = "hahah")
-    val a: String
+    val a: String = "",
+    val b: String = "",
+    override val d: String = "",
+    override val f: String = ""
 ) : BasiConfig() {
     @Transient
     val listLong: List<out Long> = listOf()
 }
 
-open class BasiConfig : BasiConfig2(), IConfig, IConfig2 {
-
-    val b: String = ""
-
-    override val d: String
-        get() = ""
-
-    override val f: String
-        get() = ""
+abstract class BasiConfig : BasiConfig2(), IConfig, IConfig2 {
 }
 
 open class BasiConfig2 {
-    val c: String = ""
+
 }
 
 interface IConfig {

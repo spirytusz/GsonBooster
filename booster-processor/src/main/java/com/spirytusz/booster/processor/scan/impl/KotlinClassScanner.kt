@@ -26,7 +26,7 @@ class KotlinClassScanner(
             fieldName = ksValueParameter.name?.asString().toString(),
             type = createTypeDescriptorFromKSType(ksValueParameter.type.resolve()),
             hasDefault = ksValueParameter.hasDefault,
-            transient = false
+            transient = ksValueParameter.annotations.any { it.shortName.asString() == "Transient" }
         )
     }
 
@@ -39,7 +39,7 @@ class KotlinClassScanner(
             fieldName = ksPropertyDeclaration.simpleName.asString(),
             type = createTypeDescriptorFromKSType(ksPropertyDeclaration.type.resolve()),
             hasDefault = ksPropertyDeclaration.hasBackingField,
-            transient = false
+            transient = ksPropertyDeclaration.annotations.any { it.shortName.asString() == "Transient" }
         )
     }
 }

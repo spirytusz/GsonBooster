@@ -5,6 +5,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.base.BaseSymbolProcessor
+import com.spirytusz.booster.processor.check.CodeCheckProcessor
 import com.spirytusz.booster.processor.scan.ClassScanProcessor
 
 /**
@@ -20,16 +21,8 @@ class BoostProcessor(
 ) : BaseSymbolProcessor(environment) {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        ClassScanProcessor(resolver, environment).process().forEach { classScanner ->
-            val ksClassSimpleName = classScanner.ksClass.simpleName.asString()
-            val classScannerSimpleName = classScanner::class.java.simpleName
-            classScanner.primaryConstructorProperties.forEach {
-                logger.warn("$ksClassSimpleName [$classScannerSimpleName] primaryConstructorProperties $it")
-            }
-            classScanner.classProperties.forEach {
-                logger.warn("$ksClassSimpleName [$classScannerSimpleName] classProperties $it")
-            }
-        }
+        val classScanners = ClassScanProcessor(resolver, environment).process()
+        CodeCheckProcessor(environment).process(classScanners)
         return emptyList()
     }
 }

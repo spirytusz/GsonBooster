@@ -19,6 +19,10 @@ data class TypeDescriptor(
     val typeArguments: Set<TypeDescriptor>
 ) {
 
+    fun isArray(): Boolean {
+        return jsonTokenName in listOf(JsonTokenName.LIST, JsonTokenName.SET)
+    }
+
     fun nullable(): Boolean = nullability == Nullability.NULLABLE
 
     fun copy(
