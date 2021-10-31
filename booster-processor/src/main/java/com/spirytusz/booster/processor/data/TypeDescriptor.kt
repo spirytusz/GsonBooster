@@ -15,6 +15,7 @@ data class TypeDescriptor(
     val raw: String,
     val nullability: Nullability,
     val variance: Variance,
+    val jsonTokenName: JsonTokenName,
     val typeArguments: Set<TypeDescriptor>
 ) {
 
@@ -28,6 +29,7 @@ data class TypeDescriptor(
             raw = this.raw,
             nullability = nullability,
             variance = variance,
+            jsonTokenName = jsonTokenName,
             typeArguments = typeArguments
         )
     }

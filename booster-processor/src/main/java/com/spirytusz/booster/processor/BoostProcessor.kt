@@ -21,8 +21,8 @@ class BoostProcessor(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver.boostAnnotatedClasses.forEach { boostAnnotatedClass ->
-            val classScanner =
-                ClassScannerFactory.createClassScanner(environment, boostAnnotatedClass)
+            val classScanner = ClassScannerFactory
+                .createClassScanner(resolver, environment, boostAnnotatedClass)
             classScanner.primaryConstructorProperties.forEach {
                 logger.warn("${boostAnnotatedClass.simpleName.asString()} [${classScanner::class.java.simpleName}] primaryConstructorProperties $it")
             }

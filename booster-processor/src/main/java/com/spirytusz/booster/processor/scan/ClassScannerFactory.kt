@@ -1,11 +1,13 @@
 package com.spirytusz.booster.processor.scan
 
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 
 object ClassScannerFactory {
 
     fun createClassScanner(
+        resolver: Resolver,
         environment: SymbolProcessorEnvironment,
         ksClassDeclaration: KSClassDeclaration
     ): AbstractClassScanner {
@@ -19,9 +21,9 @@ object ClassScannerFactory {
         }
         containingFile!!
         return if (containingFile.fileName.endsWith(".kt")) {
-            KotlinClassScanner(environment, ksClassDeclaration)
+            KotlinClassScanner(resolver, environment, ksClassDeclaration)
         } else {
-            JavaClassScanner(environment, ksClassDeclaration)
+            JavaClassScanner(resolver, environment, ksClassDeclaration)
         }
     }
 }

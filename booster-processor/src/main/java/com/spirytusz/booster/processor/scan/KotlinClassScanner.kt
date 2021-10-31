@@ -1,5 +1,6 @@
 package com.spirytusz.booster.processor.scan
 
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
@@ -10,9 +11,10 @@ import com.spirytusz.booster.processor.data.PropertyDescriptor
  * Kotlin类扫描器
  */
 class KotlinClassScanner(
+    resolver: Resolver,
     environment: SymbolProcessorEnvironment,
     ksClass: KSClassDeclaration
-) : AbstractClassScanner(environment, ksClass) {
+) : AbstractClassScanner(environment, resolver, ksClass) {
 
     override fun createPropertyDescriptorFromKSValueParameter(
         ksValueParameter: KSValueParameter

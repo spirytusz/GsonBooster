@@ -1,12 +1,15 @@
 package com.spirytusz.booster.processor.scan
 
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.*
 import com.spirytusz.booster.processor.data.PropertyDescriptor
 import com.spirytusz.booster.processor.data.TypeDescriptor
+import com.spirytusz.booster.processor.scan.resolver.JsonTokenNameResolver
 
 abstract class AbstractClassScanner(
     private val environment: SymbolProcessorEnvironment,
+    private val resolver: Resolver,
     private val ksClass: KSClassDeclaration
 ) {
 
@@ -42,6 +45,8 @@ abstract class AbstractClassScanner(
         ksPropertyDeclaration: KSPropertyDeclaration
     ): PropertyDescriptor
 
+    private val jsonTokenNameResolver = JsonTokenNameResolver(environment, resolver)
+
     protected fun createTypeDescriptorFromKSType(ksType: KSType): TypeDescriptor {
         val typeArguments = ksType.arguments.map {
             it to it.type?.resolve()
@@ -53,6 +58,7 @@ abstract class AbstractClassScanner(
             raw = ksType.declaration.qualifiedName?.asString().toString(),
             nullability = ksType.nullability,
             variance = Variance.INVARIANT,
+            jsonTokenName = jsonTokenNameResolver.resolve(ksType),
             typeArguments = typeArguments
         )
     }

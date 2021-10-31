@@ -34,5 +34,6 @@ data class PropertyDescriptor(
         if (hasDefault) {
             append(" hasDefault")
         }
+        append(" ${type.jsonTokenName.name}")
     }
 }
