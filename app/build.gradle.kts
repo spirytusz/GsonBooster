@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 plugins {
+    id("com.google.devtools.ksp")
     id("com.android.application")
     kotlin("android")
     kotlin("android.extensions")
-    kotlin("kapt")
 }
 
 android {
@@ -40,5 +40,5 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.8.6")
     implementation(project(":booster-annotation"))
-    kapt(project(":booster-processor"))
+    ksp(project(":booster-processor"))
 }

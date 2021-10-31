@@ -4,13 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.spirytusz.gsonbooster.data.Foo
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,19 +19,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val json = json()
-        findViewById<Button>(R.id.testBtn).setOnClickListener {
-            val common = GsonBuilder().create()
-            val boost = GsonBuilder()
-                .create()
-
-            val commonTimeCost = traceOnceJson(common, json)
-            val boostTimeCost = traceOnceJson(boost, json)
-            findViewById<TextView>(R.id.result).text = """
-                common time cost: ${TimeUnit.NANOSECONDS.toMicros(commonTimeCost) / 1000.0}
-                boost time cost:  ${TimeUnit.NANOSECONDS.toMicros(boostTimeCost) / 1000.0}
-            """.trimIndent()
-        }
+//        val json = json()
+//        findViewById<Button>(R.id.testBtn).setOnClickListener {
+//            val common = GsonBuilder().create()
+//            val boost = GsonBuilder()
+//                .create()
+//
+//            val commonTimeCost = traceOnceJson(common, json)
+//            val boostTimeCost = traceOnceJson(boost, json)
+//            findViewById<TextView>(R.id.result).text = """
+//                common time cost: ${TimeUnit.NANOSECONDS.toMicros(commonTimeCost) / 1000.0}
+//                boost time cost:  ${TimeUnit.NANOSECONDS.toMicros(boostTimeCost) / 1000.0}
+//            """.trimIndent()
+//        }
     }
 
     private fun traceOnceJson(gson: Gson, json: String): Long {

@@ -1,11 +1,12 @@
 package com.spirytusz.gsonbooster.data
 
 import com.google.gson.annotations.SerializedName
-import com.spirytusz.booster.annotation.Boost
 
-@Boost
+private const val KEY = "1" + "1" + "1"
+
+
 data class Foo(
-    @SerializedName("foo_int")
+    @SerializedName(KEY)
     val intValue: Int = 0,
     @SerializedName("foo_string")
     val stringValue: String = "",
@@ -35,9 +36,13 @@ data class Foo(
     val testEnum: TestEnum = TestEnum.HELLO,
     @SerializedName("var_bean")
     val varFieldBean: VarFieldBean = VarFieldBean()
-)
+) {
 
-@Boost
+    @Transient
+    val ktA: String = ""
+}
+
+
 data class Bar(
     @SerializedName("bar_int")
     val intValue: Int = 0,
@@ -47,7 +52,7 @@ data class Bar(
     val stringValue: String = ""
 )
 
-@Boost
+
 data class NullableBean(
     @SerializedName("nullable_int")
     val intValue: Int? = null,
@@ -67,7 +72,7 @@ data class NullableBean(
     val listBar: List<Bar>? = null
 )
 
-@Boost
+
 data class VarFieldBean(
     @SerializedName("var_int")
     var intValue: Int = 0,
@@ -78,7 +83,7 @@ data class VarFieldBean(
 ) {
 
     @SerializedName("var_out_constructor_list_long")
-    var outConstructorListLongValue: List<Long> = listOf()
+    var outConstructorListLongValue: MutableList<Long?> = mutableListOf()
 }
 
 

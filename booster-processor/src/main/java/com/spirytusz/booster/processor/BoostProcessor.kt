@@ -1,11 +1,11 @@
 package com.spirytusz.booster.processor
 
-import com.google.auto.service.AutoService
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.symbol.KSAnnotated
 import com.spirytusz.booster.annotation.Boost
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Processor
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.TypeElement
+import com.spirytusz.booster.processor.base.BaseSymbolProcessor
+import com.spirytusz.booster.processor.scan.ClassScannerFactory
 
 /**
  * [Boost]注解处理器
@@ -15,13 +15,21 @@ import javax.lang.model.element.TypeElement
  *     2. 生成TypeAdapter
  *     3. 生成TypeAdapterFactory
  */
-@AutoService(Processor::class)
-class BoostProcessor : AbstractProcessor() {
+class BoostProcessor(
+    private val environment: SymbolProcessorEnvironment
+) : BaseSymbolProcessor(environment) {
 
-    override fun process(
-        annotations: MutableSet<out TypeElement>?,
-        roundEnv: RoundEnvironment?
-    ): Boolean {
-        return false
+    override fun process(resolver: Resolver): List<KSAnnotated> {
+        resolver.boostAnnotatedClasses.forEach { boostAnnotatedClass ->
+            val classScanner =
+                ClassScannerFactory.createClassScanner(environment, boostAnnotatedClass)
+            classScanner.primaryConstructorProperties.forEach {
+                logger.warn("${boostAnnotatedClass.simpleName.asString()} [${classScanner::class.java.simpleName}] primaryConstructorProperties $it")
+            }
+            classScanner.classProperties.forEach {
+                logger.warn("${boostAnnotatedClass.simpleName.asString()} [${classScanner::class.java.simpleName}] classProperties $it")
+            }
+        }
+        return emptyList()
     }
 }
