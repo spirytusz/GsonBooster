@@ -8,15 +8,16 @@ class CollectionTypeChecker : AbstractClassPropertiesChecker() {
 
     override fun calculateInvalidProperties(classScanner: AbstractClassScanner): Set<PropertyDescriptor> {
         val expectCollectionType = setOf(
-            List::class.qualifiedName, MutableList::class.qualifiedName,
-            Set::class.qualifiedName, MutableSet::class.qualifiedName
+            List::class.qualifiedName, "kotlin.collections.MutableList",
+            Set::class.qualifiedName, "kotlin.collections.MutableSet"
         )
-        return classScanner.allProperties.filter {
-            it.type.isArray()
-        }.filterNot {
+
+        return classScanner.allProperties.filterNot {
             it.transient
         }.filter {
-            it.type.raw in expectCollectionType
+            it.type.isArray()
+        }.filter {
+            it.type.raw !in expectCollectionType
         }.toSet()
     }
 
