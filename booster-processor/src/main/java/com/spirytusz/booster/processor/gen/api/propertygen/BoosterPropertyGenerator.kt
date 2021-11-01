@@ -47,7 +47,7 @@ class BoosterPropertyGenerator(
         classScanner: AbstractClassScanner,
         typeDescriptor: TypeDescriptor
     ): PropertySpec {
-        val typeAdapterClassSimpleName = classScanner.getTypeAdapterName()
+        val typeAdapterClassSimpleName = typeDescriptor.getTypeAdapterName()
         val adapterFieldName = typeDescriptor.getTypeAdapterFieldName()
         val isAnnotatedByBooster = allClassScanners.any {
             it.ksClass.qualifiedName?.asString() == typeDescriptor.raw

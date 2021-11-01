@@ -9,5 +9,6 @@ enum class JsonTokenName(val token: String, val nextFunExp: String) {
     BOOLEAN("BOOLEAN", "nextBoolean()"),
     LIST("BEGIN_ARRAY", ""),
     SET("BEGIN_ARRAY", ""),
-    OBJECT("BEGIN_OBJECT", "")
+    OBJECT("BEGIN_OBJECT", ""),
+    ENUM("STRING", "nextString()")
 }

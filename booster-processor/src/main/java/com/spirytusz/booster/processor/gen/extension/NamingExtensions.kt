@@ -10,6 +10,10 @@ fun AbstractClassScanner.getTypeAdapterName(): String {
     return "${ksClassName}$TYPE_ADAPTER"
 }
 
+fun TypeDescriptor.getTypeAdapterName(): String {
+    return "${flattenSimple()}$TYPE_ADAPTER"
+}
+
 fun TypeDescriptor.getTypeAdapterFieldName(): String {
     return "${joinWithArguments()}$TYPE_ADAPTER".firstCharToLowerCase()
 }

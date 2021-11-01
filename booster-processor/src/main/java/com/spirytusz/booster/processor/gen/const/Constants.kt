@@ -13,4 +13,8 @@ object Constants {
     const val WRITER = "writer"
 
     const val OBJECT = "obj"
+
+    const val DEFAULT_VALUE = "defaultValue"
+
+    const val RETURN_VALUE = "returnValue"
 }

@@ -23,7 +23,7 @@ data class TypeDescriptor(
 ) {
 
     fun isPrimitive(): Boolean {
-        return !isArray() && !isObject()
+        return !isArray() && !isObject() && !isEnum()
     }
 
     fun isArray(): Boolean {
@@ -32,6 +32,10 @@ data class TypeDescriptor(
 
     fun isObject(): Boolean {
         return jsonTokenName == JsonTokenName.OBJECT
+    }
+
+    fun isEnum(): Boolean {
+        return jsonTokenName == JsonTokenName.ENUM
     }
 
     fun nullable(): Boolean = nullability == Nullability.NULLABLE
