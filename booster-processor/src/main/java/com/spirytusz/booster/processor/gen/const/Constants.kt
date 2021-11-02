@@ -17,4 +17,6 @@ object Constants {
     const val DEFAULT_VALUE = "defaultValue"
 
     const val RETURN_VALUE = "returnValue"
+
+    const val READING_STORE_TEMP_FIELD_NAME_PREFIX = "tempReading"
 }

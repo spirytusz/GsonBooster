@@ -2,6 +2,7 @@ package com.spirytusz.booster.processor.gen.extension
 
 import com.google.devtools.ksp.symbol.KSFile
 import com.spirytusz.booster.processor.data.TypeDescriptor
+import com.spirytusz.booster.processor.gen.const.Constants.READING_STORE_TEMP_FIELD_NAME_PREFIX
 import com.spirytusz.booster.processor.gen.const.Constants.TYPE_ADAPTER
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 
@@ -24,6 +25,10 @@ fun KSFile.getTypeAdapterFileName(): String {
     return "$fileName$TYPE_ADAPTER"
 }
 
+fun TypeDescriptor.getReadingStoreTempFieldName(): String {
+    return "$READING_STORE_TEMP_FIELD_NAME_PREFIX${joinWithArguments().firstCharToUpperCase()}"
+}
+
 private fun TypeDescriptor.joinWithArguments(): String = buildString {
     append(raw.split(".").last())
     typeArguments.forEach {
@@ -33,4 +38,8 @@ private fun TypeDescriptor.joinWithArguments(): String = buildString {
 
 private fun String.firstCharToLowerCase(): String {
     return this.replaceFirstChar { it.lowercaseChar() }
+}
+
+private fun String.firstCharToUpperCase(): String {
+    return this.replaceFirstChar { it.uppercaseChar() }
 }
