@@ -4,6 +4,7 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.spirytusz.booster.processor.data.TypeDescriptor
 import com.spirytusz.booster.processor.gen.const.Constants.READING_STORE_TEMP_FIELD_NAME_PREFIX
 import com.spirytusz.booster.processor.gen.const.Constants.TYPE_ADAPTER
+import com.spirytusz.booster.processor.gen.const.Constants.WRITING_TEMP_FIELD_NAME_PREFIX
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 
 fun AbstractClassScanner.getTypeAdapterName(): String {
@@ -27,6 +28,10 @@ fun KSFile.getTypeAdapterFileName(): String {
 
 fun TypeDescriptor.getReadingStoreTempFieldName(): String {
     return "$READING_STORE_TEMP_FIELD_NAME_PREFIX${joinWithArguments().firstCharToUpperCase()}"
+}
+
+fun TypeDescriptor.getWritingTempFieldName(): String {
+    return "$WRITING_TEMP_FIELD_NAME_PREFIX${joinWithArguments().firstCharToUpperCase()}"
 }
 
 private fun TypeDescriptor.joinWithArguments(): String = buildString {
