@@ -2,6 +2,7 @@ package com.spirytusz.booster.processor.gen.api.funcgen.read
 
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.gson.stream.JsonReader
+import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.gen.api.funcgen.AbstractFunctionGenerator
 import com.spirytusz.booster.processor.gen.api.funcgen.read.types.TypeReadCodeGeneratorFactory
 import com.spirytusz.booster.processor.gen.const.Constants.DEFAULT_VALUE
@@ -14,7 +15,8 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ksp.toClassName
 
 class BoosterReadFuncGenerator(
-    ksFile: KSFile
+    ksFile: KSFile,
+    private val config: BoosterGenConfig
 ) : AbstractFunctionGenerator(ksFile) {
 
     fun generateReadFunc(classScanner: AbstractClassScanner): FunSpec {
@@ -59,7 +61,8 @@ class BoosterReadFuncGenerator(
             val keyFormat = keys.joinToString { key -> key }
             CodeBlock.Builder().beginControlFlow("$keyFormat ->", *keys.toTypedArray())
                 .apply {
-                    TypeReadCodeGeneratorFactory.create(propertyDesc).generate(this, propertyDesc)
+                    TypeReadCodeGeneratorFactory.create(propertyDesc)
+                        .generate(this, propertyDesc, config)
                 }
                 .endControlFlow()
                 .build()

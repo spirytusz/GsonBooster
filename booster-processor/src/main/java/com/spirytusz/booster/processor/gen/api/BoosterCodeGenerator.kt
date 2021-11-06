@@ -4,6 +4,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
+import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.gen.api.funcgen.read.BoosterReadFuncGenerator
 import com.spirytusz.booster.processor.gen.api.funcgen.write.BoosterWriteFuncGenerator
 import com.spirytusz.booster.processor.gen.api.propertygen.BoosterPropertyGenerator
@@ -21,19 +22,20 @@ class BoosterCodeGenerator(
     private val environment: SymbolProcessorEnvironment,
     private val ksFile: KSFile,
     private val allClassScanners: Set<AbstractClassScanner>,
-    private val ksFileClassScanners: Set<AbstractClassScanner>
+    private val ksFileClassScanners: Set<AbstractClassScanner>,
+    private val config: BoosterGenConfig
 ) {
 
     private val propertyGenerator by lazy {
-        BoosterPropertyGenerator(environment, ksFile, allClassScanners)
+        BoosterPropertyGenerator(environment, ksFile, allClassScanners, config)
     }
 
     private val readFuncGenerator by lazy {
-        BoosterReadFuncGenerator(ksFile)
+        BoosterReadFuncGenerator(ksFile, config)
     }
 
     private val writeFuncGenerator by lazy {
-        BoosterWriteFuncGenerator(ksFile)
+        BoosterWriteFuncGenerator(ksFile, config)
     }
 
     fun process() {

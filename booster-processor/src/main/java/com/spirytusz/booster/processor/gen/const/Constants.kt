@@ -21,4 +21,6 @@ object Constants {
     const val READING_STORE_TEMP_FIELD_NAME_PREFIX = "tempReading"
 
     const val WRITING_TEMP_FIELD_NAME_PREFIX = "tempWriting"
+
+    const val TRIGGER_CRASH_COMMENT = "// Expect JsonToken %L but NULL: will trigger JsonSyntaxException"
 }

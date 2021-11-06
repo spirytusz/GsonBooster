@@ -1,10 +1,12 @@
 package com.spirytusz.booster.processor.gen.api.funcgen.read.types
 
+import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.data.JsonTokenName
 import com.spirytusz.booster.processor.data.PropertyDescriptor
 import com.spirytusz.booster.processor.data.TypeDescriptor
 import com.spirytusz.booster.processor.gen.api.funcgen.read.types.base.TypeReadCodeGenerator
 import com.spirytusz.booster.processor.gen.const.Constants.READER
+import com.spirytusz.booster.processor.gen.const.Constants.TRIGGER_CRASH_COMMENT
 import com.spirytusz.booster.processor.gen.extension.asTypeName
 import com.spirytusz.booster.processor.gen.extension.getReadingStoreTempFieldName
 import com.spirytusz.booster.processor.gen.extension.getTypeAdapterFieldName
@@ -12,31 +14,51 @@ import com.squareup.kotlinpoet.CodeBlock
 
 class CollectionTypeReadCodeGenerator : TypeReadCodeGenerator {
 
-    override fun generate(codeBlock: CodeBlock.Builder, propertyDescriptor: PropertyDescriptor) {
-        addCheckCodeRecursively(codeBlock, propertyDescriptor, propertyDescriptor.type, null)
+    override fun generate(
+        codeBlock: CodeBlock.Builder,
+        propertyDescriptor: PropertyDescriptor,
+        config: BoosterGenConfig
+    ) {
+        addCheckCodeRecursively(
+            codeBlock,
+            propertyDescriptor,
+            config,
+            propertyDescriptor.type,
+            null
+        )
     }
 
     private fun addCheckCodeRecursively(
         codeBlock: CodeBlock.Builder,
         propertyDescriptor: PropertyDescriptor,
+        config: BoosterGenConfig,
         typeDescriptor: TypeDescriptor,
         parentTypeDescriptor: TypeDescriptor?
     ) {
         if (!typeDescriptor.isArray()) {
-            addReadNonCollectionTypeCode(codeBlock, typeDescriptor, parentTypeDescriptor!!)
+            addReadNonCollectionTypeCode(codeBlock, config, typeDescriptor, parentTypeDescriptor!!)
             return
         }
 
         // if
         codeBlock.beginControlFlow("if ($READER.peek() == JsonToken.NULL)")
-        codeBlock.addStatement("$READER.nextNull()")
-        if (typeDescriptor.nullable()) {
-            if (parentTypeDescriptor == null) {
-                codeBlock.addStatement("${propertyDescriptor.fieldName} = null")
-            } else {
-                val parentTypeReadingStoreFieldName =
-                    parentTypeDescriptor.getReadingStoreTempFieldName()
-                codeBlock.addStatement("$parentTypeReadingStoreFieldName.add(null)")
+        when {
+            typeDescriptor.nullable() -> {
+                codeBlock.addStatement("$READER.nextNull()")
+                if (parentTypeDescriptor == null) {
+                    codeBlock.addStatement("${propertyDescriptor.fieldName} = null")
+                } else {
+                    val parentTypeReadingStoreFieldName =
+                        parentTypeDescriptor.getReadingStoreTempFieldName()
+                    codeBlock.addStatement("$parentTypeReadingStoreFieldName.add(null)")
+                }
+            }
+            config.fromJsonNullSafe -> {
+                codeBlock.addStatement("$READER.nextNull()")
+            }
+            else -> {
+                codeBlock.addStatement(TRIGGER_CRASH_COMMENT, typeDescriptor.jsonTokenName.token)
+                codeBlock.addStatement("$READER.beginArray()")
             }
         }
         codeBlock.endControlFlow()
@@ -47,7 +69,7 @@ class CollectionTypeReadCodeGenerator : TypeReadCodeGenerator {
         codeBlock.addStatement("$READER.beginArray()")
         codeBlock.beginControlFlow("while ($READER.hasNext())")
         val genericType = typeDescriptor.typeArguments.first()
-        addCheckCodeRecursively(codeBlock, propertyDescriptor, genericType, typeDescriptor)
+        addCheckCodeRecursively(codeBlock, propertyDescriptor, config, genericType, typeDescriptor)
         codeBlock.endControlFlow()
         codeBlock.addStatement("$READER.endArray()")
         if (parentTypeDescriptor == null) {
@@ -62,16 +84,26 @@ class CollectionTypeReadCodeGenerator : TypeReadCodeGenerator {
 
     private fun addReadNonCollectionTypeCode(
         codeBlock: CodeBlock.Builder,
+        config: BoosterGenConfig,
         typeDescriptor: TypeDescriptor,
         parentTypeDescriptor: TypeDescriptor
     ) {
         // if
         codeBlock.beginControlFlow("if ($READER.peek() == JsonToken.NULL)")
-        codeBlock.addStatement("$READER.nextNull()")
-        if (typeDescriptor.nullable()) {
-            val parentTypeReadingStoreFieldName =
-                parentTypeDescriptor.getReadingStoreTempFieldName()
-            codeBlock.addStatement("$parentTypeReadingStoreFieldName.add(null)")
+        when {
+            typeDescriptor.nullable() -> {
+                val parentTypeReadingStoreFieldName =
+                    parentTypeDescriptor.getReadingStoreTempFieldName()
+                codeBlock.addStatement("$READER.nextNull()")
+                codeBlock.addStatement("$parentTypeReadingStoreFieldName.add(null)")
+            }
+            config.fromJsonNullSafe -> {
+                codeBlock.addStatement("$READER.nextNull()")
+            }
+            else -> {
+                codeBlock.addStatement(TRIGGER_CRASH_COMMENT, typeDescriptor.jsonTokenName.token)
+                codeBlock.addStatement("$READER.${typeDescriptor.jsonTokenName.nextFunExp}")
+            }
         }
         codeBlock.endControlFlow()
 

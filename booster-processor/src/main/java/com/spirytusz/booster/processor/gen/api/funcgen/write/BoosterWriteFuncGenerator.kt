@@ -2,6 +2,7 @@ package com.spirytusz.booster.processor.gen.api.funcgen.write
 
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.gson.stream.JsonWriter
+import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.data.PropertyDescriptor
 import com.spirytusz.booster.processor.gen.api.funcgen.AbstractFunctionGenerator
 import com.spirytusz.booster.processor.gen.api.funcgen.write.types.TypeWriteCodeGeneratorFactory
@@ -14,7 +15,8 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ksp.toClassName
 
 class BoosterWriteFuncGenerator(
-    ksFile: KSFile
+    ksFile: KSFile,
+    private val config: BoosterGenConfig
 ) : AbstractFunctionGenerator(ksFile) {
 
     fun generateWriteFunc(classScanner: AbstractClassScanner): FunSpec {

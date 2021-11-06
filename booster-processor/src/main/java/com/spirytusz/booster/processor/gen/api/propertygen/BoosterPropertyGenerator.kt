@@ -4,6 +4,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
+import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.data.TypeDescriptor
 import com.spirytusz.booster.processor.gen.const.Constants.GSON
 import com.spirytusz.booster.processor.gen.extension.asTypeName
@@ -16,7 +17,8 @@ import com.squareup.kotlinpoet.*
 class BoosterPropertyGenerator(
     private val environment: SymbolProcessorEnvironment,
     private val ksFile: KSFile,
-    private val allClassScanners: Set<AbstractClassScanner>
+    private val allClassScanners: Set<AbstractClassScanner>,
+    private val config: BoosterGenConfig
 ) {
 
 
