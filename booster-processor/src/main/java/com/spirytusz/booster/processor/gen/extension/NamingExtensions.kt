@@ -6,10 +6,19 @@ import com.spirytusz.booster.processor.gen.const.Constants.READING_STORE_TEMP_FI
 import com.spirytusz.booster.processor.gen.const.Constants.TYPE_ADAPTER
 import com.spirytusz.booster.processor.gen.const.Constants.WRITING_TEMP_FIELD_NAME_PREFIX
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
+import com.squareup.kotlinpoet.ClassName
 
 fun AbstractClassScanner.getTypeAdapterName(): String {
     val ksClassName = this.ksClass.simpleName.asString()
     return "${ksClassName}$TYPE_ADAPTER"
+}
+
+fun AbstractClassScanner.getTypeAdapterClassName(): ClassName {
+    val typeAdapterName = getTypeAdapterName()
+    val split = typeAdapterName.split(".")
+    val packageName = split.subList(0, split.size - 1).joinToString(separator = ".") { it }
+    val simpleName = split.last()
+    return ClassName(packageName, simpleName)
 }
 
 fun TypeDescriptor.getTypeAdapterName(): String {

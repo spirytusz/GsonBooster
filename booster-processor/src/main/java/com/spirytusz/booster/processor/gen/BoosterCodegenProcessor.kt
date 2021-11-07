@@ -14,15 +14,17 @@ class BoosterCodegenProcessor(private val environment: SymbolProcessorEnvironmen
         }.mapValues {
             it.value.toSet()
         }
+        val config = readBoosterGenConfig()
         groupByFile.forEach { (ksFile, ksFileClassScanners) ->
             BoosterCodeGenerator(
                 environment = environment,
                 ksFile = ksFile,
                 allClassScanners = classScanners,
                 ksFileClassScanners = ksFileClassScanners,
-                config = readBoosterGenConfig()
+                config = config
             ).process()
         }
+        BoosterTypeAdapterFactoryGenerator(environment).generate(classScanners, config)
     }
 
     private fun readBoosterGenConfig(): BoosterGenConfig {

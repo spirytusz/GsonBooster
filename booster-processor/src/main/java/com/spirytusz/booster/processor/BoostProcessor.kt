@@ -23,6 +23,7 @@ class BoostProcessor(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val classScanners = ClassScanProcessor(resolver, environment).process()
+        if (classScanners.isEmpty()) return emptyList()
         CodeCheckProcessor(environment).process(classScanners)
         BoosterCodegenProcessor(environment).process(classScanners)
         return emptyList()
