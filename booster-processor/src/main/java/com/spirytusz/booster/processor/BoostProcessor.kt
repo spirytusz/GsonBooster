@@ -21,6 +21,10 @@ class BoostProcessor(
     private val environment: SymbolProcessorEnvironment
 ) : BaseSymbolProcessor(environment) {
 
+    /**
+     * @see <a href="https://github.com/google/ksp/blob/main/docs/multi-round.md">multi-round.md</a>
+     * @return 需要延迟处理的symbol。因为没有需要延迟处理的symbol，故返回空集
+     */
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val classScanners = ClassScanProcessor(resolver, environment).process()
         if (classScanners.isEmpty()) return emptyList()
