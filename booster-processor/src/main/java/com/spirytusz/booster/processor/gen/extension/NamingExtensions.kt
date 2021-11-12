@@ -7,22 +7,22 @@ import com.spirytusz.booster.processor.gen.const.Constants.TYPE_ADAPTER
 import com.spirytusz.booster.processor.gen.const.Constants.WRITING_TEMP_FIELD_NAME_PREFIX
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.ClassName
-
-fun AbstractClassScanner.getTypeAdapterName(): String {
-    val ksClassName = this.ksClass.simpleName.asString()
-    return "${ksClassName}$TYPE_ADAPTER"
-}
+import com.squareup.kotlinpoet.TypeName
 
 fun AbstractClassScanner.getTypeAdapterClassName(): ClassName {
-    val typeAdapterName = getTypeAdapterName()
+    val ksClassPackageName = this.ksClass.packageName.asString()
+    val ksClassSimpleName = this.ksClass.simpleName.asString()
+    val typeAdapterName = "$ksClassPackageName.$ksClassSimpleName$TYPE_ADAPTER"
     val split = typeAdapterName.split(".")
     val packageName = split.subList(0, split.size - 1).joinToString(separator = ".") { it }
     val simpleName = split.last()
     return ClassName(packageName, simpleName)
 }
 
-fun TypeDescriptor.getTypeAdapterName(): String {
-    return "${flattenSimple()}$TYPE_ADAPTER"
+fun TypeDescriptor.asTypeAdapterName(): TypeName {
+    val packageName = origin.declaration.packageName.asString()
+    val simpleName = origin.declaration.simpleName.asString() + TYPE_ADAPTER
+    return ClassName.bestGuess("$packageName.$simpleName")
 }
 
 fun TypeDescriptor.getTypeAdapterFieldName(): String {

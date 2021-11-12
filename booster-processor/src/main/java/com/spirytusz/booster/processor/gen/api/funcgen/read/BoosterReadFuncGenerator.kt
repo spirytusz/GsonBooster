@@ -8,6 +8,7 @@ import com.spirytusz.booster.processor.gen.api.funcgen.read.types.TypeReadCodeGe
 import com.spirytusz.booster.processor.gen.const.Constants.DEFAULT_VALUE
 import com.spirytusz.booster.processor.gen.const.Constants.READER
 import com.spirytusz.booster.processor.gen.const.Constants.RETURN_VALUE
+import com.spirytusz.booster.processor.gen.extension.asTypeName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
@@ -36,7 +37,7 @@ class BoosterReadFuncGenerator(
     private fun FunSpec.Builder.appendDefaultValueDeclaration(
         classScanner: AbstractClassScanner
     ): FunSpec.Builder = this.apply {
-        addStatement("val $DEFAULT_VALUE = ${classScanner.ksClass.simpleName.asString()}()")
+        addStatement("val $DEFAULT_VALUE = %T()", classScanner.ksClass.asTypeName())
     }
 
     private fun FunSpec.Builder.appendTempProperties(
@@ -77,8 +78,6 @@ class BoosterReadFuncGenerator(
     private fun FunSpec.Builder.appendReturnCodes(
         classScanner: AbstractClassScanner
     ): FunSpec.Builder = this.apply {
-        val ksClassSimpleName = classScanner.ksClass.simpleName.asString()
-
         val returnCodeBlock = CodeBlock.Builder()
         val primaryConstructorProperties = classScanner.primaryConstructorProperties.filterNot {
             it.transient
@@ -86,7 +85,8 @@ class BoosterReadFuncGenerator(
             "${it.fieldName} = ${it.fieldName}"
         }.joinToString { it }
         returnCodeBlock.addStatement(
-            "val $RETURN_VALUE = $ksClassSimpleName(%L)",
+            "val $RETURN_VALUE = %T(%L)",
+            classScanner.ksClass.asTypeName(),
             primaryConstructorProperties
         )
         classScanner.classProperties.filterNot {

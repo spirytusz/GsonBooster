@@ -10,8 +10,8 @@ import com.spirytusz.booster.processor.gen.api.funcgen.write.BoosterWriteFuncGen
 import com.spirytusz.booster.processor.gen.api.propertygen.BoosterPropertyGenerator
 import com.spirytusz.booster.processor.gen.const.Constants.GSON
 import com.spirytusz.booster.processor.gen.extension.asTypeName
+import com.spirytusz.booster.processor.gen.extension.getTypeAdapterClassName
 import com.spirytusz.booster.processor.gen.extension.getTypeAdapterFileName
-import com.spirytusz.booster.processor.gen.extension.getTypeAdapterName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
@@ -55,7 +55,7 @@ class BoosterCodeGenerator(
 
     private fun generateTypeAdapter(classScanner: AbstractClassScanner): TypeSpec {
         val typeAdapterBuilder = TypeSpec
-            .classBuilder(classScanner.getTypeAdapterName())
+            .classBuilder(classScanner.getTypeAdapterClassName().simpleName)
             .superclass(
                 TypeAdapter::class.asClassName().parameterizedBy(classScanner.ksClass.asTypeName())
             ).primaryConstructor(

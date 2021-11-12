@@ -7,8 +7,8 @@ enum class JsonTokenName(val token: String, val nextFunExp: String) {
     DOUBLE("NUMBER", "nextDouble()"),
     STRING("STRING", "nextString()"),
     BOOLEAN("BOOLEAN", "nextBoolean()"),
-    LIST("BEGIN_ARRAY", ""),
-    SET("BEGIN_ARRAY", ""),
-    OBJECT("BEGIN_OBJECT", ""),
+    LIST("BEGIN_ARRAY", "beginArray()"),
+    SET("BEGIN_ARRAY", "beginArray()"),
+    OBJECT("BEGIN_OBJECT", "beginObject()"),
     ENUM("STRING", "nextString()")
 }

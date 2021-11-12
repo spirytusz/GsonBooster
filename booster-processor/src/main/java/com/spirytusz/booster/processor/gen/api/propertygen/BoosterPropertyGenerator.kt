@@ -7,9 +7,9 @@ import com.google.gson.reflect.TypeToken
 import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.data.TypeDescriptor
 import com.spirytusz.booster.processor.gen.const.Constants.GSON
+import com.spirytusz.booster.processor.gen.extension.asTypeAdapterName
 import com.spirytusz.booster.processor.gen.extension.asTypeName
 import com.spirytusz.booster.processor.gen.extension.getTypeAdapterFieldName
-import com.spirytusz.booster.processor.gen.extension.getTypeAdapterName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.*
 
@@ -49,7 +49,6 @@ class BoosterPropertyGenerator(
         classScanner: AbstractClassScanner,
         typeDescriptor: TypeDescriptor
     ): PropertySpec {
-        val typeAdapterClassSimpleName = typeDescriptor.getTypeAdapterName()
         val adapterFieldName = typeDescriptor.getTypeAdapterFieldName()
         val isAnnotatedByBooster = allClassScanners.any {
             it.ksClass.qualifiedName?.asString() == typeDescriptor.raw
@@ -57,7 +56,7 @@ class BoosterPropertyGenerator(
         val initializerCodeBlock = if (isAnnotatedByBooster) {
             CodeBlock.Builder()
                 .beginControlFlow("lazy")
-                .addStatement("%L($GSON)", typeAdapterClassSimpleName)
+                .addStatement("%T($GSON)", typeDescriptor.asTypeAdapterName())
                 .endControlFlow()
                 .build()
         } else {
@@ -72,7 +71,7 @@ class BoosterPropertyGenerator(
                 .build()
         }
         val adapterType = with(ParameterizedTypeName.Companion) {
-            TypeAdapter::class.asClassName().parameterizedBy(typeDescriptor.asTypeName())
+            TypeAdapter::class.asClassName().parameterizedBy(typeDescriptor.asTypeName().copy(nullable = false))
         }
         return PropertySpec.builder(adapterFieldName, adapterType, KModifier.PRIVATE)
             .delegate(initializerCodeBlock)

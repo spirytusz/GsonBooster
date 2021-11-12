@@ -94,7 +94,7 @@ class BoosterTypeAdapterFactoryGenerator(private val environment: SymbolProcesso
         }
         codeBlock.addStatement("else -> null")
         codeBlock.endControlFlow()
-        codeBlock.addStatement("return typeAdapter as? %L", returnType)
+        codeBlock.addStatement("return typeAdapter as? %T", returnType)
         createFun.addCode(codeBlock.build())
         return createFun.build()
     }

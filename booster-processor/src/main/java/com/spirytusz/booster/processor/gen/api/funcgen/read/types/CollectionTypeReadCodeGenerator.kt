@@ -1,5 +1,6 @@
 package com.spirytusz.booster.processor.gen.api.funcgen.read.types
 
+import com.google.gson.stream.JsonToken
 import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.data.JsonTokenName
 import com.spirytusz.booster.processor.data.PropertyDescriptor
@@ -41,7 +42,7 @@ class CollectionTypeReadCodeGenerator : TypeReadCodeGenerator {
         }
 
         // if
-        codeBlock.beginControlFlow("if ($READER.peek() == JsonToken.NULL)")
+        codeBlock.beginControlFlow("if ($READER.peek() == %T.NULL)", JsonToken::class)
         when {
             typeDescriptor.nullable() -> {
                 codeBlock.addStatement("$READER.nextNull()")
@@ -89,7 +90,7 @@ class CollectionTypeReadCodeGenerator : TypeReadCodeGenerator {
         parentTypeDescriptor: TypeDescriptor
     ) {
         // if
-        codeBlock.beginControlFlow("if ($READER.peek() == JsonToken.NULL)")
+        codeBlock.beginControlFlow("if ($READER.peek() == %T.NULL)", JsonToken::class)
         when {
             typeDescriptor.nullable() -> {
                 val parentTypeReadingStoreFieldName =
