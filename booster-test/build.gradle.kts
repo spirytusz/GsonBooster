@@ -1,10 +1,14 @@
 plugins {
     kotlin("jvm")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 sourceSets.test {
-    java.srcDirs("$buildDir/generated/source/kapt/test")
+    java.srcDir(File("build/generated/ksp/test/kotlin"))
+}
+
+ksp {
+    arg("factoryName", "com.spirytusz.booster.test.BoostTestTypeAdapterFactory")
 }
 
 dependencies {
@@ -14,6 +18,6 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.8.6")
     implementation(project(":booster-annotation"))
-    kapt(project(":booster-processor"))
-    kaptTest(project(":booster-processor"))
+    ksp(project(":booster-processor"))
+    kspTest(project(":booster-processor"))
 }

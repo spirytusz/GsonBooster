@@ -1,0 +1,8 @@
+{
+  "primitive_str": "123",
+  "primitive_int": 4,
+  "primitive_long": 5,
+  "primitive_float": 6.0,
+  "primitive_double": 7.0,
+  "primitive_bool": true
+}
