@@ -39,11 +39,13 @@ class BoosterTypeAdapterFactoryGenerator(private val environment: SymbolProcesso
     }
 
     private fun resolveTypeAdapterFactoryName(config: BoosterGenConfig): ClassName? {
-        if (!config.generateTypeAdapterFactory) {
+        if (config.typeAdapterFactoryName.isEmpty()) {
+            environment.logger.warn("will not generate TypeAdapterFactory caused by empty factoryName")
             return null
         }
         val split = config.typeAdapterFactoryName.split(".")
         if (split.size <= 2) {
+            environment.logger.warn("will not generate TypeAdapterFactory caused by illegal factoryName")
             return null
         }
         val packageName = split.subList(0, split.size - 1).joinToString(separator = ".") { it }

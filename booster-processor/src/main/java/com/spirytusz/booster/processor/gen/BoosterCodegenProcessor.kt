@@ -33,7 +33,7 @@ class BoosterCodegenProcessor(private val environment: SymbolProcessorEnvironmen
         val typeAdapterFactoryName = environment.options["factoryName"]
         return BoosterGenConfig(
             fromJsonNullSafe = fromJsonNullSafe ?: default.fromJsonNullSafe,
-            typeAdapterFactoryName = typeAdapterFactoryName ?: default.typeAdapterFactoryName
+            typeAdapterFactoryName = typeAdapterFactoryName ?: ""
         )
     }
 }
