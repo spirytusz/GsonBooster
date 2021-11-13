@@ -39,8 +39,8 @@ fun TypeDescriptor.getReadingStoreTempFieldName(): String {
     return "$READING_STORE_TEMP_FIELD_NAME_PREFIX${joinWithArguments().firstCharToUpperCase()}"
 }
 
-fun TypeDescriptor.getWritingTempFieldName(): String {
-    return "$WRITING_TEMP_FIELD_NAME_PREFIX${joinWithArguments().firstCharToUpperCase()}"
+fun TypeDescriptor.getWritingTempFieldName(propertyName: String): String {
+    return "$WRITING_TEMP_FIELD_NAME_PREFIX${joinWithArguments().firstCharToUpperCase()}For${propertyName.firstCharToUpperCase()}"
 }
 
 private fun TypeDescriptor.joinWithArguments(): String = buildString {

@@ -20,7 +20,7 @@ class CollectionTypeWriteCodeGenerator : TypeWriteCodeGenerator {
         typeDescriptor: TypeDescriptor
     ) {
         if (!typeDescriptor.isArray()) {
-            addWriteNonCollectionTypeCode(codeBlock, typeDescriptor)
+            addWriteNonCollectionTypeCode(codeBlock, propertyDescriptor, typeDescriptor)
             return
         }
 
@@ -29,9 +29,9 @@ class CollectionTypeWriteCodeGenerator : TypeWriteCodeGenerator {
             propertyDescriptor: PropertyDescriptor,
             typeDescriptor: TypeDescriptor
         ) {
-            val tempWritingFieldName = typeDescriptor.getWritingTempFieldName()
+            val tempWritingFieldName = typeDescriptor.getWritingTempFieldName(propertyDescriptor.fieldName)
             val genericTypeDescriptor = typeDescriptor.typeArguments.first()
-            val genericTypeTempWriteFieldName = genericTypeDescriptor.getWritingTempFieldName()
+            val genericTypeTempWriteFieldName = genericTypeDescriptor.getWritingTempFieldName(propertyDescriptor.fieldName)
             codeBlock.addStatement("$WRITER.beginArray()")
             codeBlock.beginControlFlow("for ($genericTypeTempWriteFieldName in $tempWritingFieldName)")
             addCheckCodeRecursively(
@@ -43,7 +43,7 @@ class CollectionTypeWriteCodeGenerator : TypeWriteCodeGenerator {
             codeBlock.addStatement("$WRITER.endArray()")
         }
 
-        val tempWritingFieldName = typeDescriptor.getWritingTempFieldName()
+        val tempWritingFieldName = typeDescriptor.getWritingTempFieldName(propertyDescriptor.fieldName)
         if (propertyDescriptor.type == typeDescriptor) {
             codeBlock.addStatement(
                 "val $tempWritingFieldName = $OBJECT.${propertyDescriptor.fieldName}"
@@ -65,27 +65,29 @@ class CollectionTypeWriteCodeGenerator : TypeWriteCodeGenerator {
 
     private fun addWriteNonCollectionTypeCode(
         codeBlock: FunSpec.Builder,
+        propertyDescriptor: PropertyDescriptor,
         typeDescriptor: TypeDescriptor
     ) {
-        val tempWritingFieldName = typeDescriptor.getWritingTempFieldName()
+        val tempWritingFieldName = typeDescriptor.getWritingTempFieldName(propertyDescriptor.fieldName)
         if (typeDescriptor.nullable()) {
             codeBlock.beginControlFlow("if ($tempWritingFieldName != null)")
-            realAddWriteNonCollectionTypeCode(codeBlock, typeDescriptor)
+            realAddWriteNonCollectionTypeCode(codeBlock, propertyDescriptor, typeDescriptor)
             codeBlock.endControlFlow()
 
             codeBlock.beginControlFlow("else")
             codeBlock.addStatement("$WRITER.nullValue()")
             codeBlock.endControlFlow()
         } else {
-            realAddWriteNonCollectionTypeCode(codeBlock, typeDescriptor)
+            realAddWriteNonCollectionTypeCode(codeBlock, propertyDescriptor, typeDescriptor)
         }
     }
 
     private fun realAddWriteNonCollectionTypeCode(
         codeBlock: FunSpec.Builder,
+        propertyDescriptor: PropertyDescriptor,
         typeDescriptor: TypeDescriptor
     ) {
-        val tempWritingFieldName = typeDescriptor.getWritingTempFieldName()
+        val tempWritingFieldName = typeDescriptor.getWritingTempFieldName(propertyDescriptor.fieldName)
         when {
             typeDescriptor.isPrimitive() -> {
                 codeBlock.addStatement("$WRITER.value($tempWritingFieldName)")
