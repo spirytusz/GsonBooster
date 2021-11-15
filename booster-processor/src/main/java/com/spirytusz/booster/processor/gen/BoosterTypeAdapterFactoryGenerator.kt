@@ -30,11 +30,11 @@ class BoosterTypeAdapterFactoryGenerator(private val environment: SymbolProcesso
         config: BoosterGenConfig
     ): ClassName? {
         val factoryName = resolveTypeAdapterFactoryName(config) ?: return null
-        environment.logger.warn(factoryName.toString())
         val fileSpec = FileSpec.builder(factoryName.packageName, factoryName.simpleName)
             .addType(generateTypeAdapterFactory(allBoostAnnotatedClasses, factoryName))
             .build()
         fileSpec.writeTo(codeGenerator = environment.codeGenerator, aggregating = false)
+        environment.logger.warn("generated TypeAdapterFactory $factoryName finish.")
         return factoryName
     }
 
