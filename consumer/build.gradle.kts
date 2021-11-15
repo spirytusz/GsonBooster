@@ -25,6 +25,26 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+
+    // https://github.com/google/ksp/issues/37#issuecomment-868961649
+    applicationVariants.all {
+        val variantName = name
+        sourceSets {
+            getByName("main") {
+                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
+            }
+        }
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
 }
 
 dependencies {
@@ -41,4 +61,9 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.6")
     implementation(project(":booster-annotation"))
     ksp(project(":booster-processor"))
+}
+
+ksp {
+    arg("factoryName", "com.spirytusz.gsonbooster.ExampleTypeAdapterFactory")
+    arg("nullSafe", "true")
 }

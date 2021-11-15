@@ -1,0 +1,14 @@
+{
+  "foo_boolean": true,
+  "foo_double": 3453.0,
+  "foo_int": 123,
+  "foo_list_long": [
+    233,
+    666,
+    777,
+    "999"
+  ],
+  "foo_long": 5678,
+  "foo_string": "356534",
+  "foo_float": 1.0
+}
