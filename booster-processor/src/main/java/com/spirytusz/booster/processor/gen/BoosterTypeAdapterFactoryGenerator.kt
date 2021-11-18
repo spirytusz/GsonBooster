@@ -14,6 +14,7 @@ import com.spirytusz.booster.processor.gen.extension.getTypeAdapterClassName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.writeTo
 
 class BoosterTypeAdapterFactoryGenerator(private val environment: SymbolProcessorEnvironment) {
@@ -61,6 +62,13 @@ class BoosterTypeAdapterFactoryGenerator(private val environment: SymbolProcesso
             .classBuilder(factoryName)
             .addSuperinterface(TypeAdapterFactory::class)
             .addFunction(generateCreateFunc(allBoostAnnotatedClasses))
+            .apply {
+                // a processor needs to associate an output with the sources of the corresponding KSNode
+                // https://github.com/google/ksp/blob/main/docs/incremental.md
+                allBoostAnnotatedClasses.forEach {
+                    this.addOriginatingKSFile(it.containingFile)
+                }
+            }
             .build()
     }
 

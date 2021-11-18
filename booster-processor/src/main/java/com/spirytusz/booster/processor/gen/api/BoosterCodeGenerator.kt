@@ -15,6 +15,7 @@ import com.spirytusz.booster.processor.gen.extension.getTypeAdapterFileName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 
 import com.squareup.kotlinpoet.ksp.writeTo
 
@@ -67,7 +68,9 @@ class BoosterCodeGenerator(
                     .initializer(GSON)
                     .addModifiers(KModifier.PRIVATE)
                     .build()
-            )
+            ) // a processor needs to associate an output with the sources of the corresponding KSNode
+            // https://github.com/google/ksp/blob/main/docs/incremental.md
+            .addOriginatingKSFile(classScanner.containingFile)
 
         val propertySpecs = propertyGenerator.generateProperties(classScanner)
 
