@@ -18,7 +18,7 @@ data class Foo(
     @SerializedName("foo_float")
     val floatValue: Float = 0f,
     @SerializedName("foo_list_long")
-    val listLong: ArrayList<Long> = arrayListOf()
+    val listLong: List<Long> = mutableListOf()
 ) {
 
     @Transient
