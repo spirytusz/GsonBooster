@@ -15,7 +15,7 @@ class JsonTokenNameResolver(
     private val resolver: Resolver
 ) {
     fun resolve(ksType: KSType): JsonTokenName {
-        val resolved = when {
+        return when {
             ksType.isAssignableFrom(resolver.builtIns.intType) -> JsonTokenName.INT
             ksType.isAssignableFrom(resolver.builtIns.longType) -> JsonTokenName.LONG
             ksType.isAssignableFrom(resolver.builtIns.floatType) -> JsonTokenName.FLOAT
@@ -27,8 +27,6 @@ class JsonTokenNameResolver(
             ksType.isEnum() -> JsonTokenName.ENUM
             else -> JsonTokenName.OBJECT
         }
-        environment.logger.warn("resolve() >>> ksType=$ksType, resolved=${resolved.name}")
-        return resolved
     }
 
     private fun KSType.isChildTypeOf(kClass: KClass<*>): Boolean {

@@ -30,10 +30,11 @@ data class PropertyDescriptor(
             append("val ")
         }
         append("$fieldName: ")
-        append(type.flattenSimple())
+        append(type.flattenCanonical())
         if (hasDefault) {
             append(" hasDefault")
         }
-        append(" ${type.jsonTokenName.name}")
+        append(" keys: $keys")
+        append(" JsonToken: ${type.jsonTokenName.name}")
     }
 }

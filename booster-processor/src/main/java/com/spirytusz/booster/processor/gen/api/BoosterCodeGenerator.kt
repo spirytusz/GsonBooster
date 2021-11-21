@@ -5,18 +5,17 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.spirytusz.booster.processor.config.BoosterGenConfig
+import com.spirytusz.booster.processor.extension.asTypeName
+import com.spirytusz.booster.processor.extension.getTypeAdapterClassName
+import com.spirytusz.booster.processor.extension.getTypeAdapterFileName
 import com.spirytusz.booster.processor.gen.api.funcgen.read.BoosterReadFuncGenerator
 import com.spirytusz.booster.processor.gen.api.funcgen.write.BoosterWriteFuncGenerator
 import com.spirytusz.booster.processor.gen.api.propertygen.BoosterPropertyGenerator
 import com.spirytusz.booster.processor.gen.const.Constants.GSON
-import com.spirytusz.booster.processor.gen.extension.asTypeName
-import com.spirytusz.booster.processor.gen.extension.getTypeAdapterClassName
-import com.spirytusz.booster.processor.gen.extension.getTypeAdapterFileName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
-
 import com.squareup.kotlinpoet.ksp.writeTo
 
 class BoosterCodeGenerator(

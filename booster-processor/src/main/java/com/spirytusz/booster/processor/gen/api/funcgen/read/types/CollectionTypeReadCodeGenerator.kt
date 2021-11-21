@@ -5,12 +5,12 @@ import com.spirytusz.booster.processor.config.BoosterGenConfig
 import com.spirytusz.booster.processor.data.JsonTokenName
 import com.spirytusz.booster.processor.data.PropertyDescriptor
 import com.spirytusz.booster.processor.data.TypeDescriptor
+import com.spirytusz.booster.processor.extension.asTypeName
+import com.spirytusz.booster.processor.extension.getReadingStoreTempFieldName
+import com.spirytusz.booster.processor.extension.getTypeAdapterFieldName
 import com.spirytusz.booster.processor.gen.api.funcgen.read.types.base.TypeReadCodeGenerator
 import com.spirytusz.booster.processor.gen.const.Constants.READER
 import com.spirytusz.booster.processor.gen.const.Constants.TRIGGER_CRASH_COMMENT
-import com.spirytusz.booster.processor.gen.extension.asTypeName
-import com.spirytusz.booster.processor.gen.extension.getReadingStoreTempFieldName
-import com.spirytusz.booster.processor.gen.extension.getTypeAdapterFieldName
 import com.squareup.kotlinpoet.CodeBlock
 
 class CollectionTypeReadCodeGenerator : TypeReadCodeGenerator {

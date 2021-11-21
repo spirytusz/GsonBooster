@@ -15,8 +15,12 @@ class ClassScanProcessor(
     private val environment: SymbolProcessorEnvironment
 ) {
 
+    companion object {
+        private val TARGET_ANNOTATION = Boost::class.qualifiedName!!
+    }
+
     private val Resolver.boostAnnotatedClasses: Set<KSClassDeclaration>
-        get() = this.getSymbolsWithAnnotation(Boost::class.java.canonicalName)
+        get() = this.getSymbolsWithAnnotation(TARGET_ANNOTATION)
             .filterIsInstance<KSClassDeclaration>()
             .filter {
                 it.classKind == ClassKind.CLASS
@@ -26,6 +30,11 @@ class ClassScanProcessor(
             .toSet()
 
     fun process(): Set<AbstractClassScanner> {
+        val boostAnnotatedClasses = resolver.boostAnnotatedClasses
+        if (boostAnnotatedClasses.isEmpty()) {
+            environment.logger.warn("No $TARGET_ANNOTATION annotated class found")
+            return emptySet()
+        }
         return resolver.boostAnnotatedClasses.map { boostAnnotatedClass ->
             ClassScannerFactory.createClassScanner(resolver, environment, boostAnnotatedClass)
         }.toSet()

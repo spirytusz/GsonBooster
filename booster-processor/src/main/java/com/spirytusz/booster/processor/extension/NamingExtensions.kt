@@ -1,4 +1,4 @@
-package com.spirytusz.booster.processor.gen.extension
+package com.spirytusz.booster.processor.extension
 
 import com.google.devtools.ksp.symbol.KSFile
 import com.spirytusz.booster.processor.data.TypeDescriptor

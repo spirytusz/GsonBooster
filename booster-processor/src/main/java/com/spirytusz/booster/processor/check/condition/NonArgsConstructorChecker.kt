@@ -1,10 +1,19 @@
 package com.spirytusz.booster.processor.check.condition
 
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.spirytusz.booster.processor.check.api.AbstractClassPropertiesChecker
 import com.spirytusz.booster.processor.data.PropertyDescriptor
+import com.spirytusz.booster.processor.extension.error
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 
-class NonArgsConstructorChecker : AbstractClassPropertiesChecker() {
+class NonArgsConstructorChecker(
+    private val environment: SymbolProcessorEnvironment
+) : AbstractClassPropertiesChecker() {
+
+    companion object {
+        private const val TAG = "NonArgsConstructorChecker"
+    }
+
     override fun calculateInvalidProperties(classScanner: AbstractClassScanner): Set<PropertyDescriptor> {
         return classScanner.primaryConstructorProperties.filterNot { it.transient }
             .filterNot { it.hasDefault }.toSet()
@@ -14,11 +23,8 @@ class NonArgsConstructorChecker : AbstractClassPropertiesChecker() {
         classScanner: AbstractClassScanner,
         invalidProperties: Set<PropertyDescriptor>
     ) {
-        val className = classScanner.ksClass.qualifiedName?.asString().toString()
         val invalidPropertyNames = invalidProperties.map { it.fieldName }
-        val msg = "$className without non-args constructor. properties: $invalidPropertyNames"
-        throw WithoutNonArgsConstructorException(msg)
+        val msg = "without non-args constructor. properties: $invalidPropertyNames"
+        environment.logger.error(TAG, msg, classScanner.ksClass)
     }
-
-    private class WithoutNonArgsConstructorException(msg: String) : IllegalArgumentException(msg)
 }

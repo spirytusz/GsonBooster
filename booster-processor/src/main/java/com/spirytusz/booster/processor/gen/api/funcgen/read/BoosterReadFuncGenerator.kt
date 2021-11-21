@@ -3,12 +3,12 @@ package com.spirytusz.booster.processor.gen.api.funcgen.read
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.gson.stream.JsonReader
 import com.spirytusz.booster.processor.config.BoosterGenConfig
+import com.spirytusz.booster.processor.extension.asTypeName
 import com.spirytusz.booster.processor.gen.api.funcgen.AbstractFunctionGenerator
 import com.spirytusz.booster.processor.gen.api.funcgen.read.types.TypeReadCodeGeneratorFactory
 import com.spirytusz.booster.processor.gen.const.Constants.DEFAULT_VALUE
 import com.spirytusz.booster.processor.gen.const.Constants.READER
 import com.spirytusz.booster.processor.gen.const.Constants.RETURN_VALUE
-import com.spirytusz.booster.processor.gen.extension.asTypeName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec

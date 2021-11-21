@@ -2,11 +2,11 @@ package com.spirytusz.booster.processor.gen.api.funcgen.write.types
 
 import com.spirytusz.booster.processor.data.PropertyDescriptor
 import com.spirytusz.booster.processor.data.TypeDescriptor
+import com.spirytusz.booster.processor.extension.getTypeAdapterFieldName
+import com.spirytusz.booster.processor.extension.getWritingTempFieldName
 import com.spirytusz.booster.processor.gen.api.funcgen.write.types.base.TypeWriteCodeGenerator
 import com.spirytusz.booster.processor.gen.const.Constants.OBJECT
 import com.spirytusz.booster.processor.gen.const.Constants.WRITER
-import com.spirytusz.booster.processor.gen.extension.getTypeAdapterFieldName
-import com.spirytusz.booster.processor.gen.extension.getWritingTempFieldName
 import com.squareup.kotlinpoet.FunSpec
 
 class CollectionTypeWriteCodeGenerator : TypeWriteCodeGenerator {

@@ -7,10 +7,10 @@ import com.google.gson.TypeAdapterFactory
 import com.google.gson.reflect.TypeToken
 import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.config.BoosterGenConfig
+import com.spirytusz.booster.processor.extension.asTypeName
+import com.spirytusz.booster.processor.extension.getTypeAdapterClassName
 import com.spirytusz.booster.processor.gen.const.Constants.GSON
 import com.spirytusz.booster.processor.gen.const.Constants.TYPE_TOKEN
-import com.spirytusz.booster.processor.gen.extension.asTypeName
-import com.spirytusz.booster.processor.gen.extension.getTypeAdapterClassName
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy

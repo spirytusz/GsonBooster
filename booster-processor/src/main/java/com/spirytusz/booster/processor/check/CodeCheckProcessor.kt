@@ -12,19 +12,19 @@ class CodeCheckProcessor(
 ) {
 
     private val collectionTypeChecker by lazy {
-        CollectionTypeChecker()
+        CollectionTypeChecker(environment)
     }
 
     private val kotlinKeywordPropertyChecker by lazy {
-        KotlinKeywordPropertyChecker()
+        KotlinKeywordPropertyChecker(environment)
     }
 
     private val nonArgsConstructorChecker by lazy {
-        NonArgsConstructorChecker()
+        NonArgsConstructorChecker(environment)
     }
 
     private val publicGetterSetterChecker by lazy {
-        PublicGetterSetterChecker()
+        PublicGetterSetterChecker(environment)
     }
 
     fun process(classScanners: Set<AbstractClassScanner>) {

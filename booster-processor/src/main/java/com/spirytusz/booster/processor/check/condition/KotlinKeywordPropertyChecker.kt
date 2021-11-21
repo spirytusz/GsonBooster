@@ -1,12 +1,18 @@
 package com.spirytusz.booster.processor.check.condition
 
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.spirytusz.booster.processor.check.api.AbstractClassPropertiesChecker
 import com.spirytusz.booster.processor.data.PropertyDescriptor
+import com.spirytusz.booster.processor.extension.error
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 
-class KotlinKeywordPropertyChecker : AbstractClassPropertiesChecker() {
+class KotlinKeywordPropertyChecker(
+    private val environment: SymbolProcessorEnvironment
+) : AbstractClassPropertiesChecker() {
 
     companion object {
+        private const val TAG = "KotlinKeywordPropertyChecker"
+
         // LinkedHashSet
         private val keywords = mutableSetOf(
             "as?", "as", "break", "class", "continue",
@@ -37,12 +43,8 @@ class KotlinKeywordPropertyChecker : AbstractClassPropertiesChecker() {
         classScanner: AbstractClassScanner,
         invalidProperties: Set<PropertyDescriptor>
     ) {
-        val className = classScanner.ksClass.qualifiedName?.asString().toString()
         val invalidPropertyNames = invalidProperties.map { it.fieldName }
-        val msg = "$className properties: $invalidPropertyNames named by kotlin keywords"
-
-        throw FieldNameInKotlinKeywordsException(msg)
+        val msg = "properties: $invalidPropertyNames named by kotlin keywords"
+        environment.logger.error(TAG, msg, classScanner.ksClass)
     }
-
-    private class FieldNameInKotlinKeywordsException(msg: String) : IllegalArgumentException(msg)
 }

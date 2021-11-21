@@ -5,6 +5,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.*
 import com.spirytusz.booster.processor.data.PropertyDescriptor
 import com.spirytusz.booster.processor.data.TypeDescriptor
+import com.spirytusz.booster.processor.extension.info
 import com.spirytusz.booster.processor.scan.resolver.JsonTokenNameResolver
 
 abstract class AbstractClassScanner(
@@ -34,6 +35,8 @@ abstract class AbstractClassScanner(
     val allProperties: Set<PropertyDescriptor> by lazy {
         (primaryConstructorProperties + classProperties).distinctBy { it.fieldName }.toSet()
     }
+
+    private val tag = this::class.simpleName.toString()
 
     /**
      * constructor properties
@@ -70,7 +73,12 @@ abstract class AbstractClassScanner(
 
     private fun scanPrimaryConstructorProperties(): Set<PropertyDescriptor> {
         return ksClass.primaryConstructor?.parameters?.map {
-            createPropertyDescriptorFromKSValueParameter(it)
+            val primaryConstructProperty = createPropertyDescriptorFromKSValueParameter(it)
+            environment.logger.info(
+                tag,
+                "${ksClass.qualifiedName?.asString()} primaryConstructProperty >>> $primaryConstructProperty"
+            )
+            primaryConstructProperty
         }?.toSet() ?: emptySet()
     }
 
@@ -78,7 +86,12 @@ abstract class AbstractClassScanner(
         return ksClass.getAllProperties().asSequence().filterNot { ksProperty ->
             primaryConstructorProperties.any { it.fieldName == ksProperty.simpleName.asString() }
         }.map {
-            createPropertyDescriptorFromKSPropertyDeclaration(it)
+            val classProperty = createPropertyDescriptorFromKSPropertyDeclaration(it)
+            environment.logger.info(
+                tag,
+                "${ksClass.qualifiedName?.asString()} classProperty >>> $classProperty"
+            )
+            classProperty
         }.toSet()
     }
 
