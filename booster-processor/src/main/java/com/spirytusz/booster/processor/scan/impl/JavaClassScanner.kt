@@ -27,7 +27,8 @@ class JavaClassScanner(
             fieldName = ksValueParameter.name?.asString().toString(),
             type = createTypeDescriptorFromKSType(ksValueParameter.type.resolve()),
             hasDefault = ksValueParameter.hasDefault,
-            transient = false
+            transient = false,
+            origin = ksValueParameter
         )
     }
 
@@ -40,7 +41,8 @@ class JavaClassScanner(
             fieldName = ksPropertyDeclaration.simpleName.asString(),
             type = createTypeDescriptorFromKSType(ksPropertyDeclaration.type.resolve()),
             hasDefault = ksPropertyDeclaration.hasBackingField,
-            transient = ksPropertyDeclaration.modifiers.contains(Modifier.JAVA_TRANSIENT)
+            transient = ksPropertyDeclaration.modifiers.contains(Modifier.JAVA_TRANSIENT),
+            origin = ksPropertyDeclaration
         )
     }
 }

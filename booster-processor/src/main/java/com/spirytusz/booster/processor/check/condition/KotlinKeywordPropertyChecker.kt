@@ -43,8 +43,12 @@ class KotlinKeywordPropertyChecker(
         classScanner: AbstractClassScanner,
         invalidProperties: Set<PropertyDescriptor>
     ) {
-        val invalidPropertyNames = invalidProperties.map { it.fieldName }
-        val msg = "properties: $invalidPropertyNames named by kotlin keywords"
-        environment.logger.error(TAG, msg, classScanner.ksClass)
+        invalidProperties.forEach {
+            environment.logger.error(
+                TAG,
+                "property: ${it.fieldName} named by kotlin keywords",
+                it.origin
+            )
+        }
     }
 }

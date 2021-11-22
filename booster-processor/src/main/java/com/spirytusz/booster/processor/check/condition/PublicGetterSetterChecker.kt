@@ -23,8 +23,12 @@ class PublicGetterSetterChecker(
         classScanner: AbstractClassScanner,
         invalidProperties: Set<PropertyDescriptor>
     ) {
-        val invalidPropertyNames = invalidProperties.map { it.fieldName }
-        val msg = "properties: $invalidPropertyNames without public getter setter."
-        environment.logger.error(TAG, msg, classScanner.ksClass)
+        invalidProperties.forEach {
+            environment.logger.error(
+                TAG,
+                "property: ${it.fieldName} without public getter setter",
+                it.origin
+            )
+        }
     }
 }

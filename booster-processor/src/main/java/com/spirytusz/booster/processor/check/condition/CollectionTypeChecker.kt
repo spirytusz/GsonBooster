@@ -32,8 +32,12 @@ class CollectionTypeChecker(private val environment: SymbolProcessorEnvironment)
         classScanner: AbstractClassScanner,
         invalidProperties: Set<PropertyDescriptor>
     ) {
-        val invalidPropertyNames = invalidProperties.map { it.fieldName }
-        val msg = "properties: $invalidPropertyNames with invalid collection type"
-        environment.logger.error(TAG, msg, classScanner.ksClass)
+        invalidProperties.forEach {
+            environment.logger.error(
+                TAG,
+                "property: ${it.fieldName} with unsupported collection type",
+                it.origin
+            )
+        }
     }
 }

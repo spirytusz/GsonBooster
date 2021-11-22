@@ -18,6 +18,10 @@ class ClassGenericsChecker(
     }
 
     override fun onError(classScanner: AbstractClassScanner) {
-        environment.logger.error(TAG, "Class with type variance", classScanner.ksClass)
+        environment.logger.error(
+            TAG,
+            "class: ${classScanner.ksClass.simpleName.asString()} with type variance",
+            classScanner.ksClass
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.spirytusz.booster.processor.data
 
+import com.google.devtools.ksp.symbol.KSNode
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -18,7 +19,8 @@ data class PropertyDescriptor(
     val fieldName: String,
     val hasDefault: Boolean,
     val transient: Boolean,
-    val type: TypeDescriptor
+    val type: TypeDescriptor,
+    val origin: KSNode
 ) {
     override fun toString(): String = buildString {
         if (transient) {
