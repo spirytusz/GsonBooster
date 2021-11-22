@@ -1,10 +1,7 @@
 package com.spirytusz.booster.processor.check
 
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.spirytusz.booster.processor.check.condition.CollectionTypeChecker
-import com.spirytusz.booster.processor.check.condition.KotlinKeywordPropertyChecker
-import com.spirytusz.booster.processor.check.condition.NonArgsConstructorChecker
-import com.spirytusz.booster.processor.check.condition.PublicGetterSetterChecker
+import com.spirytusz.booster.processor.check.condition.*
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 
 class CodeCheckProcessor(
@@ -27,12 +24,17 @@ class CodeCheckProcessor(
         PublicGetterSetterChecker(environment)
     }
 
+    private val classGenericChecker by lazy {
+        ClassGenericsChecker(environment)
+    }
+
     fun process(classScanners: Set<AbstractClassScanner>) {
         classScanners.forEach { classScanner ->
             collectionTypeChecker.check(classScanner)
             kotlinKeywordPropertyChecker.check(classScanner)
             nonArgsConstructorChecker.check(classScanner)
             publicGetterSetterChecker.check(classScanner)
+            classGenericChecker.check(classScanner)
         }
     }
 }

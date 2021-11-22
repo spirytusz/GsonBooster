@@ -3,9 +3,9 @@ package com.spirytusz.booster.processor.check.api
 import com.spirytusz.booster.processor.data.PropertyDescriptor
 import com.spirytusz.booster.processor.scan.api.AbstractClassScanner
 
-abstract class AbstractClassPropertiesChecker {
+abstract class AbstractClassPropertiesChecker : ICodeChecker {
 
-    fun check(classScanner: AbstractClassScanner) {
+    final override fun check(classScanner: AbstractClassScanner) {
         val invalidProperties = calculateInvalidProperties(classScanner)
         if (invalidProperties.isEmpty()) {
             onPass(classScanner)
