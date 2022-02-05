@@ -1,0 +1,19 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    api 'com.squareup:kotlinpoet:1.10.2'
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    api "com.google.code.gson:gson:2.8.6"
+}

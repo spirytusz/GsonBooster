@@ -4,3 +4,6 @@ include ':app'
 rootProject.name = "GsonBooster"
 include ':benchmark'
 include ':booster-test'
+include ':base:processor-base'
+include ':base:scan:scan-kapt'
+include ':base:scan:scan-ksp'
