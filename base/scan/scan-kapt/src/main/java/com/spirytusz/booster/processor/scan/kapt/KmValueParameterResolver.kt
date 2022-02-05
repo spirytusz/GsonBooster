@@ -24,7 +24,7 @@ class KmValueParameterResolver(
 
     fun resolveKmValueParameter(): KtField {
         val fieldName = kmValueParameter.name
-        val isFinal = Flag.Property.IS_VAR(kmValueParameter.flags)
+        val isFinal = aptVariableElement?.modifiers?.contains(Modifier.FINAL) == true
         val serializedNameAnnotation = aptVariableElement?.getAnnotation(SerializedName::class.java)
         val keys = if (serializedNameAnnotation != null) {
             val result = mutableListOf<String>()

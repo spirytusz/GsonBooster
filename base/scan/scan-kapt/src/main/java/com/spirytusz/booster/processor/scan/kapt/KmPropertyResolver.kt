@@ -22,7 +22,7 @@ class KmPropertyResolver(
 
     fun resolveKmProperty(): KtField {
         val fieldName = kmProperty.name
-        val isFinal = Flag.Property.IS_VAR(kmProperty.flags)
+        val isFinal = !Flag.Property.IS_VAR(kmProperty.flags)
         val serializedNameAnnotation = aptVariableElement?.getAnnotation(SerializedName::class.java)
         val keys = if (serializedNameAnnotation != null) {
             val result = mutableListOf<String>()

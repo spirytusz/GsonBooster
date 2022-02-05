@@ -1,11 +1,12 @@
 package com.spirytusz.booster.processor.scan.kapt
 
+import com.spirytusz.booster.processor.base.log.MessageLogger
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.jvm.KotlinClassHeader
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import javax.lang.model.element.TypeElement
 
-class KmClassCacheHolder {
+class KmClassCacheHolder(private val logger: MessageLogger) {
 
     private val cache = mutableMapOf<String, KmClass>()
 
@@ -19,10 +20,13 @@ class KmClassCacheHolder {
     }
 
     private fun TypeElement.asKmClass(): KmClass? {
-        val metadataAnnotation = getAnnotation(Metadata::class.java) ?: return null
+        val metadataAnnotation = getAnnotation(Metadata::class.java) ?: run {
+            logger.error("@Metadata annotation not found", this)
+            return null
+        }
         val header = KotlinClassHeader(
             kind = metadataAnnotation.kind,
-            bytecodeVersion = metadataAnnotation.bytecodeVersion,
+            //bytecodeVersion = metadataAnnotation.bytecodeVersion,
             metadataVersion = metadataAnnotation.metadataVersion,
             data1 = metadataAnnotation.data1,
             data2 = metadataAnnotation.data2,
@@ -30,6 +34,14 @@ class KmClassCacheHolder {
             extraString = metadataAnnotation.extraString,
             packageName = metadataAnnotation.packageName
         )
-        return (KotlinClassMetadata.read(header) as? KotlinClassMetadata.Class)?.toKmClass()
+        val kotlinClassMetadata = KotlinClassMetadata.read(header) ?: run {
+            logger.error("parse KotlinClassMetadata return null", this)
+            return null
+        }
+        kotlinClassMetadata as? KotlinClassMetadata.Class ?: run {
+            logger.error("parse result is NOT KotlinClassMetadata.Class", this)
+            return null
+        }
+        return kotlinClassMetadata.toKmClass()
     }
 }
