@@ -15,7 +15,6 @@ dependencies {
     implementation "org.openjdk.jmh:jmh-generator-annprocess:1.28"
 
     implementation project(":booster-annotation")
-    kapt project(":booster-processor")
 }
 
 java {
