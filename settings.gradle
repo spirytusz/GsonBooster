@@ -1,4 +1,3 @@
-include ':booster-processor'
 include ':booster-annotation'
 include ':app'
 rootProject.name = "GsonBooster"
@@ -7,3 +6,6 @@ include ':booster-test'
 include ':base:processor-base'
 include ':base:scan:scan-kapt'
 include ':base:scan:scan-ksp'
+include ':booster-processor:processor-kapt'
+include ':booster-processor:processor-ksp'
+include ':base:processor-base-test'
