@@ -28,7 +28,7 @@ class KspKtClassScanner(
         }
         return KspKtField(
             keys = resolveKeys(ksValueParameter.annotations.toList()),
-            isFinal = ksValueParameter.isVar,
+            isFinal = !ksValueParameter.isVar,
             fieldName = ksValueParameter.name?.asString().toString(),
             ktType = createKtTypeFromKSType(ksValueParameter.type.resolve()),
             initializer = initializer,

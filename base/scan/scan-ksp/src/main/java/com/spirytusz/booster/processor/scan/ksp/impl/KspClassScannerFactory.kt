@@ -5,6 +5,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Origin
 import com.spirytusz.booster.processor.base.log.MessageLogger
+import com.spirytusz.booster.processor.base.scan.ClassScanner
 
 object KspClassScannerFactory {
 
@@ -13,7 +14,7 @@ object KspClassScannerFactory {
         resolver: Resolver,
         ksClass: KSClassDeclaration,
         logger: MessageLogger
-    ): KspAbstractClassScanner {
+    ): ClassScanner {
         val containingFile = ksClass.containingFile ?: run {
             logger.error("invalid class ${ksClass.qualifiedName?.asString()}", ksClass)
             throw IllegalArgumentException("invalid class ${ksClass.qualifiedName?.asString()}")

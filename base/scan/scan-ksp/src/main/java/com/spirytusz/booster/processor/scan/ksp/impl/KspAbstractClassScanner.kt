@@ -5,6 +5,7 @@ import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.*
+import com.spirytusz.booster.processor.base.data.DeclarationScope
 import com.spirytusz.booster.processor.base.data.KtField
 import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.log.MessageLogger
@@ -26,7 +27,7 @@ abstract class KspAbstractClassScanner(
     }
 
     final override val ktFields: List<KtField> by lazy {
-        scanPrimaryConstructorKtFields() + scanClassKtFields()
+        scanPrimaryConstructorKtFields() + scanClassKtFields() + scanSuperKtFields()
     }
 
     private val jsonTokenNameResolver = JsonTokenNameResolver(resolver, logger)
@@ -34,14 +35,14 @@ abstract class KspAbstractClassScanner(
     /**
      * constructor properties
      */
-    abstract fun createKtFieldFromKSValueParameter(
+    internal abstract fun createKtFieldFromKSValueParameter(
         ksValueParameter: KSValueParameter
     ): KspKtField
 
     /**
      * class body properties
      */
-    abstract fun createKtFieldFromKSPropertyDeclaration(
+    internal abstract fun createKtFieldFromKSPropertyDeclaration(
         ksPropertyDeclaration: KSPropertyDeclaration
     ): KspKtField
 
@@ -73,13 +74,19 @@ abstract class KspAbstractClassScanner(
     }
 
     private fun scanClassKtFields(): List<KspKtField> {
-        return ksClass.getDeclaredProperties().map {
+        ksClass.getAllProperties()
+        return ksClass.getDeclaredProperties().filter {
+            ksClass.primaryConstructor?.parameters?.none { ksValueParameter ->
+                ksValueParameter.name?.asString() != it.simpleName.asString()
+            } == true
+        }.map {
             val classProperty = createKtFieldFromKSPropertyDeclaration(it)
             logger.info(
                 "${ksClass.qualifiedName?.asString()} classProperty >>> $classProperty"
             )
             classProperty
         }.toList()
+
     }
 
     private fun scanSuperKtFields(): List<KspKtField> {
@@ -93,7 +100,7 @@ abstract class KspAbstractClassScanner(
                 logger
             ).ktFields
         }.flatten().map {
-            it as KspKtField
+            it.copy(declarationScope = DeclarationScope.SUPERS) as KspKtField
         }.toList()
     }
 

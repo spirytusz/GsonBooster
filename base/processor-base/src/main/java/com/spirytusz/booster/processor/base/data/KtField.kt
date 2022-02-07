@@ -56,7 +56,7 @@ interface KtField {
         }
         append(fieldName)
         append(" : ")
-        append(ktType.toString())
+        append(ktType.toReadableString())
         append(" ")
         append(initializer.toString())
         append(" ")
