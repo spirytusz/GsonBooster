@@ -40,7 +40,10 @@ class KaptBoosterProcessor : AbstractProcessor() {
         val kmClassCacheHolder = KmClassCacheHolder(logger)
 
         env.boostAnnotatedClasses.map {
-            KaptClassScanner(processingEnv, it, kmClassCacheHolder, logger).ktFields
+            KaptClassScanner(processingEnv, it, kmClassCacheHolder, logger)
+        }.map {
+            logger.info("classType >>> ${it.classKtType.toReadableString()}")
+            it.ktFields
         }.toList().flatten().forEach {
             logger.info("ktField >>> ${it.toReadableString()}")
         }

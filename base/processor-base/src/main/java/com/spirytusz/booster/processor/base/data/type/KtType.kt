@@ -55,7 +55,7 @@ interface KtType {
         }
         append(rawType)
         if (generics.isNotEmpty()) {
-            val genericsName = generics.map { it.toString() }.joinToString { it }
+            val genericsName = generics.map { it.toReadableString() }.joinToString { it }
             append("<")
             append(genericsName)
             append(">")

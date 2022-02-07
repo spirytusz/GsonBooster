@@ -10,7 +10,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Visibility
 import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.ksp.log.KspMessageLogger
-import com.spirytusz.booster.processor.scan.ksp.impl.KspClassScannerFactory
+import com.spirytusz.booster.processor.scan.ksp.KspClassScannerFactory
 
 class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
 
@@ -30,7 +30,10 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
     override fun process(resolver: Resolver): List<KSAnnotated> {
         logger.info("start process >>> round=${++round}")
         resolver.boostAnnotatedClasses.map {
-            KspClassScannerFactory.create(environment, resolver, it, logger).ktFields
+            KspClassScannerFactory.create(environment, resolver, it, logger)
+        }.map {
+            logger.info("classType >>> ${it.classKtType.toReadableString()}")
+            it.ktFields
         }.flatten().toList().forEach {
             logger.info("ktField >>> ${it.toReadableString()}")
         }

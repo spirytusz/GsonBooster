@@ -1,4 +1,4 @@
-package com.spirytusz.booster.processor.scan.ksp.impl
+package com.spirytusz.booster.processor.scan.ksp
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -6,6 +6,8 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Origin
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
+import com.spirytusz.booster.processor.scan.ksp.impl.KspJavaClassScanner
+import com.spirytusz.booster.processor.scan.ksp.impl.KspKtClassScanner
 
 object KspClassScannerFactory {
 

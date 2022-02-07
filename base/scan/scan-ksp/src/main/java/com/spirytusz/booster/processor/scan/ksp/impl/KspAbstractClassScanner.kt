@@ -7,9 +7,14 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.*
 import com.spirytusz.booster.processor.base.data.DeclarationScope
 import com.spirytusz.booster.processor.base.data.KtField
+import com.spirytusz.booster.processor.base.data.type.JsonTokenName
+import com.spirytusz.booster.processor.base.data.type.KtType
+import com.spirytusz.booster.processor.base.data.type.KtVariableType
 import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
+import com.spirytusz.booster.processor.scan.ksp.KspClassScannerFactory
+import com.spirytusz.booster.processor.scan.ksp.data.IKsNodeOwner
 import com.spirytusz.booster.processor.scan.ksp.data.KspKtField
 import com.spirytusz.booster.processor.scan.ksp.data.KspKtType
 
@@ -28,6 +33,10 @@ abstract class KspAbstractClassScanner(
 
     final override val ktFields: List<KtField> by lazy {
         primaryConstructorKtFields + classBodyKtFields + scanSuperKtFields()
+    }
+
+    final override val classKtType: KtType by lazy {
+        resolveClassType()
     }
 
     private val primaryConstructorKtFields by lazy { scanPrimaryConstructorKtFields() }
@@ -49,6 +58,28 @@ abstract class KspAbstractClassScanner(
     internal abstract fun createKtFieldFromKSPropertyDeclaration(
         ksPropertyDeclaration: KSPropertyDeclaration
     ): KspKtField
+
+    private fun resolveClassType(): KtType {
+        fun resolveGenerics(ksTypeParameter: KSTypeParameter): KtType {
+            return object : KtVariableType(
+                rawType = ksTypeParameter.simpleName.asString(),
+                nullable = false,
+                variance = KtVariance.INVARIANT,
+                jsonTokenName = JsonTokenName.OBJECT,
+                generics = ksTypeParameter.typeParameters.map { resolveGenerics(it) }
+            ), IKsNodeOwner {
+                override val target: KSNode = ksTypeParameter
+            }
+        }
+        return KspKtType(
+            rawType = ksClass.qualifiedName?.asString().toString(),
+            nullable = false,
+            variance = KtVariance.INVARIANT,
+            jsonTokenName = JsonTokenName.OBJECT,
+            generics = ksClass.typeParameters.map { resolveGenerics(it) },
+            target = ksClass
+        )
+    }
 
     protected fun createKtTypeFromKSType(ksType: KSType): KspKtType {
         val generics = ksType.arguments.map {

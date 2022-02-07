@@ -2,15 +2,18 @@ package com.spirytusz.booster.processor.scan.kapt
 
 import com.spirytusz.booster.processor.base.data.DeclarationScope
 import com.spirytusz.booster.processor.base.data.KtField
+import com.spirytusz.booster.processor.base.data.type.JsonTokenName
+import com.spirytusz.booster.processor.base.data.type.KtType
+import com.spirytusz.booster.processor.base.data.type.KtVariableType
+import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
+import com.spirytusz.booster.processor.scan.kapt.data.IElementOwner
+import com.spirytusz.booster.processor.scan.kapt.data.KaptKtType
 import kotlinx.metadata.*
 import java.util.regex.Pattern
 import javax.annotation.processing.ProcessingEnvironment
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.*
 
 class KaptClassScanner(
     private val processingEnvironment: ProcessingEnvironment,
@@ -23,6 +26,10 @@ class KaptClassScanner(
         private val PATTERN_DELEGATE_FIELD = Pattern.compile("\\\$delegate\$")
     }
 
+    override val classKtType: KtType by lazy {
+        resolveClassKtType()
+    }
+
     override val ktFields by lazy {
         scanPrimaryConstructor() + scanBody() + scanSupers()
     }
@@ -31,7 +38,30 @@ class KaptClassScanner(
         kmClassCacheHolder.get(belongingClass)
     }
 
+    private fun resolveClassKtType(): KtType {
+        val generics = belongingClass.typeParameters.map {
+            object : KtVariableType(
+                rawType = it.simpleName.toString(),
+                nullable = false,
+                variance = KtVariance.INVARIANT,
+                jsonTokenName = JsonTokenName.OBJECT,
+                generics = listOf()
+            ), IElementOwner {
+                override val target: Element = it
+            }
+        }
+        return KaptKtType(
+            rawType = belongingClass.qualifiedName.toString(),
+            nullable = false,
+            variance = KtVariance.INVARIANT,
+            jsonTokenName = JsonTokenName.OBJECT,
+            generics = generics,
+            target = belongingClass
+        )
+    }
+
     private fun scanPrimaryConstructor(): List<KtField> {
+        classKtType
         val primaryConstructor = kmClass.constructors.single {
             !Flag.Constructor.IS_SECONDARY(it.flags)
         }
