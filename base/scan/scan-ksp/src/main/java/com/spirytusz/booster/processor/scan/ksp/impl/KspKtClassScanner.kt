@@ -47,7 +47,7 @@ class KspKtClassScanner(
             }
         return KspKtField(
             keys = resolveKeys(ksPropertyDeclaration.annotations.toList()),
-            isFinal = ksPropertyDeclaration.isMutable,
+            isFinal = !ksPropertyDeclaration.isMutable,
             fieldName = ksPropertyDeclaration.simpleName.asString(),
             ktType = createKtTypeFromKSType(ksPropertyDeclaration.type.resolve()),
             initializer = initializer,

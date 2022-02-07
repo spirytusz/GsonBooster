@@ -8,7 +8,9 @@ open class B {
 
 @Boost
 data class Bean(
-    var string: String = ""
+    var string: String = "",
+    val intValue: Int = 0
 ) : B() {
     var a: String = ""
+    val c: Long = 0L
 }

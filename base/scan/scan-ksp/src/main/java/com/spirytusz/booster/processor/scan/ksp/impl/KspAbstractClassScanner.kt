@@ -27,10 +27,14 @@ abstract class KspAbstractClassScanner(
     }
 
     final override val ktFields: List<KtField> by lazy {
-        scanPrimaryConstructorKtFields() + scanClassKtFields() + scanSuperKtFields()
+        primaryConstructorKtFields + classBodyKtFields + scanSuperKtFields()
     }
 
-    private val jsonTokenNameResolver = JsonTokenNameResolver(resolver, logger)
+    private val primaryConstructorKtFields by lazy { scanPrimaryConstructorKtFields() }
+
+    private val classBodyKtFields by lazy { scanClassKtFields() }
+
+    private val jsonTokenNameResolver by lazy { JsonTokenNameResolver(resolver, logger) }
 
     /**
      * constructor properties
@@ -74,10 +78,9 @@ abstract class KspAbstractClassScanner(
     }
 
     private fun scanClassKtFields(): List<KspKtField> {
-        ksClass.getAllProperties()
         return ksClass.getDeclaredProperties().filter {
             ksClass.primaryConstructor?.parameters?.none { ksValueParameter ->
-                ksValueParameter.name?.asString() != it.simpleName.asString()
+                ksValueParameter.name?.asString() == it.simpleName.asString()
             } == true
         }.map {
             val classProperty = createKtFieldFromKSPropertyDeclaration(it)
