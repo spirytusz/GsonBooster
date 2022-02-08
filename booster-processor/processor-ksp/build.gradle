@@ -9,6 +9,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.freeCompilerArgs += '-Xopt-in=com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview'
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
 
@@ -19,6 +23,7 @@ dependencies {
     implementation(project(":booster-annotation"))
     api project(':base:processor-base')
     implementation project(':base:scan:scan-ksp')
+    implementation project(':base:gen')
 
     implementation("com.google.auto.service:auto-service-annotations:1.0")
     kapt "com.google.auto.service:auto-service:1.0"
