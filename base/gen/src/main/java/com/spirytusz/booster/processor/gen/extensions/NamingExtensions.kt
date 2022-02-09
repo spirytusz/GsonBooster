@@ -12,7 +12,7 @@ fun String.firstChatUpperCase() =
     this.replaceFirst(this.first(), this.first().toUpperCase())
 
 fun KtType.flatten(): String = buildString {
-    append(rawType)
+    append(ClassName.bestGuess(rawType).simpleName)
     generics.forEach { append(it.flatten()) }
 }
 

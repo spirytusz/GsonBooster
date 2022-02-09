@@ -16,6 +16,10 @@ internal object Const {
 
         const val OBJECT = "obj"
 
+        const val DEFAULT_VALUE = "defaultValue"
+
+        const val RETURN_VALUE = "returnValue"
+
         const val TEMP_FIELD_PREFIX = "temp"
     }
 }
