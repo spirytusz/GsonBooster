@@ -37,7 +37,9 @@ class ReadFunctionGenerator(private val logger: MessageLogger) {
         readFunc.addStatement("val $DEFAULT_VALUE = %T()", className)
 
         // 2. 生成每个字段的临时变量
-        scanner.ktFields.forEach {
+        scanner.ktFields.filter {
+            it.declarationScope != DeclarationScope.SUPER_INTERFACE
+        }.forEach {
             val fieldName = it.fieldName
             readFunc.addStatement("var $fieldName = $DEFAULT_VALUE.$fieldName")
         }
@@ -48,7 +50,9 @@ class ReadFunctionGenerator(private val logger: MessageLogger) {
         readFunc.beginControlFlow("while ($READER.hasNext())")
 
         readFunc.beginControlFlow("when ($READER.nextName())")
-        scanner.ktFields.forEach {
+        scanner.ktFields.filter {
+            it.declarationScope != DeclarationScope.SUPER_INTERFACE
+        }.forEach {
             val conditionCodeBlock = CodeBlock.Builder()
             val keysFormat = it.keys.joinToString(separator = ", ") { "%S" }
             conditionCodeBlock.beginControlFlow("$keysFormat ->", *it.keys.toTypedArray())
@@ -84,9 +88,10 @@ class ReadFunctionGenerator(private val logger: MessageLogger) {
             className
         )
 
-        scanner.ktFields.filterNot {
-            it.declarationScope == DeclarationScope.PRIMARY_CONSTRUCTOR
-        }.forEach {
+        scanner.ktFields.filter { it.declarationScope != DeclarationScope.SUPER_INTERFACE }
+            .filterNot {
+                it.declarationScope == DeclarationScope.PRIMARY_CONSTRUCTOR
+            }.forEach {
             val fieldName = it.fieldName
             val tempReadFieldName = it.fieldName
             returnStatement.addStatement("$RETURN_VALUE.$fieldName = $tempReadFieldName")

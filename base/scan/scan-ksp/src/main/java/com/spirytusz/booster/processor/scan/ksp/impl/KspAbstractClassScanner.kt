@@ -100,27 +100,19 @@ abstract class KspAbstractClassScanner(
 
     private fun scanPrimaryConstructorKtFields(): List<KspKtField> {
         return ksClass.primaryConstructor?.parameters?.map {
-            val primaryConstructProperty = createKtFieldFromKSValueParameter(it)
-            logger.info(
-                "${ksClass.qualifiedName?.asString()} primaryConstructProperty >>> $primaryConstructProperty"
-            )
-            primaryConstructProperty
+            createKtFieldFromKSValueParameter(it)
         }?.toList() ?: emptyList()
     }
 
     private fun scanClassKtFields(): List<KspKtField> {
         return ksClass.getDeclaredProperties().filter {
-            ksClass.primaryConstructor?.parameters?.none { ksValueParameter ->
+            val primaryConstructor = ksClass.primaryConstructor ?: return@filter true
+            primaryConstructor.parameters.none { ksValueParameter ->
                 ksValueParameter.name?.asString() == it.simpleName.asString()
-            } == true
+            }
         }.map {
-            val classProperty = createKtFieldFromKSPropertyDeclaration(it)
-            logger.info(
-                "${ksClass.qualifiedName?.asString()} classProperty >>> $classProperty"
-            )
-            classProperty
+            createKtFieldFromKSPropertyDeclaration(it)
         }.toList()
-
     }
 
     private fun scanSuperKtFields(): List<KspKtField> {
@@ -132,17 +124,23 @@ abstract class KspAbstractClassScanner(
                 resolver,
                 it,
                 logger
-            ).ktFields
-        }.flatten().map {
-            it.copy(declarationScope = DeclarationScope.SUPERS) as KspKtField
-        }.toList()
+            )
+        }.map { classScanner ->
+            val ksClass = (classScanner as KspAbstractClassScanner).ksClass
+            val declarationScope = if (ksClass.classKind == ClassKind.CLASS) {
+                DeclarationScope.SUPER_CLASS
+            } else {
+                DeclarationScope.SUPER_INTERFACE
+            }
+            classScanner.ktFields.map { it.copy(declarationScope = declarationScope) as KspKtField }
+        }.flatten().toList()
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected fun resolveKeys(ksAnnotation: List<KSAnnotation>): List<String> {
+    protected fun resolveKeys(fieldName: String, ksAnnotation: List<KSAnnotation>): List<String> {
         val serializedName = ksAnnotation.find {
             it.shortName.asString() == SERIALIZED_NAME_SIMPLE_NAME
-        } ?: return emptyList()
+        } ?: return listOf(fieldName)
 
         val valueParam = serializedName.arguments.find {
             it.name?.asString() == SERIALIZED_NAME_VALUE

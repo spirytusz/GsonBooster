@@ -19,7 +19,10 @@ class KspJavaClassScanner(
 ) : KspAbstractClassScanner(environment, resolver, ksClass, logger) {
     override fun createKtFieldFromKSValueParameter(ksValueParameter: KSValueParameter): KspKtField {
         return KspKtField(
-            keys = resolveKeys(ksValueParameter.annotations.toList()),
+            keys = resolveKeys(
+                ksValueParameter.name?.asString().toString(),
+                ksValueParameter.annotations.toList()
+            ),
             isFinal = !ksValueParameter.isVar,
             fieldName = ksValueParameter.name?.asString().toString(),
             ktType = createKtTypeFromKSType(ksValueParameter.type.resolve()),
@@ -32,7 +35,10 @@ class KspJavaClassScanner(
 
     override fun createKtFieldFromKSPropertyDeclaration(ksPropertyDeclaration: KSPropertyDeclaration): KspKtField {
         return KspKtField(
-            keys = resolveKeys(ksPropertyDeclaration.annotations.toList()),
+            keys = resolveKeys(
+                ksPropertyDeclaration.simpleName.asString(),
+                ksPropertyDeclaration.annotations.toList()
+            ),
             isFinal = !ksPropertyDeclaration.isMutable,
             fieldName = ksPropertyDeclaration.simpleName.asString(),
             ktType = createKtTypeFromKSType(ksPropertyDeclaration.type.resolve()),

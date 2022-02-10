@@ -61,7 +61,10 @@ class KaptClassScanner(
     }
 
     private fun scanPrimaryConstructor(): List<KtField> {
-        classKtType
+        if (belongingClass.kind != ElementKind.CLASS) {
+            return emptyList()
+        }
+
         val primaryConstructor = kmClass.constructors.single {
             !Flag.Constructor.IS_SECONDARY(it.flags)
         }
@@ -83,7 +86,11 @@ class KaptClassScanner(
         }.filter {
             val aptVariableElement = findAptVariableElement(it.name)
             preCheckDelegate(aptVariableElement)
-            aptVariableElement != null && !aptVariableElement.modifiers.contains(Modifier.TRANSIENT)
+            if (belongingClass.kind == ElementKind.INTERFACE) {
+                true
+            } else {
+                aptVariableElement != null && !aptVariableElement.modifiers.contains(Modifier.TRANSIENT)
+            }
         }.map {
             resolveKtField(it)
         }.toList()
@@ -123,10 +130,16 @@ class KaptClassScanner(
                 superTypeElement,
                 kmClassCacheHolder,
                 logger
-            ).ktFields
-        }.flatten().map {
-            it.copy(declarationScope = DeclarationScope.SUPERS)
-        }.toList()
+            )
+        }.map { classScanner ->
+            val superTypeElement = classScanner.belongingClass
+            val declarationScope = if (superTypeElement.kind == ElementKind.CLASS) {
+                DeclarationScope.SUPER_CLASS
+            } else {
+                DeclarationScope.SUPER_INTERFACE
+            }
+            classScanner.ktFields.map { it.copy(declarationScope = declarationScope) }
+        }.flatten().toList()
     }
 
     private fun resolveKtField(kmProperty: KmProperty): KtField {

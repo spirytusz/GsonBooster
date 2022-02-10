@@ -27,7 +27,10 @@ class KspKtClassScanner(
             it.shortName.asString() == Transient::class.simpleName
         }
         return KspKtField(
-            keys = resolveKeys(ksValueParameter.annotations.toList()),
+            keys = resolveKeys(
+                ksValueParameter.name?.asString().toString(),
+                ksValueParameter.annotations.toList()
+            ),
             isFinal = !ksValueParameter.isVar,
             fieldName = ksValueParameter.name?.asString().toString(),
             ktType = createKtTypeFromKSType(ksValueParameter.type.resolve()),
@@ -46,7 +49,10 @@ class KspKtClassScanner(
                 FieldInitializer.NONE
             }
         return KspKtField(
-            keys = resolveKeys(ksPropertyDeclaration.annotations.toList()),
+            keys = resolveKeys(
+                ksPropertyDeclaration.simpleName.asString(),
+                ksPropertyDeclaration.annotations.toList()
+            ),
             isFinal = !ksPropertyDeclaration.isMutable,
             fieldName = ksPropertyDeclaration.simpleName.asString(),
             ktType = createKtTypeFromKSType(ksPropertyDeclaration.type.resolve()),

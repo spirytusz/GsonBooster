@@ -42,7 +42,9 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
 
         classScanners.map { classScanner ->
             val classType = classScanner.classKtType
-            logger.info("classType >>> ${classType.toReadableString()}")
+            classScanner.ktFields.forEach {
+                logger.info(" ${classType.toReadableString()} >>> ${it.toReadableString()}")
+            }
             val className = classType.asTypeName() as ClassName
             val typeAdapterClassGenerator = TypeAdapterClassGeneratorFactory
                 .create(classFilter, logger)
