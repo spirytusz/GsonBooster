@@ -12,8 +12,8 @@ import com.spirytusz.booster.processor.base.scan.ClassScanner
 import com.spirytusz.booster.processor.gen.const.Const.Naming.GSON
 import com.spirytusz.booster.processor.gen.extensions.getTypeAdapterClassName
 import com.spirytusz.booster.processor.gen.fields.FieldGenerator
-import com.spirytusz.booster.processor.gen.functions.WriteFunctionGenerator
 import com.spirytusz.booster.processor.gen.functions.read.ReadFunctionGenerator
+import com.spirytusz.booster.processor.gen.functions.write.WriteFunctionGenerator
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
