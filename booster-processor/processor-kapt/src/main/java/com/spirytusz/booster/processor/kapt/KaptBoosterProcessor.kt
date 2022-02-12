@@ -2,14 +2,23 @@ package com.spirytusz.booster.processor.kapt
 
 import com.google.auto.service.AutoService
 import com.spirytusz.booster.annotation.Boost
+import com.spirytusz.booster.processor.base.const.Keys.KEY_NULL_SAFE
+import com.spirytusz.booster.processor.base.const.Keys.KEY_TYPE_ADAPTER_FACTORY_NAME
+import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
+import com.spirytusz.booster.processor.base.data.type.JsonTokenName
+import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.extensions.asTypeName
+import com.spirytusz.booster.processor.base.scan.ClassScanner
 import com.spirytusz.booster.processor.gen.TypeAdapterClassGeneratorFactory
+import com.spirytusz.booster.processor.gen.TypeAdapterFactoryClassGeneratorImpl
 import com.spirytusz.booster.processor.kapt.log.KaptMessageLogger
 import com.spirytusz.booster.processor.scan.kapt.KaptClassScanner
 import com.spirytusz.booster.processor.scan.kapt.KmClassCacheHolder
 import com.spirytusz.booster.processor.scan.kapt.data.IElementOwner
+import com.spirytusz.booster.processor.scan.kapt.data.KaptKtType
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.TypeSpec
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
@@ -42,32 +51,100 @@ class KaptBoosterProcessor : AbstractProcessor() {
 
     override fun process(annotations: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
         logger.info("start process >>> round=${++round}")
+        val start = System.currentTimeMillis()
         val kmClassCacheHolder = KmClassCacheHolder(logger)
         val classScanners = env.boostAnnotatedClasses.map {
             KaptClassScanner(processingEnv, it, kmClassCacheHolder, logger)
         }.toList()
+
+        if (classScanners.isEmpty()) {
+            logger.info("end process >>> round=$round timeCost = ${System.currentTimeMillis() - start}ms")
+            return false
+        }
         val classFilter = classScanners.map { it.classKtType }.toSet()
 
-        classScanners.map { classScanner ->
+        val scannerToTypeSpecs = classScanners.map { classScanner ->
             val classType = classScanner.classKtType
             classScanner.ktFields.forEach {
                 logger.info("${classType.toReadableString()} >>> ${it.toReadableString()}")
             }
-            val className = classType.asTypeName() as ClassName
             val typeAdapterClassGenerator = TypeAdapterClassGeneratorFactory
                 .create(classFilter, logger)
-            val typeSpec = typeAdapterClassGenerator.generate(classScanner)
-                .toBuilder().apply {
-                    (classType as IElementOwner).target?.let { addOriginatingElement(it) }
-                }.build()
-            FileSpec.builder(className.packageName, className.simpleName)
+
+            val typeAdapterClassGenConfig = TypeAdapterClassGenConfig(
+                nullSafe = processingEnv.options[KEY_NULL_SAFE] == true.toString()
+            )
+            val typeSpec = typeAdapterClassGenerator.generate(
+                classScanner,
+                typeAdapterClassGenConfig
+            ).toBuilder().apply {
+                (classType as IElementOwner).target?.let { addOriginatingElement(it) }
+            }.build()
+            classScanner to typeSpec
+        }
+
+        scannerToTypeSpecs.map { (classScanner, typeSpec) ->
+            val className = classScanner.classKtType.asTypeName() as ClassName
+            FileSpec.builder(className.packageName, typeSpec.name.toString())
                 .addType(typeSpec)
                 .indent(" ".repeat(4))
                 .build()
         }.forEach {
             it.writeTo(processingEnv.filer)
+            logger.info(it.toString())
         }
+
+        generateTypeAdapterFactoryIfNeed(scannerToTypeSpecs)
+        logger.info("end process >>> round=$round timeCost = ${System.currentTimeMillis() - start}ms")
+
         return false
+    }
+
+    private fun generateTypeAdapterFactoryIfNeed(
+        scannerToTypeSpecs: List<Pair<ClassScanner, TypeSpec>>
+    ) {
+        if (!processingEnv.options.containsKey(KEY_TYPE_ADAPTER_FACTORY_NAME)) {
+            return
+        }
+        val typeAdapterFactoryName = processingEnv.options[KEY_TYPE_ADAPTER_FACTORY_NAME]!!
+        if (typeAdapterFactoryName.isEmpty()) {
+            throw IllegalArgumentException("Invalid $KEY_TYPE_ADAPTER_FACTORY_NAME param")
+        }
+
+        val classToTypeAdapters = scannerToTypeSpecs.map { (classScanner, typeSpec) ->
+            val classKtType = classScanner.classKtType
+            val typeAdapterPackageName = (classKtType.asTypeName() as ClassName).packageName
+            val typeAdapterSimpleName = typeSpec.name.toString()
+            val typeAdapterKtType = KaptKtType(
+                rawType = ClassName(typeAdapterPackageName, typeAdapterSimpleName).canonicalName,
+                nullable = false,
+                variance = KtVariance.INVARIANT,
+                jsonTokenName = JsonTokenName.OBJECT,
+                generics = listOf(),
+                target = null
+            )
+            classKtType to typeAdapterKtType
+        }.toSet()
+
+        val typeAdapterFactorySpec = TypeAdapterFactoryClassGeneratorImpl(logger)
+            .generate(typeAdapterFactoryName, classToTypeAdapters)
+            .toBuilder().apply {
+                classToTypeAdapters.mapNotNull { (classKtType, _) ->
+                    (classKtType as? IElementOwner)?.target
+                }.forEach { addOriginatingElement(it) }
+            }.build()
+        val typeAdapterFactoryClassName = ClassName.bestGuess(typeAdapterFactoryName)
+
+        FileSpec.builder(
+            typeAdapterFactoryClassName.packageName,
+            typeAdapterFactoryClassName.simpleName
+        ).addType(typeAdapterFactorySpec)
+            .indent(" ".repeat(4))
+            .build()
+            .apply {
+                logger.info(this.toString())
+            }
+            .writeTo(processingEnv.filer)
     }
 
 }

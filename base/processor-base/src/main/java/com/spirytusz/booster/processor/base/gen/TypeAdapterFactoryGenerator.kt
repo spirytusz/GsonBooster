@@ -13,7 +13,11 @@ interface TypeAdapterFactoryGenerator {
     /**
      * 根据数据类与[TypeAdapter]之间的映射关系集合[classToTypeAdapters]生成一个[TypeAdapterFactory]
      *
+     * @param typeAdapterFactoryName 生成类的权限定名
      * @param classToTypeAdapters 数据类与[TypeAdapter]之间的映射关系集合
      */
-    fun generate(classToTypeAdapters: Set<Pair<KtType, KtType>>): TypeSpec
+    fun generate(
+        typeAdapterFactoryName: String,
+        classToTypeAdapters: Set<Pair<KtType, KtType>>
+    ): TypeSpec
 }
