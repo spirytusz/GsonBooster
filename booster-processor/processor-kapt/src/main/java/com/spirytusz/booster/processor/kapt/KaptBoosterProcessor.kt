@@ -91,7 +91,6 @@ class KaptBoosterProcessor : AbstractProcessor() {
                 .build()
         }.forEach {
             it.writeTo(processingEnv.filer)
-            logger.info(it.toString())
         }
 
         generateTypeAdapterFactoryIfNeed(scannerToTypeSpecs)
@@ -111,6 +110,7 @@ class KaptBoosterProcessor : AbstractProcessor() {
             throw IllegalArgumentException("Invalid $KEY_TYPE_ADAPTER_FACTORY_NAME param")
         }
 
+        logger.info("generate typeAdapterFactory: $typeAdapterFactoryName")
         val classToTypeAdapters = scannerToTypeSpecs.map { (classScanner, typeSpec) ->
             val classKtType = classScanner.classKtType
             val typeAdapterPackageName = (classKtType.asTypeName() as ClassName).packageName
@@ -141,9 +141,6 @@ class KaptBoosterProcessor : AbstractProcessor() {
         ).addType(typeAdapterFactorySpec)
             .indent(" ".repeat(4))
             .build()
-            .apply {
-                logger.info(this.toString())
-            }
             .writeTo(processingEnv.filer)
     }
 

@@ -91,8 +91,6 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
                 aggregating = false,
                 originatingKSFiles = originatingKSFiles
             )
-
-            logger.info(fileSpec.toString())
         }
 
         generateTypeAdapterFactoryIfNeed(scannerToTypeSpecs)
@@ -112,6 +110,7 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
             throw IllegalArgumentException("Invalid $KEY_TYPE_ADAPTER_FACTORY_NAME param")
         }
 
+        logger.info("generate typeAdapterFactory: $typeAdapterFactoryName")
         val classToTypeAdapters = scannerToTypeSpecs.map { (classScanner, typeSpec) ->
             val classKtType = classScanner.classKtType
             val typeAdapterPackageName = (classKtType.asTypeName() as ClassName).packageName
@@ -142,9 +141,6 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
         ).addType(typeAdapterFactorySpec)
             .indent(" ".repeat(4))
             .build()
-            .apply {
-                logger.info(this.toString())
-            }
             .writeTo(
                 codeGenerator = environment.codeGenerator,
                 aggregating = false,

@@ -17,6 +17,7 @@ import com.spirytusz.booster.processor.scan.ksp.KspClassScannerFactory
 import com.spirytusz.booster.processor.scan.ksp.data.IKsNodeOwner
 import com.spirytusz.booster.processor.scan.ksp.data.KspKtField
 import com.spirytusz.booster.processor.scan.ksp.data.KspKtType
+import com.spirytusz.booster.processor.scan.ksp.extensions.findActualDeclaration
 
 abstract class KspAbstractClassScanner(
     private val environment: SymbolProcessorEnvironment,
@@ -89,7 +90,8 @@ abstract class KspAbstractClassScanner(
             createKtTypeFromKSType(ksType).copy(variance = typeArgument.variance.toKtVariant())
         }.toList()
         return KspKtType(
-            rawType = ksType.declaration.qualifiedName?.asString().toString(),
+            rawType = ksType.declaration.findActualDeclaration().qualifiedName?.asString()
+                .toString(),
             nullable = ksType.nullability == Nullability.NULLABLE,
             variance = Variance.INVARIANT.toKtVariant(),
             jsonTokenName = jsonTokenNameResolver.resolve(ksType),
@@ -117,7 +119,7 @@ abstract class KspAbstractClassScanner(
 
     private fun scanSuperKtFields(): List<KspKtField> {
         return ksClass.getAllSuperTypes().map {
-            it.declaration as KSClassDeclaration
+            it.declaration.findActualDeclaration() as KSClassDeclaration
         }.map {
             KspClassScannerFactory.create(
                 environment,
