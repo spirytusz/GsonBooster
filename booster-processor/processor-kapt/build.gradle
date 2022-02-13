@@ -18,6 +18,7 @@ dependencies {
     implementation project(":booster-annotation")
     api project(':base:processor-base')
     implementation project(':base:scan:scan-kapt')
+    implementation project(':base:check')
     implementation project(':base:gen')
 
     implementation "com.google.auto.service:auto-service-annotations:1.0"

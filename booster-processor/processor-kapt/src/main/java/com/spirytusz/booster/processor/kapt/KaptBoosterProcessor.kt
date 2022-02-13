@@ -9,6 +9,7 @@ import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.scan.ClassScanner
+import com.spirytusz.booster.processor.check.ClassCheckerImpl
 import com.spirytusz.booster.processor.gen.TypeAdapterClassGeneratorFactory
 import com.spirytusz.booster.processor.gen.TypeAdapterFactoryClassGeneratorImpl
 import com.spirytusz.booster.processor.kapt.log.KaptMessageLogger
@@ -56,6 +57,10 @@ class KaptBoosterProcessor : AbstractProcessor() {
         val classScanners = env.boostAnnotatedClasses.map {
             KaptClassScanner(processingEnv, it, kmClassCacheHolder, logger)
         }.toList()
+
+        classScanners.forEach {
+            ClassCheckerImpl(logger).check(it)
+        }
 
         if (classScanners.isEmpty()) {
             logger.info("end process >>> round=$round timeCost = ${System.currentTimeMillis() - start}ms")

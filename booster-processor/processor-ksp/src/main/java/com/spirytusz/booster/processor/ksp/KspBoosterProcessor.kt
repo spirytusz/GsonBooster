@@ -16,6 +16,7 @@ import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.scan.ClassScanner
+import com.spirytusz.booster.processor.check.ClassCheckerImpl
 import com.spirytusz.booster.processor.gen.TypeAdapterClassGeneratorFactory
 import com.spirytusz.booster.processor.gen.TypeAdapterFactoryClassGeneratorImpl
 import com.spirytusz.booster.processor.ksp.log.KspMessageLogger
@@ -48,6 +49,10 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
         val classScanners = resolver.boostAnnotatedClasses.map {
             KspClassScannerFactory.create(environment, resolver, it, logger)
         }.toList()
+
+        classScanners.forEach {
+            ClassCheckerImpl(logger).check(it)
+        }
 
         if (classScanners.isEmpty()) {
             logger.info("end process >>> round=$round timeCost = ${System.currentTimeMillis() - start}ms")
