@@ -36,7 +36,7 @@ internal class FieldNamingChecker(private val messageLogger: MessageLogger) : Fi
         messageLogger.error("invalid fieldName ${ktField.fieldName}", ktField)
         throw FieldNamedByKotlinKeywordException(
             "invalid fieldName [${ktField.fieldName}]" +
-                    " at ${classScanner.classKtType.rawType}"
+                    " at [${classScanner.classKtType.rawType}]"
         )
     }
 
