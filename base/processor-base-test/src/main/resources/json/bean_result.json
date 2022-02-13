@@ -1,0 +1,38 @@
+{
+  "bean_str": "123",
+  "bean_int": 4,
+  "bean_long": 5,
+  "bean_float": 6.7,
+  "bean_double": 7.8,
+  "bean_bool": true,
+  "bean_list_str": [
+    "9",
+    "10",
+    "11"
+  ],
+  "bean_java_list_str": [
+    "12",
+    "13",
+    "14"
+  ],
+  "bean_set_str": [
+    "15",
+    "16",
+    "17"
+  ],
+  "bean_java_set_str": [
+    "18",
+    "19",
+    "20"
+  ],
+  "bean_map_str_str": {
+    "21": "22",
+    "23": "24",
+    "25": "26"
+  },
+  "bean_java_map_str_str": {
+    "27": "28",
+    "29": "30",
+    "31": "32"
+  }
+}
