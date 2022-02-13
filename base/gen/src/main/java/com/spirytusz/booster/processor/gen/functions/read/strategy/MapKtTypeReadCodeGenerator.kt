@@ -3,7 +3,7 @@ package com.spirytusz.booster.processor.gen.functions.read.strategy
 import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtType
-import com.spirytusz.booster.processor.base.extensions.asTypeName
+import com.spirytusz.booster.processor.base.extensions.asTypeNameIgnoreVariant
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.gen.const.Const.Naming.READER
 import com.spirytusz.booster.processor.gen.extensions.firstChatUpperCase
@@ -27,8 +27,8 @@ class MapKtTypeReadCodeGenerator(
         val valueGeneric = ktType.generics[1]
         codeBlockBuilder.addStatement(
             "val $tempFieldName = $initializer<%T, %T>()",
-            keyGeneric.asTypeName(),
-            valueGeneric.asTypeName()
+            keyGeneric.asTypeNameIgnoreVariant(),
+            valueGeneric.asTypeNameIgnoreVariant()
         )
 
         codeBlockBuilder.addStatement("$READER.beginObject()")

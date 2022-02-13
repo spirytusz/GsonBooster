@@ -66,3 +66,13 @@ fun KtType.asTypeName(): TypeName {
         else -> typeName
     }
 }
+
+fun KtType.asTypeNameIgnoreVariant(): TypeName {
+    return if (generics.isEmpty()) {
+        ClassName.bestGuess(rawType).copy(nullable = nullable)
+    } else {
+        ClassName.bestGuess(rawType)
+            .parameterizedBy(*generics.map { it.asTypeName() }.toTypedArray())
+            .copy(nullable = nullable)
+    }
+}

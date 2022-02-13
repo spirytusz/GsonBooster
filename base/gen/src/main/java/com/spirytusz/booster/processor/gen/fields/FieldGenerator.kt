@@ -3,6 +3,7 @@ package com.spirytusz.booster.processor.gen.fields
 import com.google.gson.TypeAdapter
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
+import com.spirytusz.booster.processor.base.extensions.asTypeNameIgnoreVariant
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
 import com.spirytusz.booster.processor.gen.const.Const.Naming.GSON
@@ -22,7 +23,7 @@ internal class FieldGenerator(private val logger: MessageLogger) {
         val isRegisteredType =
             classFilterMap.containsKey(ktType.rawType) && ktType.generics.isEmpty()
         val adapterFieldName = ktType.getTypeAdapterFieldName()
-        val typeName = ktType.asTypeName()
+        val typeName = ktType.asTypeNameIgnoreVariant()
         val typeAdapterCodeBlock = if (isRegisteredType) {
             // 已经注册的，使用XXXTypeAdapter()
             val build = CodeBlock.Builder()
