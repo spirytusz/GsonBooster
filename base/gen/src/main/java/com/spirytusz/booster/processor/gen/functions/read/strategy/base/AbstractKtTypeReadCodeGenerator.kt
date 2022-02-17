@@ -5,6 +5,7 @@ import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfi
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.gen.const.Const.Naming.READER
+import com.spirytusz.booster.processor.gen.extensions.getPeekedFieldName
 import com.squareup.kotlinpoet.CodeBlock
 
 abstract class AbstractKtTypeReadCodeGenerator(
@@ -14,13 +15,16 @@ abstract class AbstractKtTypeReadCodeGenerator(
 
     protected val nullSafe: Boolean = config.nullSafe
 
+    protected val strictType: Boolean = config.strictType
+
     final override fun generate(
         ktType: KtType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ): CodeBlock {
         val codeBlockBuilder = CodeBlock.Builder()
 
-        codeBlockBuilder.beginControlFlow("when ($READER.peek())")
+        val peekedFieldName = ktType.getPeekedFieldName()
+        codeBlockBuilder.beginControlFlow("when (val $peekedFieldName = $READER.peek())")
 
         codeBlockBuilder.beginControlFlow(
             "%T.${ktType.jsonTokenName.jsonToken} -> ",
@@ -59,4 +63,16 @@ abstract class AbstractKtTypeReadCodeGenerator(
         ktType: KtType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     )
+
+    protected fun generateExpectTokenButTokenBlock(
+        codeBlockBuilder: CodeBlock.Builder,
+        ktType: KtType
+    ) {
+        val peekedFieldName = ktType.getPeekedFieldName()
+        codeBlockBuilder.addStatement(
+            "throw %T(%P)",
+            IllegalStateException::class,
+            "Expect ${ktType.jsonTokenName.jsonToken} but was $$peekedFieldName"
+        )
+    }
 }

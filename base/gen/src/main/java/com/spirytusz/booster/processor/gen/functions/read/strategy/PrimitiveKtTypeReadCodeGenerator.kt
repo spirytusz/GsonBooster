@@ -1,6 +1,8 @@
 package com.spirytusz.booster.processor.gen.functions.read.strategy
 
+import com.google.gson.internal.bind.TypeAdapters
 import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
+import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.log.MessageLogger
@@ -38,12 +40,11 @@ class PrimitiveKtTypeReadCodeGenerator(
                 codeBlockBuilder.addStatement("val $tempFieldName: %T = null", ktType.asTypeName())
                 codegenHook.invoke(codeBlockBuilder, tempFieldName)
             }
-            nullSafe -> {
+            nullSafe && !strictType -> {
                 codeBlockBuilder.addStatement("$READER.skipValue()")
             }
             else -> {
-                val nextFuncExp = ktType.jsonTokenName.nextFuncExp
-                codeBlockBuilder.addStatement("$READER.$nextFuncExp")
+                generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
             }
         }
     }
@@ -53,7 +54,34 @@ class PrimitiveKtTypeReadCodeGenerator(
         ktType: KtType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
-        val nextFuncExp = ktType.jsonTokenName.nextFuncExp
-        codeBlockBuilder.addStatement("$READER.$nextFuncExp")
+        if (strictType) {
+            generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
+        } else {
+            val gsonInternalTypeAdapterName = getGsonInternalTypeAdapterName(ktType)
+            val tempFieldName = ktType.getReadingTempFieldName()
+            codeBlockBuilder.addStatement(
+                "val $tempFieldName: %T = %T.%L.read($READER) as %T",
+                ktType.asTypeName(),
+                TypeAdapters::class,
+                gsonInternalTypeAdapterName,
+                ktType.asTypeName()
+            )
+            codegenHook.invoke(codeBlockBuilder, tempFieldName)
+        }
+    }
+
+    private fun getGsonInternalTypeAdapterName(ktType: KtType): String {
+        return when (ktType.jsonTokenName) {
+            JsonTokenName.INT -> "INTEGER"
+            JsonTokenName.LONG -> "LONG"
+            JsonTokenName.FLOAT -> "FLOAT"
+            JsonTokenName.DOUBLE -> "DOUBLE"
+            JsonTokenName.STRING -> "STRING"
+            JsonTokenName.BOOLEAN -> "BOOLEAN"
+            else -> {
+                logger.error("unexpected ktType", ktType)
+                throw IllegalArgumentException("unexpected ktType ${ktType.toReadableString()}")
+            }
+        }
     }
 }

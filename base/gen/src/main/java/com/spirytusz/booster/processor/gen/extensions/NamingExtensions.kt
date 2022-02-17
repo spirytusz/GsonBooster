@@ -1,6 +1,7 @@
 package com.spirytusz.booster.processor.gen.extensions
 
 import com.spirytusz.booster.processor.base.data.type.KtType
+import com.spirytusz.booster.processor.gen.const.Const.Naming.PEEKED
 import com.spirytusz.booster.processor.gen.const.Const.Naming.TEMP_FIELD_PREFIX
 import com.spirytusz.booster.processor.gen.const.Const.Naming.TYPE_ADAPTER
 import com.squareup.kotlinpoet.ClassName
@@ -30,4 +31,8 @@ fun KtType.getReadingTempFieldName(): String {
 
 fun KtType.getWritingTempFieldName(fieldName: String): String {
     return "${TEMP_FIELD_PREFIX}Writing${flatten()}${fieldName.firstChatUpperCase()}"
+}
+
+fun KtType.getPeekedFieldName(): String {
+    return "${PEEKED}${flatten()}"
 }

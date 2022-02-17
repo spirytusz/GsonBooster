@@ -43,7 +43,7 @@ class ObjectKtTypeReadCodeGenerator(
                 codeBlockBuilder.addStatement("$READER.skipValue()")
             }
             else -> {
-                codeBlockBuilder.addStatement("$READER.beginObject()")
+                generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
             }
         }
     }
@@ -53,6 +53,6 @@ class ObjectKtTypeReadCodeGenerator(
         ktType: KtType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
-        codeBlockBuilder.addStatement("$READER.beginObject()")
+        generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
     }
 }

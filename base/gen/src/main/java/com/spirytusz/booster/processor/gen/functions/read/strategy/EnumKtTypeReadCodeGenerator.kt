@@ -44,8 +44,7 @@ class EnumKtTypeReadCodeGenerator(
                 codeBlockBuilder.addStatement("$READER.skipValue()")
             }
             else -> {
-                val nextFuncExp = ktType.jsonTokenName.nextFuncExp
-                codeBlockBuilder.addStatement("$READER.$nextFuncExp")
+                generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
             }
         }
     }
@@ -55,7 +54,6 @@ class EnumKtTypeReadCodeGenerator(
         ktType: KtType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
-        val nextFuncExp = ktType.jsonTokenName.nextFuncExp
-        codeBlockBuilder.addStatement("$READER.$nextFuncExp")
+        generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
     }
 }

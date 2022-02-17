@@ -56,7 +56,7 @@ class CollectionKtTypeReadCodeGenerator(
                 codeBlockBuilder.addStatement("$READER.skipValue()")
             }
             else -> {
-                codeBlockBuilder.addStatement("$READER.beginArray()")
+                generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
             }
         }
     }
@@ -66,7 +66,7 @@ class CollectionKtTypeReadCodeGenerator(
         ktType: KtType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
-        codeBlockBuilder.addStatement("$READER.beginArray()")
+        generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
     }
 
     private fun getCollectionInitializer(ktType: KtType): String {

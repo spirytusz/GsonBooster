@@ -16,6 +16,8 @@ internal object Const {
 
         const val OBJECT = "obj"
 
+        const val PEEKED = "peeked"
+
         const val TYPE_TOKEN = "typeToken"
 
         const val DEFAULT_VALUE = "defaultValue"
