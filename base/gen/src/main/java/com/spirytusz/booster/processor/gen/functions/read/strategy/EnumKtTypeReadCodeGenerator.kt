@@ -22,7 +22,7 @@ class EnumKtTypeReadCodeGenerator(
         val nextFuncExp = ktType.jsonTokenName.nextFuncExp
         codeBlockBuilder.addStatement(
             "val $tempFieldName = %T.valueOf($READER.$nextFuncExp)",
-            ktType.rawType
+            ktType.asTypeName()
         )
         codegenHook.invoke(codeBlockBuilder, tempFieldName)
     }
