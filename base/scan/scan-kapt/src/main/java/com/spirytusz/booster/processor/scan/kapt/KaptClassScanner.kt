@@ -1,5 +1,6 @@
 package com.spirytusz.booster.processor.scan.kapt
 
+import com.spirytusz.booster.processor.base.data.BoosterClassKind
 import com.spirytusz.booster.processor.base.data.DeclarationScope
 import com.spirytusz.booster.processor.base.data.KtField
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
@@ -11,7 +12,6 @@ import com.spirytusz.booster.processor.base.scan.ClassScanner
 import com.spirytusz.booster.processor.scan.kapt.data.IElementOwner
 import com.spirytusz.booster.processor.scan.kapt.data.KaptKtType
 import kotlinx.metadata.*
-import java.util.regex.Pattern
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.*
 
@@ -22,8 +22,8 @@ class KaptClassScanner(
     private val logger: MessageLogger
 ) : ClassScanner {
 
-    companion object {
-        private val PATTERN_DELEGATE_FIELD = Pattern.compile("\\\$delegate\$")
+    override val classKind: BoosterClassKind by lazy {
+        KmClassKindResolver(belongingClass, kmClassCacheHolder, logger).resolveClassKind()
     }
 
     override val classKtType: KtType by lazy {
@@ -70,7 +70,6 @@ class KaptClassScanner(
         }
         return primaryConstructor.valueParameters.asSequence().filter {
             val aptVariableElement = findAptVariableElement(it.name)
-            preCheckDelegate(aptVariableElement)
             aptVariableElement != null && !aptVariableElement.modifiers.contains(Modifier.TRANSIENT)
         }.map {
             resolveKtField(it)
@@ -85,8 +84,7 @@ class KaptClassScanner(
             it.name !in constructorFieldNames
         }.filter {
             val aptVariableElement = findAptVariableElement(it.name)
-            preCheckDelegate(aptVariableElement)
-            if (belongingClass.kind == ElementKind.INTERFACE) {
+            if (classKind == BoosterClassKind.INTERFACE) {
                 true
             } else {
                 aptVariableElement != null && !aptVariableElement.modifiers.contains(Modifier.TRANSIENT)
@@ -166,21 +164,9 @@ class KaptClassScanner(
             it.kind == ElementKind.FIELD
         }.filterNot {
             it.modifiers.contains(Modifier.STATIC) || it.modifiers.contains(Modifier.TRANSIENT)
-        }.find { it.simpleName.toString() == fieldName } as? VariableElement
-    }
-
-    private fun preCheckDelegate(aptVariableElement: VariableElement?) {
-
-        fun isDelegateField(aptVariableElement: VariableElement): Boolean {
-            val fieldName = aptVariableElement.simpleName.toString()
-            return PATTERN_DELEGATE_FIELD.matcher(fieldName).find()
-        }
-
-        if (aptVariableElement != null && isDelegateField(aptVariableElement)) {
-            logger.error("Unexpected delegate field", aptVariableElement)
-            throw IllegalArgumentException(
-                "Unexpected delegate field ${belongingClass.qualifiedName}.${aptVariableElement.simpleName}"
-            )
-        }
+        }.find {
+            val elementName = it.simpleName.toString()
+            elementName == fieldName || elementName == "$fieldName\$delegate"
+        } as? VariableElement
     }
 }

@@ -5,6 +5,7 @@ import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.*
+import com.spirytusz.booster.processor.base.data.BoosterClassKind
 import com.spirytusz.booster.processor.base.data.DeclarationScope
 import com.spirytusz.booster.processor.base.data.KtField
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
@@ -30,6 +31,10 @@ abstract class KspAbstractClassScanner(
         private const val SERIALIZED_NAME_SIMPLE_NAME = "SerializedName"
         private const val SERIALIZED_NAME_VALUE = "value"
         private const val SERIALIZED_NAME_ALTERNATE = "alternate"
+    }
+
+    final override val classKind: BoosterClassKind by lazy {
+        KsClassKindResolver(ksClass, logger).resolveClassKind()
     }
 
     final override val ktFields: List<KtField> by lazy {

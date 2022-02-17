@@ -50,20 +50,20 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
             KspClassScannerFactory.create(environment, resolver, it, logger)
         }.toList()
 
-        classScanners.forEach {
-            ClassCheckerImpl(logger).check(it)
-        }
-
         if (classScanners.isEmpty()) {
             logger.info("end process >>> round=$round timeCost = ${System.currentTimeMillis() - start}ms")
             return emptyList()
+        }
+
+        classScanners.forEach {
+            ClassCheckerImpl(logger).check(it)
         }
 
         val classFilter = classScanners.map { it.classKtType }.toSet()
         val scannerToTypeSpecs = classScanners.map { classScanner ->
             val classType = classScanner.classKtType
             classScanner.ktFields.forEach {
-                logger.info(" ${classType.toReadableString()} >>> ${it.toReadableString()}")
+                logger.info("${classScanner.classKind} ${classType.toReadableString()} >>> ${it.toReadableString()}")
             }
             val typeAdapterClassGenerator = TypeAdapterClassGeneratorFactory
                 .create(classFilter, logger)

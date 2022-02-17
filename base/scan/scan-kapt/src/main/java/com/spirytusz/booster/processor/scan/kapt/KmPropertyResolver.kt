@@ -32,7 +32,11 @@ class KmPropertyResolver(
         } else {
             listOf(fieldName)
         }
-        val initializer = FieldInitializer.HAS_DEFAULT
+        val initializer = if (Flag.Property.IS_DELEGATED(kmProperty.flags)) {
+            FieldInitializer.DELEGATED
+        } else {
+            FieldInitializer.HAS_DEFAULT
+        }
         val ktType = resolveKtType()
         return KaptKtField(
             isFinal = isFinal,

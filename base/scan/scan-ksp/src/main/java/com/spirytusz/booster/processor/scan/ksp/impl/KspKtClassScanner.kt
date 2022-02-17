@@ -42,12 +42,17 @@ class KspKtClassScanner(
     }
 
     override fun createKtFieldFromKSPropertyDeclaration(ksPropertyDeclaration: KSPropertyDeclaration): KspKtField {
-        val initializer =
-            if (ksPropertyDeclaration.hasBackingField && !ksPropertyDeclaration.isDelegated()) {
+        val initializer = when {
+            ksPropertyDeclaration.hasBackingField -> {
                 FieldInitializer.HAS_DEFAULT
-            } else {
+            }
+            ksPropertyDeclaration.isDelegated() -> {
+                FieldInitializer.DELEGATED
+            }
+            else -> {
                 FieldInitializer.NONE
             }
+        }
         return KspKtField(
             keys = resolveKeys(
                 ksPropertyDeclaration.simpleName.asString(),
