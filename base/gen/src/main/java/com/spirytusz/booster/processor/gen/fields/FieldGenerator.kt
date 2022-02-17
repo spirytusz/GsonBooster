@@ -43,8 +43,7 @@ internal class FieldGenerator(private val logger: MessageLogger) {
             TypeAdapter::class.asClassName().parameterizedBy(typeName)
         }
         logger.debug(
-            "generate field $adapterFieldName for class ${scanner.classKtType.asTypeName()}",
-            ktType
+            "generate field $adapterFieldName for class ${scanner.classKtType.asTypeName()}"
         )
         return PropertySpec.builder(adapterFieldName, adapterType, KModifier.PRIVATE)
             .delegate(typeAdapterCodeBlock)
