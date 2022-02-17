@@ -52,27 +52,25 @@ fun TypeName.javaType(): TypeName {
     }
 }
 
-fun KtType.asTypeName(): TypeName {
-    val typeName = if (generics.isEmpty()) {
-        ClassName.bestGuess(rawType).copy(nullable = nullable)
+fun KtType.asTypeName(
+    ignoreVariance: Boolean = false,
+    ignoreNullability: Boolean = false
+): TypeName {
+    var typeName = if (generics.isEmpty()) {
+        ClassName.bestGuess(rawType)
     } else {
         ClassName.bestGuess(rawType)
             .parameterizedBy(*generics.map { it.asTypeName() }.toTypedArray())
-            .copy(nullable = nullable)
     }
-    return when (this.variance) {
-        KtVariance.IN -> WildcardTypeName.consumerOf(typeName)
-        KtVariance.OUT -> WildcardTypeName.producerOf(typeName)
-        else -> typeName
+    if (!ignoreNullability) {
+        typeName = typeName.copy(nullable = nullable)
     }
-}
-
-fun KtType.asTypeNameIgnoreVariant(): TypeName {
-    return if (generics.isEmpty()) {
-        ClassName.bestGuess(rawType).copy(nullable = nullable)
-    } else {
-        ClassName.bestGuess(rawType)
-            .parameterizedBy(*generics.map { it.asTypeName() }.toTypedArray())
-            .copy(nullable = nullable)
+    if (!ignoreVariance) {
+        typeName = when (this.variance) {
+            KtVariance.IN -> WildcardTypeName.consumerOf(typeName)
+            KtVariance.OUT -> WildcardTypeName.producerOf(typeName)
+            else -> typeName
+        }
     }
+    return typeName
 }
