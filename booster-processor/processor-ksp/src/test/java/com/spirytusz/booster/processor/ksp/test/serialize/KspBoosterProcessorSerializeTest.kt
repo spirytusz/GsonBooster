@@ -1,4 +1,4 @@
-package com.spirytusz.booster.processor.ksp.test
+package com.spirytusz.booster.processor.ksp.test.serialize
 
 import com.spirytusz.booster.processor.ksp.test.base.AbstractKspSerializeTest
 

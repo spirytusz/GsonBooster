@@ -1,4 +1,4 @@
-package com.spirytusz.booster.processor.kapt.test
+package com.spirytusz.booster.processor.kapt.test.serialize
 
 import com.spirytusz.booster.processor.kapt.test.base.AbstractKaptSerializeTest
 
