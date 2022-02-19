@@ -1,4 +1,4 @@
-package com.spirytusz.gsonbooster.data
+package com.spirytusz.gsonbooster.ksp.data
 
 import com.google.gson.annotations.SerializedName
 import com.spirytusz.booster.annotation.Boost
@@ -18,11 +18,11 @@ data class Foo(
     @SerializedName("foo_bar")
     val bar: Bar = Bar(),
     @SerializedName("foo_list_long")
-    val list: List<Long> = listOf(),
+    val listLong: List<Long> = listOf(),
     @SerializedName("foo_list_bar")
     val listBar: List<Bar> = listOf(),
     @SerializedName("foo_set_double")
-    val set: Set<Double> = setOf(),
+    val setLong: Set<Double> = setOf(),
     @SerializedName("foo_set_bar")
     val setBar: Set<Bar> = setOf(),
     @SerializedName("foo_list_list_long")

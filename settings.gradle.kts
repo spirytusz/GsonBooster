@@ -1,7 +1,8 @@
 rootProject.name = "GsonBooster"
 
 include(":booster-annotation")
-include(":app")
+include(":kapt-demo")
+include(":ksp-demo")
 include(":benchmark")
 include(":base:processor-base")
 include(":base:scan:scan-kapt")

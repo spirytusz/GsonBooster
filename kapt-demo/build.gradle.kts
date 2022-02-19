@@ -9,7 +9,7 @@ android {
     buildToolsVersion("30.0.3")
 
     defaultConfig {
-        applicationId = "com.spirytusz.gsonbooster"
+        applicationId = "com.spirytusz.gsonbooster.kapt"
         minSdkVersion(17)
         targetSdkVersion(30)
         versionCode = 1
@@ -50,6 +50,6 @@ dependencies {
 
 kapt {
     arguments {
-        arg("factory", "com.spirytusz.booster.BoosterTypeAdapterFactory")
+        arg("factory", "com.spirytusz.booster.kapt.BoosterTypeAdapterFactory")
     }
 }

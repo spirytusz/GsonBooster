@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version Versions.kotlin_version apply false
+    id("com.google.devtools.ksp") version Versions.ksp apply false
 }
 
 buildscript {

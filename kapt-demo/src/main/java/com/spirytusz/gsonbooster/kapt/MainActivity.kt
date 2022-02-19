@@ -1,4 +1,4 @@
-package com.spirytusz.gsonbooster
+package com.spirytusz.gsonbooster.kapt
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.spirytusz.booster.BoosterTypeAdapterFactory
-import com.spirytusz.gsonbooster.data.Foo
+import com.spirytusz.booster.kapt.BoosterTypeAdapterFactory
+import com.spirytusz.gsonbooster.kapt.data.Foo
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
