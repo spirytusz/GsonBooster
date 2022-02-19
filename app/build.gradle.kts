@@ -38,12 +38,18 @@ android {
 dependencies {
 
     implementation(Dependencies.kotlin_stdlib)
-    implementation("androidx.core:core-ktx:1.5.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    implementation(Dependencies.androidx_appcompat)
+    implementation(Dependencies.material_design)
+    implementation(Dependencies.androidx_constraintlayout)
     testImplementation(Dependencies.junit)
 
     implementation(Dependencies.gson)
     implementation(project(":booster-annotation"))
+    kapt(project(":booster-processor:processor-kapt"))
+}
+
+kapt {
+    arguments {
+        arg("factory", "com.spirytusz.booster.BoosterTypeAdapterFactory")
+    }
 }

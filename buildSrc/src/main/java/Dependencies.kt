@@ -11,6 +11,9 @@ object Versions {
     const val ksp = "1.5.31-1.0.0"
     const val junit = "4.13.2"
     const val jmh = "1.28"
+    const val androidx_constraintlayout = "2.1.1"
+    const val androidx_appcompat = "1.3.1"
+    const val material_design = "1.4.0"
 }
 
 object Dependencies {
@@ -47,4 +50,11 @@ object Dependencies {
     const val jmh = "org.openjdk.jmh:jmh-core:${Versions.jmh}"
 
     const val jmh_processor = "org.openjdk.jmh:jmh-generator-annprocess:${Versions.jmh}"
+
+    const val androidx_constraintlayout =
+        "androidx.constraintlayout:constraintlayout:${Versions.androidx_constraintlayout}"
+
+    const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
+
+    const val material_design = "com.google.android.material:material:${Versions.material_design}"
 }
