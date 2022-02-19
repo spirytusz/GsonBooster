@@ -37,13 +37,34 @@ abstract class AbstractSerializeTest {
 
         val beanClass = result.getClassByName(beanClassName)
 
+        testSerialize(result, beanClass)
+        testDeserialize(result, beanClass)
+    }
+
+    private fun testSerialize(result: KotlinCompilation.Result, beanClass: Class<*>) {
+        printLog("start testSerialize >>>")
         val boosterResult = makeBooster(result).fromJson(json, beanClass)
 
         val expectJsonObject = getExpectJsonObject(result)
-        printLog("expect: $expectJsonObject")
-        printLog("actual: ${boosterResult.toJsonObject()}")
+        printLog("serialize expect: $expectJsonObject")
+        printLog("serialize actual: ${boosterResult.toJsonObject()}")
 
         assert(boosterResult.toJsonObject() == expectJsonObject)
+        printLog("end testSerialize <<<")
+    }
+
+    private fun testDeserialize(result: KotlinCompilation.Result, beanClass: Class<*>) {
+        printLog("start testDeserialize >>>")
+        val bean = Gson().fromJson(getExpectJsonObject(result).toString(), beanClass)
+
+        val boosterResult =
+            Gson().fromJson(makeBooster(result).toJson(bean), JsonObject::class.java)
+        val expectJsonObject = getExpectJsonObject(result)
+        printLog("deserialize expect: $expectJsonObject")
+        printLog("deserialize actual: ${boosterResult.toJsonObject()}")
+
+        assert(boosterResult.toJsonObject() == expectJsonObject)
+        printLog("end testDeserialize <<<")
     }
 
     private fun makeBooster(result: KotlinCompilation.Result): Gson {
