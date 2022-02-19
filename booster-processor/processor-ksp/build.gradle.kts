@@ -20,8 +20,6 @@ dependencies {
     implementation(project(":base:check"))
     implementation(project(":base:gen"))
 
-    implementation(Dependencies.auto_service_annotation)
-    kapt(Dependencies.auto_service)
     implementation(Dependencies.ksp_api)
 
     testImplementation(Dependencies.kotlin_compiler_testing_ksp)

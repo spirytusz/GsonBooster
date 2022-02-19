@@ -8,7 +8,7 @@ object Versions {
     const val gson = "2.9.0"
     const val auto_service = "1.0"
     const val kotlin_compiler_testing = "1.4.7"
-    const val ksp = "1.5.31-1.0.0"
+    const val ksp = "$kotlin_version-1.0.0"
     const val junit = "4.13.2"
     const val jmh = "1.28"
     const val androidx_constraintlayout = "2.1.1"
