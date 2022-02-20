@@ -13,7 +13,7 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 
-class WriteFunctionGenerator(private val logger: MessageLogger) {
+internal class WriteFunctionGenerator(private val logger: MessageLogger) {
 
     fun generate(
         scanner: ClassScanner,

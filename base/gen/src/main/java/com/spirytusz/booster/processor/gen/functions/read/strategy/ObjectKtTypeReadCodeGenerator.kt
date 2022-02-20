@@ -10,7 +10,7 @@ import com.spirytusz.booster.processor.gen.extensions.getTypeAdapterFieldName
 import com.spirytusz.booster.processor.gen.functions.read.strategy.base.AbstractKtTypeReadCodeGenerator
 import com.squareup.kotlinpoet.CodeBlock
 
-class ObjectKtTypeReadCodeGenerator(
+internal class ObjectKtTypeReadCodeGenerator(
     logger: MessageLogger,
     config: TypeAdapterClassGenConfig
 ) : AbstractKtTypeReadCodeGenerator(logger, config) {

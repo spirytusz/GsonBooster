@@ -8,7 +8,7 @@ import com.spirytusz.booster.processor.gen.const.Const.Naming.READER
 import com.spirytusz.booster.processor.gen.extensions.getPeekedFieldName
 import com.squareup.kotlinpoet.CodeBlock
 
-abstract class AbstractKtTypeReadCodeGenerator(
+internal abstract class AbstractKtTypeReadCodeGenerator(
     protected val logger: MessageLogger,
     protected val config: TypeAdapterClassGenConfig
 ) : KtTypeReadCodeGenerator {

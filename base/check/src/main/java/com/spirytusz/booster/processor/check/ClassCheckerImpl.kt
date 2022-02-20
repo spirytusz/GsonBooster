@@ -7,7 +7,7 @@ import com.spirytusz.booster.processor.check.clazz.ClassGenericsChecker
 import com.spirytusz.booster.processor.check.clazz.InvisibleGetterSetterFieldChecker
 import com.spirytusz.booster.processor.check.clazz.NoArgsConstructorChecker
 
-class ClassCheckerImpl(private val messageLogger: MessageLogger) : ClassChecker {
+internal class ClassCheckerImpl(private val messageLogger: MessageLogger) : ClassChecker {
 
     private val classGenericsChecker by lazy { ClassGenericsChecker(messageLogger) }
 

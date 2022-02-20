@@ -9,7 +9,7 @@ import com.spirytusz.booster.processor.gen.extensions.flatten
 import com.spirytusz.booster.processor.gen.functions.write.strategy.base.AbstractKtTypeWriteCodeGenerator
 import com.squareup.kotlinpoet.CodeBlock
 
-class MapKtTypeWriteCodeGenerator(
+internal class MapKtTypeWriteCodeGenerator(
     logger: MessageLogger,
     config: TypeAdapterClassGenConfig
 ) : AbstractKtTypeWriteCodeGenerator(logger, config) {

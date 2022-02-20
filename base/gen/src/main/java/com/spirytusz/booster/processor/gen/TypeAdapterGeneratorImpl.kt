@@ -6,7 +6,7 @@ import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfi
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.extensions.parameterizedBy
-import com.spirytusz.booster.processor.base.gen.TypeAdapterClassGenerator
+import com.spirytusz.booster.processor.base.gen.TypeAdapterGenerator
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
 import com.spirytusz.booster.processor.gen.const.Const.Naming.GSON
@@ -19,7 +19,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 
-class TypeAdapterClassGeneratorImpl(private val logger: MessageLogger) : TypeAdapterClassGenerator {
+internal class TypeAdapterGeneratorImpl(private val logger: MessageLogger) : TypeAdapterGenerator {
 
     private val fieldGenerator by lazy { FieldGenerator(logger) }
 
@@ -27,19 +27,13 @@ class TypeAdapterClassGeneratorImpl(private val logger: MessageLogger) : TypeAda
 
     private val writeFunctionGenerator by lazy { WriteFunctionGenerator(logger) }
 
-    override fun setClassFilter(classes: Set<KtType>) {
-        val classFilterMap = classes.map {
-            preCheckKtType(it, "setClassFilter() >>>")
-            it.rawType to it
-        }.toMap()
-        fieldGenerator.setClassFilter(classFilterMap)
-    }
-
     override fun generate(
         scanner: ClassScanner,
+        classFilter: Set<KtType>,
         config: TypeAdapterClassGenConfig
     ): TypeSpec {
         preCheckKtType(scanner.classKtType, "generate() >>>")
+        setClassFilter(classFilter)
         val className = scanner.classKtType
         val typeAdapterClassName = className.getTypeAdapterClassName()
         return TypeSpec.classBuilder(typeAdapterClassName)
@@ -57,6 +51,14 @@ class TypeAdapterClassGeneratorImpl(private val logger: MessageLogger) : TypeAda
             .addReadFunction(scanner, config)
             .addWriteFunction(scanner, config)
             .build()
+    }
+
+    private fun setClassFilter(classes: Set<KtType>) {
+        val classFilterMap = classes.map {
+            preCheckKtType(it, "setClassFilter() >>>")
+            it.rawType to it
+        }.toMap()
+        fieldGenerator.setClassFilter(classFilterMap)
     }
 
     private fun TypeSpec.Builder.addClassBodyFields(

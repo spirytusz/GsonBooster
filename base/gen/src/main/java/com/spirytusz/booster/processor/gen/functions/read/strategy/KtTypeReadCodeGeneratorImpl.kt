@@ -6,7 +6,7 @@ import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.gen.functions.read.strategy.base.KtTypeReadCodeGenerator
 import com.squareup.kotlinpoet.CodeBlock
 
-class KtTypeReadCodeGeneratorImpl(
+internal class KtTypeReadCodeGeneratorImpl(
     private val logger: MessageLogger,
     private val config: TypeAdapterClassGenConfig
 ) : KtTypeReadCodeGenerator {

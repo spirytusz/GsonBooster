@@ -8,7 +8,7 @@ import com.spirytusz.booster.processor.gen.extensions.getTypeAdapterFieldName
 import com.spirytusz.booster.processor.gen.functions.write.strategy.base.AbstractKtTypeWriteCodeGenerator
 import com.squareup.kotlinpoet.CodeBlock
 
-class ObjectKtTypeWriteCodeGenerator(
+internal class ObjectKtTypeWriteCodeGenerator(
     logger: MessageLogger,
     config: TypeAdapterClassGenConfig
 ) : AbstractKtTypeWriteCodeGenerator(logger, config) {

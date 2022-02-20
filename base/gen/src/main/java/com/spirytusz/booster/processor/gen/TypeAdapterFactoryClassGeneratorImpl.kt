@@ -13,7 +13,7 @@ import com.spirytusz.booster.processor.gen.const.Const.Naming.TYPE_TOKEN
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
-class TypeAdapterFactoryClassGeneratorImpl(
+internal class TypeAdapterFactoryClassGeneratorImpl(
     private val logger: MessageLogger
 ) : TypeAdapterFactoryGenerator {
     override fun generate(

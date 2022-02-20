@@ -11,7 +11,7 @@ import com.spirytusz.booster.processor.gen.extensions.getReadingTempFieldName
 import com.spirytusz.booster.processor.gen.functions.read.strategy.base.AbstractKtTypeReadCodeGenerator
 import com.squareup.kotlinpoet.CodeBlock
 
-class PrimitiveKtTypeReadCodeGenerator(
+internal class PrimitiveKtTypeReadCodeGenerator(
     logger: MessageLogger,
     config: TypeAdapterClassGenConfig
 ) : AbstractKtTypeReadCodeGenerator(logger, config) {

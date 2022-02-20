@@ -7,7 +7,7 @@ import com.spirytusz.booster.processor.gen.const.Const.Naming.WRITER
 import com.spirytusz.booster.processor.gen.extensions.getWritingTempFieldName
 import com.squareup.kotlinpoet.CodeBlock
 
-abstract class AbstractKtTypeWriteCodeGenerator(
+internal abstract class AbstractKtTypeWriteCodeGenerator(
     protected val logger: MessageLogger,
     protected val config: TypeAdapterClassGenConfig
 ) : KtTypeWriteCodeGenerator {

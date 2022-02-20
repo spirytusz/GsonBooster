@@ -3,6 +3,7 @@ package com.spirytusz.booster.processor.base.gen
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
 import com.spirytusz.booster.processor.base.data.type.KtType
+import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.squareup.kotlinpoet.TypeSpec
 
 /**
@@ -20,4 +21,9 @@ interface TypeAdapterFactoryGenerator {
         typeAdapterFactoryName: String,
         classToTypeAdapters: Set<Pair<KtType, KtType>>
     ): TypeSpec
+
+    interface Factory {
+
+        fun create(logger: MessageLogger): TypeAdapterFactoryGenerator
+    }
 }

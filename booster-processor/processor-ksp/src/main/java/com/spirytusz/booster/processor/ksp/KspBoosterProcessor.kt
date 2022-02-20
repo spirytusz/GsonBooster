@@ -9,16 +9,17 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Visibility
 import com.spirytusz.booster.annotation.Boost
+import com.spirytusz.booster.processor.base.check.ClassChecker
 import com.spirytusz.booster.processor.base.const.Keys
 import com.spirytusz.booster.processor.base.const.Keys.KEY_TYPE_ADAPTER_FACTORY_NAME
 import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.extensions.asTypeName
+import com.spirytusz.booster.processor.base.gen.TypeAdapterFactoryGenerator
+import com.spirytusz.booster.processor.base.gen.TypeAdapterGenerator
 import com.spirytusz.booster.processor.base.scan.ClassScanner
-import com.spirytusz.booster.processor.check.ClassCheckerImpl
-import com.spirytusz.booster.processor.gen.TypeAdapterClassGeneratorFactory
-import com.spirytusz.booster.processor.gen.TypeAdapterFactoryClassGeneratorImpl
+import com.spirytusz.booster.processor.base.utils.ServiceManager
 import com.spirytusz.booster.processor.ksp.log.KspMessageLogger
 import com.spirytusz.booster.processor.scan.ksp.KspClassScannerFactory
 import com.spirytusz.booster.processor.scan.ksp.data.IKsNodeOwner
@@ -56,7 +57,7 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
         }
 
         classScanners.forEach {
-            ClassCheckerImpl(logger).check(it)
+            ServiceManager.fetchService<ClassChecker.Factory>().create(logger).check(it)
         }
 
         val classFilter = classScanners.map { it.classKtType }.toSet()
@@ -65,13 +66,17 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
             classScanner.ktFields.forEach {
                 logger.info("${classScanner.classKind} ${classType.toReadableString()} >>> ${it.toReadableString()}")
             }
-            val typeAdapterClassGenerator = TypeAdapterClassGeneratorFactory
-                .create(classFilter, logger)
+            val typeAdapterClassGenerator = ServiceManager
+                .fetchService<TypeAdapterGenerator.Factory>()
+                .create(logger)
             val typeAdapterClassGenConfig = TypeAdapterClassGenConfig(
                 nullSafe = environment.options[Keys.KEY_NULL_SAFE] == true.toString()
             )
-            val typeSpec =
-                typeAdapterClassGenerator.generate(classScanner, typeAdapterClassGenConfig)
+            val typeSpec = typeAdapterClassGenerator.generate(
+                classScanner,
+                classFilter,
+                typeAdapterClassGenConfig
+            )
 
             classScanner to typeSpec
         }
@@ -131,7 +136,9 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
             classKtType to typeAdapterKtType
         }.toSet()
 
-        val typeAdapterFactorySpec = TypeAdapterFactoryClassGeneratorImpl(logger)
+        val typeAdapterFactorySpec = ServiceManager
+            .fetchService<TypeAdapterFactoryGenerator.Factory>()
+            .create(logger)
             .generate(typeAdapterFactoryName, classToTypeAdapters)
         val typeAdapterFactoryClassName = ClassName.bestGuess(typeAdapterFactoryName)
         val originatingKSFiles = classToTypeAdapters.mapNotNull { (classKtType, _) ->

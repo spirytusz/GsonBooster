@@ -2,16 +2,17 @@ package com.spirytusz.booster.processor.kapt
 
 import com.google.auto.service.AutoService
 import com.spirytusz.booster.annotation.Boost
+import com.spirytusz.booster.processor.base.check.ClassChecker
 import com.spirytusz.booster.processor.base.const.Keys.KEY_NULL_SAFE
 import com.spirytusz.booster.processor.base.const.Keys.KEY_TYPE_ADAPTER_FACTORY_NAME
 import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtVariance
 import com.spirytusz.booster.processor.base.extensions.asTypeName
+import com.spirytusz.booster.processor.base.gen.TypeAdapterFactoryGenerator
+import com.spirytusz.booster.processor.base.gen.TypeAdapterGenerator
 import com.spirytusz.booster.processor.base.scan.ClassScanner
-import com.spirytusz.booster.processor.check.ClassCheckerImpl
-import com.spirytusz.booster.processor.gen.TypeAdapterClassGeneratorFactory
-import com.spirytusz.booster.processor.gen.TypeAdapterFactoryClassGeneratorImpl
+import com.spirytusz.booster.processor.base.utils.ServiceManager
 import com.spirytusz.booster.processor.kapt.log.KaptMessageLogger
 import com.spirytusz.booster.processor.scan.kapt.KaptClassScanner
 import com.spirytusz.booster.processor.scan.kapt.KmClassCacheHolder
@@ -64,7 +65,7 @@ class KaptBoosterProcessor : AbstractProcessor() {
         }
 
         classScanners.forEach {
-            ClassCheckerImpl(logger).check(it)
+            ServiceManager.fetchService<ClassChecker.Factory>().create(logger).check(it)
         }
         val classFilter = classScanners.map { it.classKtType }.toSet()
 
@@ -73,14 +74,16 @@ class KaptBoosterProcessor : AbstractProcessor() {
             classScanner.ktFields.forEach {
                 logger.info("${classScanner.classKind} ${classType.toReadableString()} >>> ${it.toReadableString()}")
             }
-            val typeAdapterClassGenerator = TypeAdapterClassGeneratorFactory
-                .create(classFilter, logger)
+            val typeAdapterClassGenerator = ServiceManager
+                .fetchService<TypeAdapterGenerator.Factory>()
+                .create(logger)
 
             val typeAdapterClassGenConfig = TypeAdapterClassGenConfig(
                 nullSafe = processingEnv.options[KEY_NULL_SAFE] == true.toString()
             )
             val typeSpec = typeAdapterClassGenerator.generate(
                 classScanner,
+                classFilter,
                 typeAdapterClassGenConfig
             ).toBuilder().apply {
                 (classType as IElementOwner).target?.let { addOriginatingElement(it) }
@@ -131,7 +134,9 @@ class KaptBoosterProcessor : AbstractProcessor() {
             classKtType to typeAdapterKtType
         }.toSet()
 
-        val typeAdapterFactorySpec = TypeAdapterFactoryClassGeneratorImpl(logger)
+        val typeAdapterFactorySpec = ServiceManager
+            .fetchService<TypeAdapterFactoryGenerator.Factory>()
+            .create(logger)
             .generate(typeAdapterFactoryName, classToTypeAdapters)
             .toBuilder().apply {
                 classToTypeAdapters.mapNotNull { (classKtType, _) ->
