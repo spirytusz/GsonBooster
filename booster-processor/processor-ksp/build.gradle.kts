@@ -17,8 +17,8 @@ dependencies {
     implementation(project(":booster-annotation"))
     api(project(":base:processor-base"))
     implementation(project(":base:scan:scan-ksp"))
-    implementation(project(":base:check"))
-    implementation(project(":base:gen"))
+    runtimeOnly(project(":base:check"))
+    runtimeOnly(project(":base:gen"))
 
     implementation(Dependencies.ksp_api)
 

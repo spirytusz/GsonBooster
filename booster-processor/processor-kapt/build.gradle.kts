@@ -14,8 +14,8 @@ dependencies {
     implementation(project(":booster-annotation"))
     api(project(":base:processor-base"))
     implementation(project(":base:scan:scan-kapt"))
-    implementation(project(":base:check"))
-    implementation(project(":base:gen"))
+    runtimeOnly(project(":base:check"))
+    runtimeOnly(project(":base:gen"))
 
     implementation(Dependencies.auto_service_annotation)
     kapt(Dependencies.auto_service)
