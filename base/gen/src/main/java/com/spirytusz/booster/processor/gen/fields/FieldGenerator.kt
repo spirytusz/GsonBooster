@@ -1,6 +1,7 @@
 package com.spirytusz.booster.processor.gen.fields
 
 import com.google.gson.TypeAdapter
+import com.google.gson.reflect.TypeToken
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.log.MessageLogger
@@ -35,7 +36,7 @@ internal class FieldGenerator(private val logger: MessageLogger) {
             // 没有注册的，使用gson.getAdapter(XXX::class.java)
             CodeBlock.Builder()
                 .beginControlFlow("lazy")
-                .addStatement("$GSON.getAdapter(object : TypeToken<%T>() {})", typeName)
+                .addStatement("$GSON.getAdapter(object : %T<%T>() {})", TypeToken::class, typeName)
                 .endControlFlow()
                 .build()
         }
