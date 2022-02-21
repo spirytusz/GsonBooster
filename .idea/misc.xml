@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$USER_HOME$/AndroidStudioProjects/GsonBooster/base/check" />
+    <file type="web" url="file://$USER_HOME$/AndroidStudioProjects/GsonBooster/base/gen" />
+    <file type="web" url="file://$USER_HOME$/AndroidStudioProjects/GsonBooster/base/processor-base" />
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">

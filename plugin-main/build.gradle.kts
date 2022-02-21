@@ -22,6 +22,9 @@ tasks {
 
 dependencies {
     implementation(kotlin("stdlib"))
+
+    implementation(project(":base:check"))
+    implementation(project(":base:gen"))
 }
 
 tasks.getByName<Test>("test") {

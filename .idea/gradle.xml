@@ -7,7 +7,11 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$USER_HOME$/AndroidStudioProjects/GsonBooster/base/check" />
+            <option value="$USER_HOME$/AndroidStudioProjects/GsonBooster/base/gen" />
+            <option value="$USER_HOME$/AndroidStudioProjects/GsonBooster/base/processor-base" />
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/plugin-main" />
           </set>
