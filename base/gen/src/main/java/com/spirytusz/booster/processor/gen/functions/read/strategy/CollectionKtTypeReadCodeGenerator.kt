@@ -4,6 +4,7 @@ import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfi
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
+import com.spirytusz.booster.processor.base.extensions.kotlinPrimitiveType
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.gen.const.Const.Naming.READER
 import com.spirytusz.booster.processor.gen.extensions.getReadingTempFieldName
@@ -25,7 +26,7 @@ internal class CollectionKtTypeReadCodeGenerator(
         val generic = ktType.generics.first()
         codeBlockBuilder.addStatement(
             "val $tempFieldName = $initializer<%T>()",
-            generic.asTypeName(ignoreVariance = true)
+            generic.asTypeName(ignoreVariance = true).kotlinPrimitiveType()
         )
 
         codeBlockBuilder.addStatement("$READER.beginArray()")

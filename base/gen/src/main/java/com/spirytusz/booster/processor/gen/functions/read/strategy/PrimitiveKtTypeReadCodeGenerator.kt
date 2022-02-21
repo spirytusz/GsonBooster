@@ -5,6 +5,7 @@ import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfi
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
+import com.spirytusz.booster.processor.base.extensions.kotlinPrimitiveType
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.gen.const.Const.Naming.READER
 import com.spirytusz.booster.processor.gen.extensions.getReadingTempFieldName
@@ -23,7 +24,10 @@ internal class PrimitiveKtTypeReadCodeGenerator(
     ) {
         val tempFieldName = ktType.getReadingTempFieldName()
         val nextFuncExp = ktType.jsonTokenName.nextFuncExp
-        codeBlockBuilder.addStatement("val $tempFieldName = $READER.$nextFuncExp")
+        codeBlockBuilder.addStatement(
+            "val $tempFieldName: %T = $READER.$nextFuncExp",
+            ktType.asTypeName().kotlinPrimitiveType()
+        )
         codegenHook.invoke(codeBlockBuilder, tempFieldName)
     }
 
@@ -37,7 +41,10 @@ internal class PrimitiveKtTypeReadCodeGenerator(
                 codeBlockBuilder.addStatement("$READER.nextNull()")
 
                 val tempFieldName = ktType.getReadingTempFieldName()
-                codeBlockBuilder.addStatement("val $tempFieldName: %T = null", ktType.asTypeName())
+                codeBlockBuilder.addStatement(
+                    "val $tempFieldName: %T = null",
+                    ktType.asTypeName().kotlinPrimitiveType()
+                )
                 codegenHook.invoke(codeBlockBuilder, tempFieldName)
             }
             nullSafe && !strictType -> {
@@ -61,10 +68,10 @@ internal class PrimitiveKtTypeReadCodeGenerator(
             val tempFieldName = ktType.getReadingTempFieldName()
             codeBlockBuilder.addStatement(
                 "val $tempFieldName: %T = %T.%L.read($READER) as %T",
-                ktType.asTypeName(),
+                ktType.asTypeName().kotlinPrimitiveType(),
                 TypeAdapters::class,
                 gsonInternalTypeAdapterName,
-                ktType.asTypeName()
+                ktType.asTypeName().kotlinPrimitiveType()
             )
             codegenHook.invoke(codeBlockBuilder, tempFieldName)
         }

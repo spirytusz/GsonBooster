@@ -10,7 +10,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/base/check" />
             <option value="$PROJECT_DIR$/base/gen" />
@@ -25,6 +24,8 @@
             <option value="$PROJECT_DIR$/booster-processor/processor-kapt" />
             <option value="$PROJECT_DIR$/booster-processor/processor-ksp" />
             <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/kapt-demo" />
+            <option value="$PROJECT_DIR$/ksp-demo" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
