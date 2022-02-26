@@ -19,5 +19,11 @@
 
     <actions>
         <!-- Add your actions here -->
+        <action id="com.spirytusz.booster.plugin.TypeAdapterGenAction"
+                class="com.spirytusz.booster.plugin.TypeAdapterGenAction"
+                text="Generate TypeAdapter..."
+                description="Generate typeAdapter for *.kt/*.java file">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
+        </action>
     </actions>
 </idea-plugin>
