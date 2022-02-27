@@ -1,11 +1,9 @@
 # GsonBooster
-
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.spirytusz/booster-annotation/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.spirytusz/booster-annotation)
 
 GsonBooster是一个注解处理器，能够在编译期自动生成**兼容Kotlin特性的**、**高性能TypeAdapter**，以提升Gson的序列化与反序列化时间性能。
 
 ## Download
-
 <details open>
   <summary>Gradle</summary>
 
@@ -26,7 +24,6 @@ kapt {
     }
 }
 ```
-
 </details>
 
 <details close>
@@ -49,7 +46,6 @@ kapt {
     }
 }
 ```
-
 </details>
 
 ## Usage
@@ -68,7 +64,6 @@ val gson = GsonBuilder()
 ```
 
 ## Why
-
 ### Benchmark
 
 经过预热的场景，时间性能平均提升25%
@@ -92,10 +87,9 @@ Benchmarks.reflectiveTypeAdapter  avgt    6  40666.818 ± 2422.591  ns/op
 ![](img/compare.png)
 
 ## KSP-Support
-
 [KSP(Kotlin Symbol Processing)](https://github.com/google/ksp)是Google推出的更高性能、源码级的注解处理器，GsonBooster也对KSP作了支持。
 
-<details close>
+<details open>
   <summary>Gradle</summary>
 
 根目录build.gradle
@@ -142,7 +136,7 @@ ksp {
 }
 ```
 
-<details>
+</details>
 
 <details close>
   <summary>Kotlin DSL</summary>
@@ -189,11 +183,9 @@ ksp {
     arg("factory", "com.spirytusz.booster.ksp.BoosterTypeAdapterFactory")
 }
 ```
-
 </details>
 
 ## License
-
 ```
 MIT License
 
