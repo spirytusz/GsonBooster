@@ -1,81 +1,83 @@
 # GsonBooster
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.spirytusz/booster-annotation/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.spirytusz/booster-annotation)
 
-GsonBooster是一个自动化生成Gson TypeAdapter的工具库。
+GsonBooster是一个注解处理器，能够在编译期自动生成**兼容Kotlin特性的**、**高性能TypeAdapter**，以提升Gson的序列化与反序列化时间性能。
 
-## 接入
-```
+## Download
+
+<details open>
+  <summary>Gradle</summary>
+
+```groovy
 plugins {
-    // 引入kapt
     id 'kotlin-kapt'
 }
 
-...
-
 dependencies {
-    // 添加依赖
-    implementation "com.spirytusz:booster-annotation:1.1.0"
-    kapt "com.spirytusz:booster-processor:1.1.0"
+    implementation("com.spirytusz:booster-annotation:$last_versoin")
+    kapt("com.spirytusz:booster-processor:$last_version")
 }
 
 kapt {
     arguments {
-        // 设置生成TypeAdapterFactory的名称
-        // 默认为com.spirytusz.booster.BoosterTypeAdapterFactory
-        arg("factory", "com.example.BoosterTypeAdapterFactory")
+        // 指定生成TypeAdapterFactory的全限定名，不指定则不生成
+        arg("factory", "com.spirytusz.booster.BoosterTypeAdapterFactory")
     }
 }
 ```
 
-## 使用
+</details>
 
-为需要生成TypeAdapter的类加上`@Boost`注解
+<details close>
+  <summary>Kotlin-DSL</summary>
 
+```kotlin
+plugins {
+    kotlin("kapt")
+}
+
+dependencies {
+    implementation("com.spirytusz:booster-annotation:$last_versoin")
+    kapt("com.spirytusz:booster-processor:$last_version")
+}
+
+kapt {
+    arguments {
+        // 指定生成TypeAdapterFactory的全限定名，不指定则不生成
+        arg("factory", "com.spirytusz.booster.BoosterTypeAdapterFactory")
+    }
+}
 ```
+
+</details>
+
+## Usage
+
+```kotlin
+// 增加注解
 @Boost
 data class Foo(
-    @SerializedName("foo_int")
-    val intValue: Int = 0,
-    @SerializedName("foo_list_int")
-    val listIntValue: List<Int> = listOf()
+    val string: String = ""
 )
-```
 
-为Gson实例添加自动生成的`BoosterTypeAdapterFactory `
-
-```
-import com.example.BoosterTypeAdapterFactory
-
+// 生成的TypeAdapterFactory注册到gson实例中
 val gson = GsonBuilder()
         .registerTypeAdapterFactory(BoosterTypeAdapterFactory())
         .create()
 ```
 
-## 功能
-GsonBooster支持以下场景：
+## Why
 
-1. 支持默认值；
-2. 支持可空变量；
-3. 支持枚举；
-4. 支持简单集合类（泛型为原始类型或者不带泛型的Object类型）的序列化、反序列化加速；
-5. 一定的容错性，类型不对会使用默认值。（详见[测试报告](booster-test/TestingReport.md)）
+### Benchmark
 
-## 约定
-
-GsonBooster简单用法的背后，需要接入方的支持：
-
-1. 集合类泛型不能是可空的；
-2. Json Array必须声明为List或Set；
-3. 不使用Kotlin关键词为变量命名；
-4. 类需要提供一个无参构造方法，或者构造方法的所有参数必须有默认值；
-5. 如果继承了类或实现了接口，父类和接口需要序列化 or 反序列化的字段需要体现在构造方法上；
-
-## Benchmark
+经过预热的场景，时间性能平均提升25%
 
 * OS: Mac OS X
 * JVM: JDK 1.8.0_302, OpenJDK 64-Bit Server VM, 25.302-b08
 * CPU: Intel Core i7
 * Core: 4
+* Warmup: 2
 
 ```
 Benchmark                         Mode  Cnt      Score      Error  Units
@@ -83,7 +85,115 @@ Benchmarks.generatedTypeAdapter   avgt    6  31265.404 ± 8870.324  ns/op
 Benchmarks.reflectiveTypeAdapter  avgt    6  40666.818 ± 2422.591  ns/op
 ```
 
+### 首次启动
+
+在首次启动的复杂场景，可以从火焰图中看到反射部分（ReflectiveTypeAdapterFactory.create）被优化掉，耗时大幅缩短。
+
+![](img/compare.png)
+
+## KSP-Support
+
+[KSP(Kotlin Symbol Processing)](https://github.com/google/ksp)是Google推出的更高性能、源码级的注解处理器，GsonBooster也对KSP作了支持。
+
+<details close>
+  <summary>Gradle</summary>
+
+根目录build.gradle
+
+```groovy
+buildscripts { ... }
+
+plugins {
+    id('com.google.devtools.ksp') version "$kotlin_version-1.0.0"
+}
+```
+
+app模块build.gradle
+
+```groovy
+plugins {
+    id('com.google.devtools.ksp')
+}
+
+android {
+    // KSP生成的代码不能被IDE自动识别到，需要手动添加到sourceSets中
+    buildTypes {
+        debug {
+            sourceSets.main {
+                java.srcDir("build/generated/ksp/debug/kotlin")
+            }
+        }
+        release {
+            sourceSets.main {
+                java.srcDir("build/generated/ksp/release/kotlin")
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation('com.spirytusz:booster-annotation:$last_versoin')
+    ksp('com.spirytusz:booster-processor-ksp:$last_version')
+}
+
+ksp {
+    // 指定生成TypeAdapterFactory的全限定名，不指定则不生成
+    arg('factory', 'com.spirytusz.booster.ksp.BoosterTypeAdapterFactory')
+}
+```
+
+<details>
+
+<details close>
+  <summary>Kotlin DSL</summary>
+
+根目录下的build.gradle
+
+```kotlin
+plugins {
+    kotlin("jvm")
+    id("com.google.devtools.ksp") version "$kotlin_version-1.0.0"
+}
+```
+
+app模块build.gradle
+
+```kotlin
+plugins {
+    id("com.google.devtools.ksp")
+}
+
+android {
+    // KSP生成的代码不能被IDE自动识别到，需要手动添加到sourceSets中
+    buildTypes {
+        getByName("debug") {
+            sourceSets.getByName("main") {
+                java.srcDir("build/generated/ksp/debug/kotlin")
+            }
+        }
+        getByName("release") {
+            sourceSets.getByName("main") {
+                java.srcDir("build/generated/ksp/release/kotlin")
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation("com.spirytusz:booster-annotation:$last_versoin")
+    ksp("com.spirytusz:booster-processor-ksp:$last_version")
+}
+
+ksp {
+    // 指定生成TypeAdapterFactory的全限定名，不指定则不生成
+    arg("factory", "com.spirytusz.booster.ksp.BoosterTypeAdapterFactory")
+}
+```
+
+</details>
+
 ## License
+
 ```
 MIT License
 

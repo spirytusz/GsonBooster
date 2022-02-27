@@ -19,9 +19,15 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            sourceSets.getByName("main") {
+                java.srcDir("build/generated/ksp/debug/kotlin")
+            }
+        }
         getByName("release") {
-            minifyEnabled(false)
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            sourceSets.getByName("main") {
+                java.srcDir("build/generated/ksp/release/kotlin")
+            }
         }
     }
 
@@ -34,15 +40,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    // Make IDE aware for all variants
-    applicationVariants.all {
-        val variantName = name
-        sourceSets {
-            getByName("main") {
-                java.srcDir(File("build/generated/ksp/$variantName/kotlin"))
-            }
-        }
-    }
 }
 
 dependencies {
