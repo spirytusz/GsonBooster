@@ -347,5 +347,57 @@
         "boolean_bean_boolean": true
       }
     }
-  ]
+  ],
+  "foo_test_complex_struct_bean": {
+    "complex_struct_complex_collection_bean": {
+      "complex_collection_bean_list_set_list_long": [
+        null,
+        [
+          null,
+          [
+            1,
+            2,
+            3,
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      ]
+    },
+    "complex_struct_complex_map_bean": {
+      "complex_map_bean_map_str_map_str_map_str_str": {
+        "gusha": {
+          "wula": null,
+          "cesi": {
+            "puta": null,
+            "gugu": "hhh",
+            "spi": "666"
+          }
+        },
+        "sug": null
+      }
+    },
+    "complex_struct_complex_fusion_bean": {
+      "complex_fusion_bean_map_str_list_map_str_set_str": {
+        "wondar": [
+          {
+            "seig": [
+              null,
+              "haha",
+              "666",
+              "777"
+            ]
+          },
+          {},
+          null,
+          {
+            "sogu": null
+          }
+        ],
+        "wizer": null
+      }
+    }
+  }
 }

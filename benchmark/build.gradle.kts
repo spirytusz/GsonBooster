@@ -17,10 +17,10 @@ dependencies {
 
 kapt {
     arguments {
-        arg("factoryName", "com.spirytusz.booster.BoosterTypeAdapterFactory")
+        arg("factory", "com.spirytusz.booster.BoosterTypeAdapterFactory")
     }
 }
 
 sourceSets {
-    getByName("main").java.srcDir("../buildSrc/src/main/java")
+    getByName("main").java.srcDir(File("build/generated/source/kapt/main"))
 }
