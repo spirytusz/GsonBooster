@@ -5,7 +5,7 @@ plugins {
     kotlin("kapt")
 }
 
-apply(from = "../../upload.gradle.kts")
+apply(from = "../../upload.gradle")
 
 dependencies {
     implementation(Dependencies.kotlin_stdlib)

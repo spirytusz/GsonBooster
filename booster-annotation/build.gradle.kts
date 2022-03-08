@@ -2,4 +2,4 @@ plugins {
     kotlin("jvm")
 }
 
-apply(from = "../upload.gradle.kts")
+apply(from = "../upload.gradle")
