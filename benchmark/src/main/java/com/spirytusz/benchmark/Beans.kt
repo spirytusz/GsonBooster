@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.spirytusz.booster.annotation.Boost
 
 @Boost
-data class FooTest(
+data class Foo(
     @SerializedName("foo_test_long")
     val longValue: Long = 0L,
     @SerializedName("foo_test_nullable_long")

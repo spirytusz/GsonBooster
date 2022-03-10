@@ -1,26 +1,66 @@
 plugins {
-    kotlin("jvm")
+    id("com.android.library")
+    id("androidx.benchmark")
+    kotlin("android")
     kotlin("kapt")
 }
 
+android {
+    compileSdkVersion(31)
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion(23)
+        targetSdkVersion(31)
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner("androidx.benchmark.junit4.AndroidBenchmarkRunner")
+    }
+
+    testBuildType = "release"
+    buildTypes {
+        getByName("debug") {
+            // Since debuggable can"t be modified by gradle for library modules,
+            // it must be done in a manifest - see src/androidTest/AndroidManifest.xml
+            minifyEnabled(true)
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "benchmark-proguard-rules.pro"
+            )
+        }
+        getByName("release") {
+            isDefault = true
+        }
+    }
+}
+
 dependencies {
-    implementation(Dependencies.kotlin_stdlib)
+    androidTestImplementation(Dependencies.androidx_test_runner)
+    androidTestImplementation(Dependencies.androidx_test_junit_ext)
+    androidTestImplementation(Dependencies.junit)
+    androidTestImplementation(Dependencies.androidx_benchmark_junit)
 
-    implementation(Dependencies.gson)
-
-    implementation(Dependencies.jmh)
-    implementation(Dependencies.jmh_processor)
+    // Add your dependencies here. Note that you cannot benchmark code
+    // in an app module this way - you will need to move any code you
+    // want to benchmark to a library module:
+    // https://developer.android.com/studio/projects/android-library#Convert
 
     implementation(project(":booster-annotation"))
     kapt(project(":booster-processor:processor-kapt"))
+    implementation(Dependencies.gson)
 }
 
 kapt {
     arguments {
-        arg("factory", "com.spirytusz.booster.BoosterTypeAdapterFactory")
+        arg("factory", "com.spirytusz.benchmark.BoosterTypeAdapterFactory")
     }
-}
-
-sourceSets {
-    getByName("main").java.srcDir(File("build/generated/source/kapt/main"))
 }

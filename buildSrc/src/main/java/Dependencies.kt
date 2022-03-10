@@ -14,6 +14,11 @@ object Versions {
     const val androidx_constraintlayout = "2.1.1"
     const val androidx_appcompat = "1.3.1"
     const val material_design = "1.4.0"
+
+    const val androidx_benchmark_gradle_plugin = "1.0.0"
+    const val androidx_test_runner = "1.4.0"
+    const val androidx_test_junit_ext = "1.1.3"
+    const val androidx_benchmark_junit = "1.0.0"
 }
 
 object Dependencies {
@@ -57,4 +62,15 @@ object Dependencies {
     const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
 
     const val material_design = "com.google.android.material:material:${Versions.material_design}"
+
+    const val androidx_test_runner = "androidx.test:runner:${Versions.androidx_test_runner}"
+
+    const val androidx_test_junit_ext =
+        "androidx.test.ext:junit:${Versions.androidx_test_junit_ext}"
+
+    const val androidx_benchmark_junit =
+        "androidx.benchmark:benchmark-junit4:${Versions.androidx_benchmark_junit}"
+
+    const val androidx_benchmark_gradle_plugin =
+        "androidx.benchmark:benchmark-gradle-plugin:${Versions.androidx_benchmark_gradle_plugin}"
 }
