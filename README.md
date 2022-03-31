@@ -66,23 +66,15 @@ val gson = GsonBuilder()
 ## Why
 ### Benchmark
 
-经过预热的场景，时间性能平均提升25%
-
-* OS: Mac OS X
-* JVM: JDK 1.8.0_302, OpenJDK 64-Bit Server VM, 25.302-b08
-* CPU: Intel Core i7
+* OS: Android 10
+* CPU: Snapdragon 855
 * Core: 4
-* Warmup: 2
 
-```
-Benchmark                         Mode  Cnt      Score      Error  Units
-Benchmarks.generatedTypeAdapter   avgt    6  31265.404 ± 8870.324  ns/op
-Benchmarks.reflectiveTypeAdapter  avgt    6  40666.818 ± 2422.591  ns/op
-```
+经过预热的场景下，可以看到耗时从毫秒级降低到了微秒级(横坐标为实验次数，纵坐标为耗时，单位微秒(us)):
 
-### 首次启动
+![](img/time_cost_compare.svg)
 
-在首次启动的复杂场景，可以从火焰图中看到反射部分（ReflectiveTypeAdapterFactory.create）被优化掉，耗时大幅缩短。
+可以从火焰图中看到反射部分（ReflectiveTypeAdapterFactory.create）被优化掉，耗时大幅缩短。
 
 ![](img/compare.png)
 
