@@ -22,6 +22,11 @@ allprojects {
     }
 }
 
+subprojects {
+    group = ext["GROUP"].toString()
+    version = ext["VERSION"].toString()
+}
+
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }

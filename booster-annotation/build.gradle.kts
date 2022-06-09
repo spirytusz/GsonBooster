@@ -1,5 +1,4 @@
 plugins {
     kotlin("jvm")
+    id("maven-publish-plugin")
 }
-
-apply(from = "../upload.gradle")

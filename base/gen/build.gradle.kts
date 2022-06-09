@@ -1,9 +1,8 @@
 plugins {
     kotlin("jvm")
     kotlin("kapt")
+    id("maven-publish-plugin")
 }
-
-apply(from = "../../upload.gradle")
 
 dependencies {
     api(project(":base:processor-base"))
