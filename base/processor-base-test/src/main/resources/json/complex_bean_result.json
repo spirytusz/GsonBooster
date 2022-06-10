@@ -1,0 +1,12 @@
+{
+  "complex_bean_str": "123",
+  "complex_bean_int": 4,
+  "complex_bean_long": 5,
+  "complex_bean_float": 6.7,
+  "complex_bean_double": 7.8,
+  "complex_bean_bool": true,
+  "complex_bean_interface_long": 9,
+  "complex_bean_interface_string": "10",
+  "super_bean_long": 11,
+  "super_bean_string": "12"
+}
