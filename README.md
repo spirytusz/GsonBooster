@@ -87,8 +87,6 @@ val gson = GsonBuilder()
 根目录build.gradle
 
 ```groovy
-buildscripts { ... }
-
 plugins {
     id('com.google.devtools.ksp') version "$kotlin_version-1.0.0"
 }
