@@ -5,13 +5,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
-    buildToolsVersion("30.0.3")
+    compileSdk = BuildTools.compileSdkVersion
 
     defaultConfig {
         applicationId = "com.spirytusz.gsonbooster.ksp"
-        minSdkVersion(17)
-        targetSdkVersion(30)
+        minSdk = BuildTools.minSdkVersion
+        targetSdk = BuildTools.targetSdkVersion
         versionCode = 1
         versionName = "1.0"
 
@@ -25,6 +24,9 @@ android {
             }
         }
         getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+
             sourceSets.getByName("main") {
                 java.srcDir("build/generated/ksp/release/kotlin")
             }
@@ -51,8 +53,8 @@ dependencies {
     testImplementation(Dependencies.junit)
 
     implementation(Dependencies.gson)
-    implementation(project(":booster-annotation"))
-    ksp(project(":booster-processor:processor-ksp"))
+    implementation(Dependencies.booster_annotation)
+    ksp(Dependencies.booster_processor_ksp)
 }
 
 ksp {

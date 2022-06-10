@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = BuildTools.compileSdkVersion
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
@@ -18,12 +18,10 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion(23)
-        targetSdkVersion(31)
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = BuildTools.minSdkVersion
+        targetSdk = BuildTools.targetSdkVersion
 
-        testInstrumentationRunner("androidx.benchmark.junit4.AndroidBenchmarkRunner")
+        testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
     }
 
     testBuildType = "release"
@@ -31,7 +29,7 @@ android {
         getByName("debug") {
             // Since debuggable can"t be modified by gradle for library modules,
             // it must be done in a manifest - see src/androidTest/AndroidManifest.xml
-            minifyEnabled(true)
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "benchmark-proguard-rules.pro"

@@ -1,5 +1,11 @@
+object BuildTools {
+    const val compileSdkVersion = 31
+    const val targetSdkVersion = 31
+    const val minSdkVersion = 19
+}
+
 object Versions {
-    const val gradle_build_tool = "4.1.3"
+    const val gradle_build_tool = "7.1.3"
 
     const val kotlin_version = "1.5.31"
     const val kotlinx_metadata = "0.3.0"
@@ -19,6 +25,8 @@ object Versions {
     const val androidx_test_runner = "1.4.0"
     const val androidx_test_junit_ext = "1.1.3"
     const val androidx_benchmark_junit = "1.0.0"
+
+    const val booster = "1.3.0"
 }
 
 object Dependencies {
@@ -73,4 +81,10 @@ object Dependencies {
 
     const val androidx_benchmark_gradle_plugin =
         "androidx.benchmark:benchmark-gradle-plugin:${Versions.androidx_benchmark_gradle_plugin}"
+
+    const val booster_annotation = "com.spirytusz:booster-annotation:${Versions.booster}"
+
+    const val booster_processor = "com.spirytusz:booster-processor:${Versions.booster}"
+
+    const val booster_processor_ksp = "com.spirytusz:booster-processor-ksp:${Versions.booster}"
 }
