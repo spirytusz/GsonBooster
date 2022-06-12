@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="GsonBooster.base.processor-base-test" target="11" />
+      <module name="GsonBooster.base.processor-base-test.main" target="11" />
+      <module name="GsonBooster.base.processor-base-test.test" target="11" />
+      <module name="GsonBooster.buildSrc" target="11" />
+      <module name="GsonBooster.buildSrc.main" target="11" />
+      <module name="GsonBooster.buildSrc.test" target="11" />
+      <module name="GsonBooster.kapt-demo" target="11" />
+      <module name="GsonBooster.ksp-demo" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
