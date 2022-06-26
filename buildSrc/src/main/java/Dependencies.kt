@@ -26,7 +26,7 @@ object Versions {
     const val androidx_test_junit_ext = "1.1.3"
     const val androidx_benchmark_junit = "1.0.0"
 
-    const val booster = "1.3.0"
+    const val booster = "1.4.0"
 }
 
 object Dependencies {

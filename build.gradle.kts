@@ -5,6 +5,7 @@ plugins {
 
 buildscript {
     repositories {
+        maven { url = rootProject.uri(".repo") }
         mavenCentral()
         google()
     }
@@ -17,6 +18,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url = rootProject.uri(".repo") }
         mavenCentral()
         google()
     }
