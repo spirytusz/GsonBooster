@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
 import com.google.gson.reflect.TypeToken
+import com.spirytusz.booster.annotation.BoostProcessed
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.gen.TypeAdapterFactoryGenerator
@@ -23,6 +24,7 @@ internal class TypeAdapterFactoryClassGeneratorImpl(
         val typeAdapterFactoryClassName = ClassName.bestGuess(typeAdapterFactoryName)
         return TypeSpec
             .classBuilder(typeAdapterFactoryClassName)
+            .addAnnotation(BoostProcessed::class)
             .addSuperinterface(TypeAdapterFactory::class)
             .addFunction(generateCreateFunc(classToTypeAdapters))
             .build()

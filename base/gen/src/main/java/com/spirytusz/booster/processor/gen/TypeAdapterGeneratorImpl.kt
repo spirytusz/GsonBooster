@@ -2,6 +2,7 @@ package com.spirytusz.booster.processor.gen
 
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
+import com.spirytusz.booster.annotation.BoostProcessed
 import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
 import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
@@ -37,6 +38,7 @@ internal class TypeAdapterGeneratorImpl(private val logger: MessageLogger) : Typ
         val className = scanner.classKtType
         val typeAdapterClassName = className.getTypeAdapterClassName()
         return TypeSpec.classBuilder(typeAdapterClassName)
+            .addAnnotation(BoostProcessed::class)
             .superclass(TypeAdapter::class.parameterizedBy(className.asTypeName()))
             .primaryConstructor(
                 FunSpec.constructorBuilder()
