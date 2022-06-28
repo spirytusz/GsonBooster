@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/base/check" />
+            <option value="$PROJECT_DIR$/base/contract" />
             <option value="$PROJECT_DIR$/base/gen" />
             <option value="$PROJECT_DIR$/base/processor-base" />
             <option value="$PROJECT_DIR$/base/processor-base-test" />

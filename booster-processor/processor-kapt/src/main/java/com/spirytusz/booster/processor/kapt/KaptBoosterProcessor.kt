@@ -3,8 +3,8 @@ package com.spirytusz.booster.processor.kapt
 import com.google.auto.service.AutoService
 import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.base.check.ClassChecker
-import com.spirytusz.booster.processor.base.const.Keys.KEY_NULL_SAFE
-import com.spirytusz.booster.processor.base.const.Keys.KEY_TYPE_ADAPTER_FACTORY_NAME
+import com.spirytusz.booster.contract.Constants.BoosterKeys.KEY_NULL_SAFE
+import com.spirytusz.booster.contract.Constants.BoosterKeys.KEY_TYPE_ADAPTER_FACTORY_NAME
 import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtVariance

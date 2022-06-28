@@ -6,7 +6,7 @@ import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
-import com.spirytusz.booster.processor.gen.const.Const.Naming.GSON
+import com.spirytusz.booster.contract.Constants.Naming.GSON
 import com.spirytusz.booster.processor.gen.extensions.getTypeAdapterClassName
 import com.spirytusz.booster.processor.gen.extensions.getTypeAdapterFieldName
 import com.squareup.kotlinpoet.*

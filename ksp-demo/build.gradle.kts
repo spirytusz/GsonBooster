@@ -55,6 +55,7 @@ dependencies {
     implementation(Dependencies.gson)
     implementation(Dependencies.booster_annotation)
     ksp(Dependencies.booster_processor_ksp)
+    ksp(Dependencies.booster_aggregation_processor)
 }
 
 ksp {

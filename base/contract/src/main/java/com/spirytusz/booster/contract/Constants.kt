@@ -1,6 +1,17 @@
-package com.spirytusz.booster.processor.gen.const
+package com.spirytusz.booster.contract
 
-internal object Const {
+object Constants {
+
+    object BoosterKeys {
+        const val KEY_TYPE_ADAPTER_FACTORY_NAME = "factory"
+
+        const val KEY_NULL_SAFE = "nullSafe"
+    }
+
+    object PackageNames {
+        const val AGGREGATED_PACKAGE_NAME = "com.spirytusz.booster.aggregated"
+    }
+
     object Naming {
         const val TYPE_ADAPTER = "TypeAdapter"
 

@@ -10,7 +10,7 @@ import com.spirytusz.booster.processor.base.extensions.parameterizedBy
 import com.spirytusz.booster.processor.base.gen.TypeAdapterGenerator
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
-import com.spirytusz.booster.processor.gen.const.Const.Naming.GSON
+import com.spirytusz.booster.contract.Constants.Naming.GSON
 import com.spirytusz.booster.processor.gen.extensions.getTypeAdapterClassName
 import com.spirytusz.booster.processor.gen.fields.FieldGenerator
 import com.spirytusz.booster.processor.gen.functions.read.ReadFunctionGenerator

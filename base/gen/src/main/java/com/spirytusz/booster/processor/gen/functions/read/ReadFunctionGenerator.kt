@@ -7,9 +7,9 @@ import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfi
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.log.MessageLogger
 import com.spirytusz.booster.processor.base.scan.ClassScanner
-import com.spirytusz.booster.processor.gen.const.Const.Naming.DEFAULT_VALUE
-import com.spirytusz.booster.processor.gen.const.Const.Naming.READER
-import com.spirytusz.booster.processor.gen.const.Const.Naming.RETURN_VALUE
+import com.spirytusz.booster.contract.Constants.Naming.DEFAULT_VALUE
+import com.spirytusz.booster.contract.Constants.Naming.READER
+import com.spirytusz.booster.contract.Constants.Naming.RETURN_VALUE
 import com.spirytusz.booster.processor.gen.functions.read.strategy.KtTypeReadCodeGeneratorImpl
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock

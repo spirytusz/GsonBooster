@@ -2,7 +2,7 @@ package com.spirytusz.booster.processor.kapt.test.base
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.spirytusz.booster.processor.base.const.Keys.KEY_TYPE_ADAPTER_FACTORY_NAME
+import com.spirytusz.booster.contract.Constants.BoosterKeys.KEY_TYPE_ADAPTER_FACTORY_NAME
 import com.spirytusz.booster.processor.kapt.KaptBoosterProcessor
 import com.spirytusz.booster.processor.test.AbstractSerializeTest
 import com.spirytusz.booster.processor.test.extensions.getClassByName

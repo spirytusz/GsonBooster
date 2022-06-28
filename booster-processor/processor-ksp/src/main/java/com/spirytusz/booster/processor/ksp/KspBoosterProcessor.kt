@@ -10,8 +10,8 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Visibility
 import com.spirytusz.booster.annotation.Boost
 import com.spirytusz.booster.processor.base.check.ClassChecker
-import com.spirytusz.booster.processor.base.const.Keys
-import com.spirytusz.booster.processor.base.const.Keys.KEY_TYPE_ADAPTER_FACTORY_NAME
+import com.spirytusz.booster.contract.Constants.BoosterKeys.KEY_NULL_SAFE
+import com.spirytusz.booster.contract.Constants.BoosterKeys.KEY_TYPE_ADAPTER_FACTORY_NAME
 import com.spirytusz.booster.processor.base.data.config.TypeAdapterClassGenConfig
 import com.spirytusz.booster.processor.base.data.type.JsonTokenName
 import com.spirytusz.booster.processor.base.data.type.KtVariance
@@ -70,7 +70,7 @@ class KspBoosterProcessor(private val environment: SymbolProcessorEnvironment) :
                 .fetchService<TypeAdapterGenerator.Factory>()
                 .create(logger)
             val typeAdapterClassGenConfig = TypeAdapterClassGenConfig(
-                nullSafe = environment.options[Keys.KEY_NULL_SAFE] == true.toString()
+                nullSafe = environment.options[KEY_NULL_SAFE] == true.toString()
             )
             val typeSpec = typeAdapterClassGenerator.generate(
                 classScanner,

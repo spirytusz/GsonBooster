@@ -6,7 +6,7 @@ import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.extensions.kotlinPrimitiveType
 import com.spirytusz.booster.processor.base.log.MessageLogger
-import com.spirytusz.booster.processor.gen.const.Const.Naming.READER
+import com.spirytusz.booster.contract.Constants.Naming.READER
 import com.spirytusz.booster.processor.gen.extensions.getReadingTempFieldName
 import com.spirytusz.booster.processor.gen.functions.read.strategy.base.AbstractKtTypeReadCodeGenerator
 import com.squareup.kotlinpoet.CodeBlock

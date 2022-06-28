@@ -9,8 +9,8 @@ import com.spirytusz.booster.processor.base.data.type.KtType
 import com.spirytusz.booster.processor.base.extensions.asTypeName
 import com.spirytusz.booster.processor.base.gen.TypeAdapterFactoryGenerator
 import com.spirytusz.booster.processor.base.log.MessageLogger
-import com.spirytusz.booster.processor.gen.const.Const.Naming.GSON
-import com.spirytusz.booster.processor.gen.const.Const.Naming.TYPE_TOKEN
+import com.spirytusz.booster.contract.Constants.Naming.GSON
+import com.spirytusz.booster.contract.Constants.Naming.TYPE_TOKEN
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
