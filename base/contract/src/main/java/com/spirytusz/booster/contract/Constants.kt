@@ -6,6 +6,10 @@ object Constants {
         const val KEY_TYPE_ADAPTER_FACTORY_NAME = "factory"
 
         const val KEY_NULL_SAFE = "nullSafe"
+
+        const val KEY_PROJECT_NAME = "project_name"
+
+        const val KEY_IS_MAIN_PROJECT = "is_main_project"
     }
 
     object PackageNames {

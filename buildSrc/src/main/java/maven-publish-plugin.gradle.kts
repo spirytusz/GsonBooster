@@ -65,7 +65,7 @@ rootProject.subprojects {
 
 publishing {
     publications {
-        create<MavenPublication>("pluginMaven") {
+        create<MavenPublication>("booster") {
             groupId = groupName
             artifactId = artifactName
             version = ver
@@ -122,5 +122,5 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["pluginMaven"])
+    sign(publishing.publications["booster"])
 }
