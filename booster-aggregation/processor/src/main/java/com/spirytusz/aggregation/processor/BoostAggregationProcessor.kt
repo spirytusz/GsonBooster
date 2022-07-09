@@ -42,7 +42,7 @@ class BoostProcessedCollector(
             }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val typeAdapterNames = mutableSetOf<String>()
+        val typeAdapterNames = mutableMapOf<String, String>()
         val typeAdapterFactoryNames = mutableSetOf<String>()
 
         val annotatedClasses = resolver.boostProcessedAnnotatedClasses
@@ -51,7 +51,11 @@ class BoostProcessedCollector(
                 // TypeAdapter
                 ksDeclaration.isGeneratedTypeAdapter() -> {
                     environment.logger.warn("find TypeAdapter", ksDeclaration)
-                    typeAdapterNames.add(ksDeclaration.qualifiedName?.asString().toString())
+                    val superType = ksDeclaration.superTypes.first().resolve()
+                    val superTypeGenericType = superType.arguments.first().type?.resolve()
+                    val superTypeGenericName = superTypeGenericType?.declaration?.qualifiedName?.asString().toString()
+                    val typeAdapterName = ksDeclaration.qualifiedName?.asString().toString()
+                    typeAdapterNames[superTypeGenericName] = typeAdapterName
                 }
                 // TypeAdapterFactory
                 ksDeclaration.isGeneratedTypeAdapterFactory() -> {

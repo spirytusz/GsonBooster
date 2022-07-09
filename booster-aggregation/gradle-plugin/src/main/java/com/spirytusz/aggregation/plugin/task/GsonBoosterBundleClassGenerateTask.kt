@@ -30,7 +30,13 @@ abstract class GsonBoosterBundleClassGenerateTask : DefaultTask() {
         project.logger.info("OutputFile: $outputFile")
 
         val jsonObject = inputFile.readAsJson()
-        val typeAdapterNames = jsonObject.get("type_adapter_names").asJsonArray.map { it.asString }
+        val typeAdapterNames = jsonObject.get("type_adapter_names").asJsonObject.let {
+            mutableMapOf<String, String>().apply {
+                it.keySet().forEach { key ->
+                    put(key, it.get(key).asString)
+                }
+            }
+        }
         val factoryNames = jsonObject.get("type_adapter_factory_names").asJsonArray
             .map { it.asString }
 

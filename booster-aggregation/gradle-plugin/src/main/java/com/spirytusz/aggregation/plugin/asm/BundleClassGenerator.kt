@@ -3,7 +3,7 @@ package com.spirytusz.aggregation.plugin.asm
 import org.objectweb.asm.*
 
 class BundleClassGenerator(
-    private val typeAdapterNames: List<String>,
+    private val typeAdapterNames: Map<String, String>,
     private val typeAdapterFactoryNames: List<String>
 ) {
 
@@ -85,21 +85,6 @@ class BundleClassGenerator(
             visitFieldInsn(Opcodes.PUTSTATIC, GENERATED_CLASS, FACTORY_FIELD_NAME, "L$LIST;")
         }
 
-        fun MethodVisitor.putTypeAdapters() {
-            typeAdapterNames.forEach { typeAdapterName ->
-                val formattedName = typeAdapterName.replace(".", "/")
-                val label = Label()
-                visitLabel(label)
-                visitLineNumber(currentLineNumber++, label)
-                visitFieldInsn(Opcodes.GETSTATIC, GENERATED_CLASS, ADAPTER_FIELD_NAME, "L$LIST;")
-                visitTypeInsn(Opcodes.NEW, formattedName)
-                visitInsn(Opcodes.DUP)
-                visitMethodInsn(Opcodes.INVOKESPECIAL, formattedName, "<init>", "()V", false)
-                visitMethodInsn(Opcodes.INVOKEINTERFACE, LIST, "add", "(Ljava/lang/Object;)Z", true)
-                visitInsn(Opcodes.POP)
-            }
-        }
-
         fun MethodVisitor.putTypeAdapterFactories() {
             currentLineNumber++
 
@@ -120,7 +105,6 @@ class BundleClassGenerator(
         val methodVisitor = visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
         methodVisitor.visitCode()
         methodVisitor.initStaticField()
-        methodVisitor.putTypeAdapters()
         methodVisitor.putTypeAdapterFactories()
 
         val label = Label()

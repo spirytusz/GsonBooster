@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AggregatedResult(
     @SerializedName("type_adapter_names")
-    val typeAdapterNames: Set<String> = emptySet(),
+    val typeAdapterNames: Map<String, String> = emptyMap(),
     @SerializedName("type_adapter_factory_names")
     val typeAdapterFactoryNames: Set<String> = emptySet()
 ) {
