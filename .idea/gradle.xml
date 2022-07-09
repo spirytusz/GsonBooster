@@ -23,6 +23,8 @@
             <option value="$PROJECT_DIR$/booster-aggregation" />
             <option value="$PROJECT_DIR$/booster-aggregation/gradle-plugin" />
             <option value="$PROJECT_DIR$/booster-aggregation/processor" />
+            <option value="$PROJECT_DIR$/booster-aggregation/runtime" />
+            <option value="$PROJECT_DIR$/booster-aggregation/runtime-stub" />
             <option value="$PROJECT_DIR$/booster-annotation" />
             <option value="$PROJECT_DIR$/booster-processor" />
             <option value="$PROJECT_DIR$/booster-processor/processor-kapt" />

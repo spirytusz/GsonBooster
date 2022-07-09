@@ -8,13 +8,13 @@ class BundleClassGenerator(
 ) {
 
     companion object {
+        const val GENERATED_CLASS = "com/spirytusz/booster/aggregation/runtime/BoosterAggregationRegistry"
+
         private const val OBJECT = "java/lang/Object"
         private const val LIST = "java/util/List"
         private const val ARRAY_LIST = "java/util/ArrayList"
         private const val TYPE_ADAPTER = "com/google/gson/TypeAdapter"
         private const val TYPE_ADAPTER_FACTORY = "com/google/gson/TypeAdapterFactory"
-
-        private const val GENERATED_CLASS = "com/spirytusz/booster/aggregation/BoosterBundle"
 
         private const val ADAPTER_FIELD_NAME = "adapters"
         private const val FACTORY_FIELD_NAME = "factories"
@@ -33,14 +33,14 @@ class BundleClassGenerator(
             arrayOf()
         )
         classWriter.visitField(
-            Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
+            Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
             ADAPTER_FIELD_NAME,
             "L$LIST;",
             "L$LIST<L$TYPE_ADAPTER;>;",
             null
         )
         classWriter.visitField(
-            Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
+            Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
             FACTORY_FIELD_NAME,
             "L$LIST;",
             "L$LIST<L$TYPE_ADAPTER_FACTORY;>;",
@@ -135,7 +135,7 @@ class BundleClassGenerator(
 
         fun generateListGetter(fieldName: String, argumentType: String) {
             val methodVisitor = visitMethod(
-                Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC,
+                Opcodes.ACC_PROTECTED or Opcodes.ACC_STATIC,
                 "get${fieldName.replaceFirstChar { it.uppercaseChar() }}",
                 "()L$LIST;",
                 "()L$LIST<L$argumentType;>;",
