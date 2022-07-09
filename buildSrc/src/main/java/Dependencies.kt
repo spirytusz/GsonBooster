@@ -27,6 +27,9 @@ object Versions {
     const val androidx_benchmark_junit = "1.0.0"
 
     const val booster = "1.4.0"
+
+    const val asm = "9.1"
+    const val common_io = "2.6"
 }
 
 object Dependencies {
@@ -87,4 +90,9 @@ object Dependencies {
     const val booster_processor = "com.spirytusz:booster-processor:${Versions.booster}"
 
     const val booster_processor_ksp = "com.spirytusz:booster-processor-ksp:${Versions.booster}"
+
+    const val ksp_gradle_plugin = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.ksp}"
+
+    const val asm = "org.ow2.asm:asm-commons:${Versions.asm}"
+    const val common_io = "commons-io:commons-io:${Versions.common_io}"
 }

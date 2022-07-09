@@ -41,4 +41,14 @@ object Constants {
 
         const val TEMP_FIELD_PREFIX = "temp"
     }
+
+    object PluginIds {
+        const val ANDROID_PLUGIN = "com.android.application"
+
+        const val ANDROID_LIB_PLUGIN = "com.android.library"
+
+        const val KSP_PLUGIN = "com.google.devtools.ksp"
+
+        const val KOTLIN_JVM = "org.jetbrains.kotlin.jvm"
+    }
 }
