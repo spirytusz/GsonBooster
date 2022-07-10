@@ -51,4 +51,15 @@ object Constants {
 
         const val KOTLIN_JVM = "org.jetbrains.kotlin.jvm"
     }
+
+    object ClassNames {
+        const val CLASSNAME_OBJECT = "java/lang/Object"
+        const val CLASSNAME_LIST = "java/util/List"
+        const val CLASSNAME_ARRAY_LIST = "java/util/ArrayList"
+        const val CLASSNAME_TYPE_ADAPTER = "com/google/gson/TypeAdapter"
+        const val CLASSNAME_TYPE_ADAPTER_FACTORY = "com/google/gson/TypeAdapterFactory"
+        const val CLASSNAME_GSON = "com/google/gson/Gson"
+        const val CLASSNAME_TYPE_TOKEN = "com/google/gson/reflect/TypeToken"
+        const val CLASSNAME_CLASS = "java/lang/Class"
+    }
 }

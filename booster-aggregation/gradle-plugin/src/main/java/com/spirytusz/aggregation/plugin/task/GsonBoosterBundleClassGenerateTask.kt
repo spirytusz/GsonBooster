@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import com.spirytusz.aggregation.plugin.asm.BundleClassGenerator
 import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import java.io.File
@@ -16,18 +17,18 @@ abstract class GsonBoosterBundleClassGenerateTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     abstract val aggregatedJsonFile: RegularFileProperty
 
-    @get:OutputFile
-    abstract val bundleKotlinSourceClass: RegularFileProperty
+    @get:OutputDirectory
+    abstract val bundleKotlinSourceDirectory: DirectoryProperty
 
     private val gson = Gson()
 
     @TaskAction
     fun generateGsonBoosterBundleClass() {
         val inputFile = aggregatedJsonFile.asFile.get()
-        val outputFile = bundleKotlinSourceClass.asFile.get()
+        val outputDirectory = bundleKotlinSourceDirectory
 
         project.logger.info("InputFile: $inputFile")
-        project.logger.info("OutputFile: $outputFile")
+        project.logger.info("OutputFile: $outputDirectory")
 
         val jsonObject = inputFile.readAsJson()
         val typeAdapterNames = jsonObject.get("type_adapter_names").asJsonObject.let {
@@ -42,7 +43,18 @@ abstract class GsonBoosterBundleClassGenerateTask : DefaultTask() {
 
         val codeGenerator = BundleClassGenerator(typeAdapterNames, factoryNames)
         val generatedClassByteArray = codeGenerator.generate()
-        outputFile.writeBytes(generatedClassByteArray)
+        generatedClassByteArray.forEach { (name, byteArray) ->
+            val file = outputDirectory.file(name).get().asFile
+            FileUtils.writeByteArrayToFile(file, byteArray)
+            if (!file.parentFile.exists()) {
+                file.parentFile.mkdir()
+            }
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+            project.logger.info("write class ${file.absolutePath}")
+            file.writeBytes(byteArray)
+        }
     }
 
     private fun File.readAsJson(): JsonObject {

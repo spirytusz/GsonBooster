@@ -1,6 +1,12 @@
 package com.spirytusz.aggregation.plugin.asm
 
+import com.spirytusz.aggregation.plugin.asm.extensions.writeNoArgsConstructor
+import com.spirytusz.booster.contract.Constants.ClassNames.CLASSNAME_ARRAY_LIST
+import com.spirytusz.booster.contract.Constants.ClassNames.CLASSNAME_LIST
+import com.spirytusz.booster.contract.Constants.ClassNames.CLASSNAME_OBJECT
+import com.spirytusz.booster.contract.Constants.ClassNames.CLASSNAME_TYPE_ADAPTER_FACTORY
 import org.objectweb.asm.*
+import java.io.File
 
 class BundleClassGenerator(
     private val typeAdapterNames: Map<String, String>,
@@ -8,81 +14,78 @@ class BundleClassGenerator(
 ) {
 
     companion object {
-        const val GENERATED_CLASS = "com/spirytusz/booster/aggregation/runtime/BoosterAggregationRegistry"
+        private val GENERATE_CLASS_DIRECTORY = "com/spirytusz/booster/aggregation/runtime"
+            .replace("/", File.separator)
 
-        private const val OBJECT = "java/lang/Object"
-        private const val LIST = "java/util/List"
-        private const val ARRAY_LIST = "java/util/ArrayList"
-        private const val TYPE_ADAPTER = "com/google/gson/TypeAdapter"
-        private const val TYPE_ADAPTER_FACTORY = "com/google/gson/TypeAdapterFactory"
-
-        private const val ADAPTER_FIELD_NAME = "adapters"
         private const val FACTORY_FIELD_NAME = "factories"
+        private const val REGISTRY_NAME = "BoosterAggregationRegistry"
+
+        private val GENERATED_CLASS =
+            "$GENERATE_CLASS_DIRECTORY${File.separator}$REGISTRY_NAME"
     }
 
     private var currentLineNumber = 0
 
-    fun generate(): ByteArray {
+    fun generate(): List<Pair<String, ByteArray>> {
+        currentLineNumber = 0
+        val result = mutableListOf<Pair<String, ByteArray>>()
         val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
         classWriter.visit(
             Opcodes.V1_8,
             Opcodes.ACC_PUBLIC or Opcodes.ACC_SUPER,
             GENERATED_CLASS,
             null,
-            OBJECT,
+            CLASSNAME_OBJECT,
             arrayOf()
         )
         classWriter.visitField(
             Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
-            ADAPTER_FIELD_NAME,
-            "L$LIST;",
-            "L$LIST<L$TYPE_ADAPTER;>;",
-            null
-        )
-        classWriter.visitField(
-            Opcodes.ACC_PRIVATE or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
             FACTORY_FIELD_NAME,
-            "L$LIST;",
-            "L$LIST<L$TYPE_ADAPTER_FACTORY;>;",
+            "L$CLASSNAME_LIST;",
+            "L$CLASSNAME_LIST<L$CLASSNAME_TYPE_ADAPTER_FACTORY;>;",
             null
-        )
+        ).visitEnd()
+        classWriter.visitNestMemberAndInnerClass()
         classWriter.visitConstructor()
         classWriter.visitStaticBlock()
         classWriter.generateGetters()
-        return classWriter.toByteArray()
+        classWriter.visitEnd()
+        result.add("$GENERATED_CLASS.class" to classWriter.toByteArray())
+
+        result.addAll(generateInnerClasses())
+
+        return result
     }
 
-    private fun ClassVisitor.visitConstructor() {
-        val methodVisitor = visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
-        methodVisitor.visitCode()
-        val label1 = Label()
-        methodVisitor.visitLabel(label1)
-        methodVisitor.visitLineNumber(9, label1)
-        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
-        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, OBJECT, "<init>", "()V", false)
-        methodVisitor.visitInsn(Opcodes.RETURN)
-        methodVisitor.visitEnd()
+    private fun ClassVisitor.visitNestMemberAndInnerClass() {
+        typeAdapterNames.entries.indices.forEach { index ->
+            val wrappedInnerClassName = "$GENERATED_CLASS\$${typeAdapterNames.size - index}"
+            visitNestMember(wrappedInnerClassName)
+        }
+        typeAdapterNames.entries.indices.forEach { index ->
+            val wrappedInnerClassName = "$GENERATED_CLASS\$${index + 1}"
+            visitInnerClass(wrappedInnerClassName, null, null, 0)
+        }
+    }
+
+    private fun ClassWriter.visitConstructor() {
+        writeNoArgsConstructor(lineNumber = 9)
     }
 
     private fun ClassVisitor.visitStaticBlock() {
-        currentLineNumber = 16
 
-        fun MethodVisitor.initStaticField() {
-            val label1 = Label()
-            visitLabel(label1)
-            visitLineNumber(11, label1)
-            visitTypeInsn(Opcodes.NEW, ARRAY_LIST)
+        fun MethodVisitor.initStaticField(
+            fieldName: String,
+            interfaceType: String,
+            realType: String
+        ) {
+            val label = Label()
+            visitLabel(label)
+            visitLineNumber(currentLineNumber++, label)
+            visitTypeInsn(Opcodes.NEW, realType)
             visitInsn(Opcodes.DUP)
-            visitMethodInsn(Opcodes.INVOKESPECIAL, ARRAY_LIST, "<init>", "()V", false)
-            visitFieldInsn(Opcodes.PUTSTATIC, GENERATED_CLASS, ADAPTER_FIELD_NAME, "L$LIST;")
-
-            val label2 = Label()
-            visitLabel(label2)
-            visitLineNumber(13, label2)
-            visitTypeInsn(Opcodes.NEW, ARRAY_LIST)
-            visitInsn(Opcodes.DUP)
-            visitMethodInsn(Opcodes.INVOKESPECIAL, ARRAY_LIST, "<init>", "()V", false)
-            visitFieldInsn(Opcodes.PUTSTATIC, GENERATED_CLASS, FACTORY_FIELD_NAME, "L$LIST;")
+            visitMethodInsn(Opcodes.INVOKESPECIAL, realType, "<init>", "()V", false)
+            visitFieldInsn(Opcodes.PUTSTATIC, GENERATED_CLASS, fieldName, "L$interfaceType;")
         }
 
         fun MethodVisitor.putTypeAdapterFactories() {
@@ -93,51 +96,113 @@ class BundleClassGenerator(
                 val label = Label()
                 visitLabel(label)
                 visitLineNumber(currentLineNumber++, label)
-                visitFieldInsn(Opcodes.GETSTATIC, GENERATED_CLASS, FACTORY_FIELD_NAME, "L$LIST;")
+                visitFieldInsn(
+                    Opcodes.GETSTATIC,
+                    GENERATED_CLASS,
+                    FACTORY_FIELD_NAME,
+                    "L$CLASSNAME_LIST;"
+                )
                 visitTypeInsn(Opcodes.NEW, formattedName)
                 visitInsn(Opcodes.DUP)
                 visitMethodInsn(Opcodes.INVOKESPECIAL, formattedName, "<init>", "()V", false)
-                visitMethodInsn(Opcodes.INVOKEINTERFACE, LIST, "add", "(Ljava/lang/Object;)Z", true)
+                visitMethodInsn(
+                    Opcodes.INVOKEINTERFACE,
+                    CLASSNAME_LIST,
+                    "add",
+                    "(Ljava/lang/Object;)Z",
+                    true
+                )
+                visitInsn(Opcodes.POP)
+            }
+        }
+
+        fun MethodVisitor.putWrapTypeAdapterFactories() {
+            currentLineNumber++
+
+            typeAdapterNames.entries.forEachIndexed { index, _ ->
+                val wrappedInnerClassName = "$GENERATED_CLASS\$${index + 1}"
+                val label = Label()
+                visitLabel(label)
+                visitLineNumber(currentLineNumber++, label)
+                visitFieldInsn(
+                    Opcodes.GETSTATIC,
+                    GENERATED_CLASS,
+                    FACTORY_FIELD_NAME,
+                    "L$CLASSNAME_LIST;"
+                )
+                visitTypeInsn(Opcodes.NEW, wrappedInnerClassName)
+                visitInsn(Opcodes.DUP)
+                visitMethodInsn(
+                    Opcodes.INVOKESPECIAL,
+                    wrappedInnerClassName,
+                    "<init>",
+                    "()V",
+                    false
+                )
+                visitMethodInsn(
+                    Opcodes.INVOKEINTERFACE,
+                    CLASSNAME_LIST,
+                    "add",
+                    "(L$CLASSNAME_OBJECT;)Z",
+                    true
+                )
                 visitInsn(Opcodes.POP)
             }
         }
 
         val methodVisitor = visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
         methodVisitor.visitCode()
-        methodVisitor.initStaticField()
+
+        currentLineNumber = 11
+
+        methodVisitor.initStaticField(FACTORY_FIELD_NAME, CLASSNAME_LIST, CLASSNAME_ARRAY_LIST)
+        currentLineNumber += 2
+
         methodVisitor.putTypeAdapterFactories()
+        methodVisitor.putWrapTypeAdapterFactories()
 
         val label = Label()
         methodVisitor.visitLabel(label)
         methodVisitor.visitLineNumber(currentLineNumber++, label)
         methodVisitor.visitInsn(Opcodes.RETURN)
-
+        methodVisitor.visitMaxs(-1, -1)
         methodVisitor.visitEnd()
     }
 
     private fun ClassVisitor.generateGetters() {
 
-        fun generateListGetter(fieldName: String, argumentType: String) {
+        fun generateGetter(fieldName: String, desc: String, signature: String) {
             val methodVisitor = visitMethod(
-                Opcodes.ACC_PROTECTED or Opcodes.ACC_STATIC,
+                Opcodes.ACC_PROTECTED or Opcodes.ACC_STATIC or Opcodes.ACC_FINAL,
                 "get${fieldName.replaceFirstChar { it.uppercaseChar() }}",
-                "()L$LIST;",
-                "()L$LIST<L$argumentType;>;",
+                "()$desc",
+                signature,
                 null
             )
             methodVisitor.visitCode()
             val label = Label()
             methodVisitor.visitLabel(label)
             methodVisitor.visitLineNumber(currentLineNumber++, label)
-            methodVisitor.visitFieldInsn(Opcodes.GETSTATIC, GENERATED_CLASS, fieldName, "L$LIST;")
+            methodVisitor.visitFieldInsn(Opcodes.GETSTATIC, GENERATED_CLASS, fieldName, desc)
             methodVisitor.visitInsn(Opcodes.ARETURN)
+            methodVisitor.visitMaxs(-1, -1)
             methodVisitor.visitEnd()
         }
 
         currentLineNumber += 3
-        generateListGetter(ADAPTER_FIELD_NAME, TYPE_ADAPTER)
+        generateGetter(
+            FACTORY_FIELD_NAME,
+            "L$CLASSNAME_LIST;",
+            "()L$CLASSNAME_LIST<L$CLASSNAME_TYPE_ADAPTER_FACTORY;>;"
+        )
+    }
 
-        currentLineNumber += 3
-        generateListGetter(FACTORY_FIELD_NAME, TYPE_ADAPTER_FACTORY)
+    private fun generateInnerClasses(): List<Pair<String, ByteArray>> {
+        return typeAdapterNames.entries.mapIndexed { index, (type, typeAdapter) ->
+            val wrappedInnerClassName = "$GENERATED_CLASS\$${index + 1}"
+            val innerClassGenerator =
+                TypeAdapterFactoryInnerClassGenerator(GENERATED_CLASS, type, typeAdapter, index + 1)
+            "$wrappedInnerClassName.class" to innerClassGenerator.generate()
+        }
     }
 }

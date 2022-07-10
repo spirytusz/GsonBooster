@@ -1,10 +1,8 @@
 package com.spirytusz.aggregation.plugin
 
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import com.android.build.gradle.internal.tasks.DexArchiveBuilderTask
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.devtools.ksp.gradle.KspExtension
-import com.spirytusz.aggregation.plugin.asm.BundleClassGenerator
 import com.spirytusz.aggregation.plugin.data.BoostAggregationExtension
 import com.spirytusz.aggregation.plugin.sourceset.KspGeneratedCollector
 import com.spirytusz.aggregation.plugin.task.GsonBoosterBundleClassGenerateTask
@@ -14,7 +12,6 @@ import com.spirytusz.booster.contract.Constants.PluginIds.ANDROID_PLUGIN
 import com.spirytusz.booster.contract.Constants.PluginIds.KSP_PLUGIN
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class BoostAggregationPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -65,12 +62,11 @@ class BoostAggregationPlugin : Plugin<Project> {
                 val inputFile = project.layout.buildDirectory.file(
                     "generated/ksp/$variantName/resources/boost-aggregated.json"
                 )
-                val generatedClassName = BundleClassGenerator.GENERATED_CLASS
-                val outputFile = project.layout.buildDirectory.file(
-                    "tmp/kotlin-classes/${variantName}/$generatedClassName.class"
+                val outputFile = project.layout.buildDirectory.dir(
+                    "tmp/kotlin-classes/${variantName}/"
                 )
                 it.aggregatedJsonFile.set(inputFile)
-                it.bundleKotlinSourceClass.set(outputFile)
+                it.bundleKotlinSourceDirectory.set(outputFile)
             }
             val kspTask = project.tasks.named("ksp${variant}Kotlin")
             val dexBuilderTask = project.tasks.named("dexBuilder${variant}")

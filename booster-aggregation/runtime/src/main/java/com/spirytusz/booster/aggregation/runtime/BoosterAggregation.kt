@@ -13,7 +13,5 @@ object BoosterAggregation {
         builder.create()
     }
 
-    val aggregationTypeAdapters = adapters
-
     val aggregationTypeAdapterFactories = factories
 }
