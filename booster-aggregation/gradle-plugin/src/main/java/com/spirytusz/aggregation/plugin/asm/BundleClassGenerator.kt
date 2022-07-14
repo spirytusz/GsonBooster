@@ -45,7 +45,6 @@ class BundleClassGenerator(
             "L$CLASSNAME_LIST<L$CLASSNAME_TYPE_ADAPTER_FACTORY;>;",
             null
         ).visitEnd()
-        classWriter.visitNestMemberAndInnerClass()
         classWriter.visitConstructor()
         classWriter.visitStaticBlock()
         classWriter.generateGetters()
@@ -55,17 +54,6 @@ class BundleClassGenerator(
         result.addAll(generateInnerClasses())
 
         return result
-    }
-
-    private fun ClassVisitor.visitNestMemberAndInnerClass() {
-        typeAdapterNames.entries.indices.forEach { index ->
-            val wrappedInnerClassName = "$GENERATED_CLASS\$${typeAdapterNames.size - index}"
-            visitNestMember(wrappedInnerClassName)
-        }
-        typeAdapterNames.entries.indices.forEach { index ->
-            val wrappedInnerClassName = "$GENERATED_CLASS\$${index + 1}"
-            visitInnerClass(wrappedInnerClassName, null, null, 0)
-        }
     }
 
     private fun ClassWriter.visitConstructor() {
@@ -119,8 +107,8 @@ class BundleClassGenerator(
         fun MethodVisitor.putWrapTypeAdapterFactories() {
             currentLineNumber++
 
-            typeAdapterNames.entries.forEachIndexed { index, _ ->
-                val wrappedInnerClassName = "$GENERATED_CLASS\$${index + 1}"
+            typeAdapterNames.entries.forEach { (_, typeAdapter) ->
+                val wrappedInnerClassName = "${GENERATED_CLASS}_${typeAdapter.getSimpleName()}"
                 val label = Label()
                 visitLabel(label)
                 visitLineNumber(currentLineNumber++, label)
@@ -198,11 +186,15 @@ class BundleClassGenerator(
     }
 
     private fun generateInnerClasses(): List<Pair<String, ByteArray>> {
-        return typeAdapterNames.entries.mapIndexed { index, (type, typeAdapter) ->
-            val wrappedInnerClassName = "$GENERATED_CLASS\$${index + 1}"
+        return typeAdapterNames.entries.map { (type, typeAdapter) ->
+            val wrappedInnerClassName = "${GENERATED_CLASS}_${typeAdapter.getSimpleName()}"
             val innerClassGenerator =
-                TypeAdapterFactoryInnerClassGenerator(GENERATED_CLASS, type, typeAdapter, index + 1)
+                TypeAdapterFactoryInnerClassGenerator(GENERATED_CLASS, type, typeAdapter)
             "$wrappedInnerClassName.class" to innerClassGenerator.generate()
         }
+    }
+
+    private fun String.getSimpleName(): String {
+        return split(".").last()
     }
 }

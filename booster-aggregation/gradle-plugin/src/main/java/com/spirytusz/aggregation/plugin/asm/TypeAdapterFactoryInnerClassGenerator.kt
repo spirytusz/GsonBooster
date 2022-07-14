@@ -15,28 +15,25 @@ import org.objectweb.asm.Type
 
 class TypeAdapterFactoryInnerClassGenerator(
     private val outerClassName: String,
-    private val type: String,
-    typeAdapter: String,
-    private val index: Int
+    type: String,
+    typeAdapter: String
 ) {
 
+    private val typeName = type.replace(".", "/")
     private val typeAdapterClassName = typeAdapter.replace(".", "/")
 
     fun generate(): ByteArray {
         val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
         classWriter.visit(
             Opcodes.V1_8,
-            Opcodes.ACC_SUPER,
-            "${outerClassName}\$$index",
+            Opcodes.ACC_PUBLIC or Opcodes.ACC_SUPER,
+            "${outerClassName}_${typeAdapterClassName.split("/").last()}",
             null,
             CLASSNAME_OBJECT,
             arrayOf(CLASSNAME_TYPE_ADAPTER_FACTORY)
         )
-        classWriter.visitNestHost(outerClassName)
-        classWriter.visitOuterClass(outerClassName, null, null)
-        classWriter.visitInnerClass("$outerClassName\$$index", null, null, 0)
 
-        classWriter.writeNoArgsConstructor(lineNumber = 9,  accFlag = 0)
+        classWriter.writeNoArgsConstructor(lineNumber = 8)
         classWriter.visitCreateMethod()
         classWriter.visitEnd()
 
@@ -55,8 +52,8 @@ class TypeAdapterFactoryInnerClassGenerator(
 
         val label = Label()
         methodVisitor.visitLabel(label)
-        methodVisitor.visitLineNumber(19, label)
-        methodVisitor.visitLdcInsn(Type.getObjectType(type))
+        methodVisitor.visitLineNumber(11, label)
+        methodVisitor.visitLdcInsn(Type.getObjectType(typeName))
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 2)
         methodVisitor.visitMethodInsn(
             Opcodes.INVOKEVIRTUAL,
@@ -72,12 +69,8 @@ class TypeAdapterFactoryInnerClassGenerator(
             "(L$CLASSNAME_CLASS;)Z",
             false
         )
-        val ifLabel = Label()
-        val elseLabel = Label()
-        methodVisitor.visitJumpInsn(Opcodes.IFEQ, elseLabel)
-
-        methodVisitor.visitLabel(ifLabel)
-        methodVisitor.visitLineNumber(20, ifLabel)
+        val label1 = Label()
+        methodVisitor.visitJumpInsn(Opcodes.IFEQ, label1)
         methodVisitor.visitTypeInsn(Opcodes.NEW, typeAdapterClassName)
         methodVisitor.visitInsn(Opcodes.DUP)
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
@@ -88,19 +81,17 @@ class TypeAdapterFactoryInnerClassGenerator(
             "(L$CLASSNAME_GSON;)V",
             false
         )
+
+        val label2 = Label()
+        methodVisitor.visitJumpInsn(Opcodes.GOTO, label2)
+        methodVisitor.visitLabel(label1)
+        methodVisitor.visitFrame(-1, -1, null, -1, null)
+        methodVisitor.visitInsn(Opcodes.ACONST_NULL)
+
+        methodVisitor.visitLabel(label2)
+        methodVisitor.visitFrame(-1, -1, null, -1, null)
         methodVisitor.visitInsn(Opcodes.ARETURN)
 
-        methodVisitor.visitLabel(elseLabel)
-        methodVisitor.visitLineNumber(22, elseLabel)
-        methodVisitor.visitFrame(
-            Opcodes.F_SAME,
-            0,
-            arrayOf(null, null, null),
-            0,
-            arrayOf(null, null, null)
-        )
-        methodVisitor.visitInsn(Opcodes.ACONST_NULL)
-        methodVisitor.visitInsn(Opcodes.ARETURN)
         methodVisitor.visitMaxs(-1, -1)
         methodVisitor.visitEnd()
     }

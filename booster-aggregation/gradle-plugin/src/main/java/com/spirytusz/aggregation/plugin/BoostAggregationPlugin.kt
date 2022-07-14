@@ -62,11 +62,11 @@ class BoostAggregationPlugin : Plugin<Project> {
                 val inputFile = project.layout.buildDirectory.file(
                     "generated/ksp/$variantName/resources/boost-aggregated.json"
                 )
-                val outputFile = project.layout.buildDirectory.dir(
+                val outputDirectory = project.layout.buildDirectory.dir(
                     "tmp/kotlin-classes/${variantName}/"
                 )
                 it.aggregatedJsonFile.set(inputFile)
-                it.bundleKotlinSourceDirectory.set(outputFile)
+                it.bundleKotlinSourceDirectory.set(outputDirectory)
             }
             val kspTask = project.tasks.named("ksp${variant}Kotlin")
             val dexBuilderTask = project.tasks.named("dexBuilder${variant}")

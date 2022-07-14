@@ -5,8 +5,8 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Label
 import org.objectweb.asm.Opcodes
 
-fun ClassWriter.writeNoArgsConstructor(lineNumber: Int, accFlag: Int = Opcodes.ACC_PUBLIC) {
-    val methodVisitor = visitMethod(accFlag, "<init>", "()V", null, null)
+fun ClassWriter.writeNoArgsConstructor(lineNumber: Int) {
+    val methodVisitor = visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
     methodVisitor.visitCode()
     val label = Label()
     methodVisitor.visitLabel(label)
