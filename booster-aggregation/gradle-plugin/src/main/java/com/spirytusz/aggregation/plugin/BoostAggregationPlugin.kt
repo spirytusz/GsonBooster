@@ -1,6 +1,7 @@
 package com.spirytusz.aggregation.plugin
 
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import com.android.build.gradle.internal.tasks.DexArchiveBuilderTask
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.devtools.ksp.gradle.KspExtension
 import com.spirytusz.aggregation.plugin.data.BoostAggregationExtension
@@ -55,15 +56,15 @@ class BoostAggregationPlugin : Plugin<Project> {
         fun registerTaskVariantAware(project: Project, variantName: String) {
             val variant = variantName.replaceFirstChar { it.uppercaseChar() }
             val variantTaskName = "generate${variant}GsonBoosterBundleClass"
+            val outputDirectory = project.layout.buildDirectory.dir(
+                "intermediates/gson-booster/${variantName}/"
+            )
             val bundleTask = project.tasks.register(
                 variantTaskName,
                 GsonBoosterBundleClassGenerateTask::class.java
             ) {
                 val inputFile = project.layout.buildDirectory.file(
                     "generated/ksp/$variantName/resources/boost-aggregated.json"
-                )
-                val outputDirectory = project.layout.buildDirectory.dir(
-                    "tmp/kotlin-classes/${variantName}/"
                 )
                 it.aggregatedJsonFile.set(inputFile)
                 it.bundleKotlinSourceDirectory.set(outputDirectory)
@@ -72,6 +73,9 @@ class BoostAggregationPlugin : Plugin<Project> {
             val dexBuilderTask = project.tasks.named("dexBuilder${variant}")
 
             bundleTask.dependsOn(kspTask)
+            dexBuilderTask.configure {
+                (it as DexArchiveBuilderTask).projectClasses.from(outputDirectory)
+            }
             dexBuilderTask.dependsOn(bundleTask)
         }
 
