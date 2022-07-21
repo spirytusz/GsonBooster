@@ -13,6 +13,7 @@ buildscript {
         classpath(Dependencies.gradle_build_tool)
         classpath(kotlin("gradle-plugin", version = Versions.kotlin_version))
         classpath(Dependencies.androidx_benchmark_gradle_plugin)
+        classpath(Dependencies.build_config)
     }
 }
 

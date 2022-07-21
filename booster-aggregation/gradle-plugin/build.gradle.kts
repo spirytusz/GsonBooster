@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("java-gradle-plugin")
+    id("com.github.gmazzo.buildconfig")
     `maven-publish-plugin`
 }
 
@@ -20,4 +21,9 @@ gradlePlugin {
         id = "com.spirytusz.booster.aggregation"
         implementationClass = "com.spirytusz.aggregation.plugin.BoostAggregationPlugin"
     }
+}
+
+buildConfig {
+    packageName.set("com.spirytusz.aggregation.plugin")
+    buildConfigField("String", "GSON_BOOSTER_VERSION", "\"$version\"")
 }

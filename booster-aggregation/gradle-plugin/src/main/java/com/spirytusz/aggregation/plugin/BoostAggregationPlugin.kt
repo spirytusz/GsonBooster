@@ -43,7 +43,7 @@ class BoostAggregationPlugin : Plugin<Project> {
 
     private fun configureDependency(project: Project) {
         project.pluginManager.withPlugin(KSP_PLUGIN) {
-            project.dependencies.add("ksp", "com.spirytusz:booster-aggregation-processor:1.4.0")
+            project.dependencies.add("ksp", "com.spirytusz:booster-aggregation-processor:${BuildConfig.GSON_BOOSTER_VERSION}")
         }
     }
 

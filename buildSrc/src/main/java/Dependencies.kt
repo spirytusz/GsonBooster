@@ -30,6 +30,8 @@ object Versions {
 
     const val asm = "9.1"
     const val common_io = "2.6"
+
+    const val build_config = "3.1.0"
 }
 
 object Dependencies {
@@ -95,4 +97,5 @@ object Dependencies {
 
     const val asm = "org.ow2.asm:asm-commons:${Versions.asm}"
     const val common_io = "commons-io:commons-io:${Versions.common_io}"
+    const val build_config = "com.github.gmazzo:gradle-buildconfig-plugin:${Versions.build_config}"
 }
